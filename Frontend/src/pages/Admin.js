@@ -25,7 +25,6 @@ const Admin = () => {
   if (window.confirm(message)) {
     try {
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
-      // Update the local state to reflect the change
       setBlogs(blogs.map(blog => 
         blog.id === id ? { ...blog, status: status } : blog
       ));

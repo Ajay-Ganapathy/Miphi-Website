@@ -1,27 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const Form = () => {
+ 
+  const [authorName, setAuthorName] = useState('');
+  const [title, setTitle] = useState('');
+  const [blogContent, setBlogContent] = useState('');
+  const [message, setMessage] = useState(''); 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
+   
     const data = {
-      author_name: formData.get('authorname'),
-      blog_title: formData.get('title'),
-      blog_content: formData.get('blogcontent'),
-      status: 'Pending' // Initial status when the blog is submitted
+      author_name: authorName,
+      blog_title: title,
+      blog_content: blogContent,
+      status: 'Pending' 
     };
-
-    console.log(data)
 
     try {
       const response = await axios.post('http://localhost:5000/blogs', data);
       console.log('Blog submitted successfully:', response.data);
-      // Handle success (e.g., show a success message or redirect)
+      setMessage('Blog submitted successfully!'); 
+
+    
+      setAuthorName('');
+      setTitle('');
+      setBlogContent('');
     } catch (error) {
       console.error('Error submitting blog:', error);
-      // Handle error (e.g., show an error message)
+      setMessage('Error submitting blog. Please try again.'); 
     }
   };
 
@@ -39,6 +48,8 @@ const Form = () => {
               name="authorname"
               type="text"
               placeholder="Author Name"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
               required
             />
           </div>
@@ -52,6 +63,8 @@ const Form = () => {
               name="title"
               type="text"
               placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
             />
             <p className="text-red-500 text-xs italic">Title</p>
@@ -67,6 +80,8 @@ const Form = () => {
               rows="4"
               className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Write your thoughts here..."
+              value={blogContent}
+              onChange={(e) => setBlogContent(e.target.value)}
               required
             ></textarea>
           </div>
@@ -77,6 +92,14 @@ const Form = () => {
           >
             Submit
           </button>
+
+          {message && (
+            <div className="mt-4 text-center">
+              <p className={`text-sm ${message.includes('Error') ? 'text-red-500' : 'text-green-500'}`}>
+                {message}
+              </p>
+            </div>
+          )}
         </form>
       </div>
     </div>
