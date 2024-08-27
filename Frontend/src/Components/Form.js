@@ -1,38 +1,49 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import TextEditor from './TextEditor';
 
 const Form = () => {
- 
   const [authorName, setAuthorName] = useState('');
   const [title, setTitle] = useState('');
   const [blogContent, setBlogContent] = useState('');
-  const [message, setMessage] = useState(''); 
+  const [message, setMessage] = useState('');
+  const [image , setImage] = useState(null);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-   
-    const data = {
-      author_name: authorName,
-      blog_title: title,
-      blog_content: blogContent,
-      status: 'Pending' 
-    };
-
+  
+    const formData = new FormData();
+    formData.append('author_name', authorName);
+    formData.append('blog_title', title);
+    formData.append('blog_content', blogContent);
+    formData.append('status', 'Pending');
+    
+    // Append the image file if it exists
+    if (image) {
+      formData.append('image_url', image);
+    }
+  
     try {
-      const response = await axios.post('http://localhost:5000/blogs', data);
+      const response = await axios.post('http://localhost:5000/blogs', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
       console.log('Blog submitted successfully:', response.data);
       setMessage('Blog submitted successfully!'); 
-
-    
+  
       setAuthorName('');
       setTitle('');
       setBlogContent('');
+      setImage(null);
     } catch (error) {
       console.error('Error submitting blog:', error);
-      setMessage('Error submitting blog. Please try again.'); 
+      setMessage('Error submitting blog. Please try again.');
     }
   };
+  
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -54,11 +65,11 @@ const Form = () => {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
               Title
             </label>
             <input
-              className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="title"
               name="title"
               type="text"
@@ -67,27 +78,31 @@ const Form = () => {
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-            <p className="text-red-500 text-xs italic">Title</p>
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="blogcontent">
-              Blog Content
+            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
+              Image
             </label>
-            <textarea
-              id="blogcontent"
-              name="blogcontent"
-              rows="4"
-              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Write your thoughts here..."
-              value={blogContent}
-              onChange={(e) => setBlogContent(e.target.value)}
-              required
-            ></textarea>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="image_url"
+              name="image_url"
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])} 
+            />
+
           </div>
 
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="blogcontent">
+            Blog Content
+          </label>
+
+          
+          <TextEditor value={blogContent} onChange={setBlogContent} />
+
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
             type="submit"
           >
             Submit

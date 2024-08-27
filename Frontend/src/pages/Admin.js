@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Modal from '../Components/Modal';
 
 const Admin = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,6 +13,7 @@ const Admin = () => {
     try {
       const response = await axios.get('http://localhost:5000/blogs');
       setBlogs(response.data.blogs);
+      console.log(blogs)
     } catch (error) {
       console.error('Error fetching blogs:', error);
     }
@@ -34,6 +36,22 @@ const Admin = () => {
   }
   };
 
+  const editBlog = () => {
+
+  }
+
+  // const editBlog = async (id , status) => {
+  //   try{
+
+  //     await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
+  //     setBlogs(blogs.map(blog => 
+  //       blog.id === id ? { ...blog, status: status } : blog
+  //     ));
+  //   } catch (error) {
+  //     console.error('Error updating blog status:', error);
+  //   }
+  // }
+
   return (
     <div className="admin-panel">
       <h1 className="text-2xl font-bold mb-4 mt-4 text-center">Admin Panel</h1>
@@ -53,6 +71,9 @@ const Admin = () => {
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Accept / Reject
               </th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Edit Permissions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -60,7 +81,11 @@ const Admin = () => {
               <tr key={blog.id} className="hover:bg-gray-50">
                 <td className="py-2 px-4 border-b border-gray-200">{blog.author_name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{blog.blog_title}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{blog.blog_content}</td>
+                <td className="py-2 px-4 border-b border-gray-200">{<>
+                  <div
+                  dangerouslySetInnerHTML={ {__html : blog.blog_content}}
+                  />
+                </>}</td>
                 <td className="py-2 px-4 border-b border-gray-200">
                   {blog.status === 'Pending' && (
                     <div className="flex space-x-2">
@@ -68,7 +93,7 @@ const Admin = () => {
                         className="bg-green-600 text-white p-2 m-2"
                         onClick={() => {
                             console.log(blog.id)
-                            updateBlogStatus(blog.id, 'Accept')
+                            updateBlogStatus(blog.id, 'Accept' )
                         }}
                       >
                         Accept
@@ -83,6 +108,12 @@ const Admin = () => {
                   )}
                   {blog.status === 'Accept' && <span className="text-green-600">Accepted</span>}
                   {blog.status === 'Reject' && <span className="text-red-600">Rejected</span>}
+                </td>
+
+                <td>
+
+                 <Modal id = {blog.id} blogs = {blogs} setBlogs = {setBlogs} />
+
                 </td>
               </tr>
             ))}
