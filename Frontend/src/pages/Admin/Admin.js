@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Modal from '../Components/Modal';
-import Modal2 from '../Components/Modal2';
+import Modal from '../../Components/Modal';
+import Modal2 from '../../Components/Modal2';
 
 const Admin = () => {
   const [blogs, setBlogs] = useState([]);
