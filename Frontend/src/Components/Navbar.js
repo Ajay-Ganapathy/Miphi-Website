@@ -1,7 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
+
+	const navigate = useNavigate()
   return (
     <div>
      
@@ -22,10 +25,33 @@ const Navbar = () => {
 			<ul class="flex font-semibold justify-between">
                
 				<li class="md:px-4 md:py-2 text-indigo-500"><Link to ="/">Home</Link></li>
-				<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to="/about">About Us </Link></li>
-				<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to ="/products">Products </Link></li>
-				<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to ="/solutions">Solutions </Link></li>
-				<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to ="/contact">Contact</Link></li>
+
+				{
+					
+					(localStorage.getItem("isAuthenticated") !== "true" ) && 
+
+					<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to="/admin">Admin Login </Link></li>
+			}
+				
+
+				{
+					
+					(localStorage.getItem("isAuthenticated") === "true" ) && 
+
+				 <li class="md:px-4 md:py-2 hover:text-indigo-500"><span onClick = {() => {
+					localStorage.setItem("isAuthenticated" , false)
+					navigate("/admin")
+				}}>Logout</span></li>
+			}
+				
+				
+			
+				
+				
+
+
+				
+          
 			</ul>
 		</div>
 		

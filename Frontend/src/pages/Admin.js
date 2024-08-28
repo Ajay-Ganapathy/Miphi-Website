@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Components/Modal';
+import Modal2 from '../Components/Modal2';
 
 const Admin = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,7 +13,7 @@ const Admin = () => {
   const fetchBlogs = async () => {
     try {
       const response = await axios.get('http://localhost:5000/blogs');
-      setBlogs(response.data.blogs);
+      setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
       console.log(blogs)
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -69,52 +70,44 @@ const Admin = () => {
                 Blog Content
               </th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Accept / Reject
+                Status
               </th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Edit Permissions
+                Remarks
               </th>
             </tr>
           </thead>
           <tbody>
+            
             {blogs.map((blog) => (
               <tr key={blog.id} className="hover:bg-gray-50">
                 <td className="py-2 px-4 border-b border-gray-200">{blog.author_name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{blog.blog_title}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{<>
                   <div
-                  dangerouslySetInnerHTML={ {__html : blog.blog_content}}
+                 // dangerouslySetInnerHTML={ {__html : blog.blog_content}}
                   />
+
+                  <Modal2 id = {blog.id} author = {blog.author_name} blog_title = {blog.blog_title} title = "View Blog" remarks = {blog.remarks} content = {blog.blog_content}  blogs = {blogs} setBlogs = {setBlogs} image = { blog.image_url } />
                 </>}</td>
                 <td className="py-2 px-4 border-b border-gray-200">
-                  {blog.status === 'Pending' && (
-                    <div className="flex space-x-2">
-                      <button
-                        className="bg-green-600 text-white p-2 m-2"
-                        onClick={() => {
-                            console.log(blog.id)
-                            updateBlogStatus(blog.id, 'Accept' )
-                        }}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        className="bg-red-700 text-white p-2 m-2"
-                        onClick={() => updateBlogStatus(blog.id, 'Reject')}
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
+                 
                   {blog.status === 'Accept' && <span className="text-green-600">Accepted</span>}
                   {blog.status === 'Reject' && <span className="text-red-600">Rejected</span>}
+                  {blog.status === 'Pending' && <span className="text-yellow-600">Pending</span>}
                 </td>
 
-                <td>
+                
+                  <td className="py-2 px-4 border-b border-gray-200"> {blog.remarks}</td>
+                
+                
+                
 
-                 <Modal id = {blog.id} blogs = {blogs} setBlogs = {setBlogs} />
+                {/* <td>
 
-                </td>
+                 <Modal id = {blog.id} blogs = {blogs} setBlogs = {setBlogs} title = "Edit"  />
+
+                </td> */}
               </tr>
             ))}
           </tbody>

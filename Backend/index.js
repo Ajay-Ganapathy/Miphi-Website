@@ -27,7 +27,29 @@ const db = mysql.createPool({
   database: process.env.DB_NAME || 'blogDB',
 });
 
-const storage = multer.diskStorage({
+// Route to handle login
+app.post('/login', async (req, res) => {
+  const { name, password } = req.body;
+
+  try {
+    const query = 'SELECT * FROM users WHERE name = ? AND password = ?';
+    const [rows] = await db.execute(query, [name, password]);
+
+    console.log(name , password)
+
+    if (rows.length > 0) {
+      res.status(200).send({ message: 'Login successful' });
+    } else {
+      res.status(401).send({ message: 'Invalid name or password' });
+    }
+  } catch (err) {
+    console.error('Database query error:', err);
+    res.status(500).send({ message: 'Server error' });
+  }
+});
+
+// Route to handle blog creation
+app.post('/blogs', multer({ storage: multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
@@ -35,47 +57,22 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix);
   },
-});
-
-const upload = multer({ storage: storage });
-
-// Route to create a blog post
-// app.post('/blogs', upload.single('image'), async (req, res) => {
-//   try {
-//     const { author_name, blog_title, blog_content, status } = req.body;
-    
-//     // Check if a file was uploaded and set the image_url
-//     const image_url = req.file ? `/uploads/${req.file.filename}` : '';
-
-//     const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url) VALUES (?, ?, ?, ?, ?)`;
-//     const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url]);
-
-//     res.status(201).json({ id: results.insertId, image: image_url });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-app.post('/blogs', upload.single('image_url'), async (req, res) => {
+}) }).single('image_url'), async (req, res) => {
   try {
-    console.log('File:', req.file); // Check if the file is being uploaded
     const { author_name, blog_title, blog_content, status } = req.body;
-
-    const image_url = req.file ? `/uploads/${req.file.filename}` : '';
-    console.log('Image URL:', req.file); // Check what image URL is being set
+    const image_url = req.file ? `uploads/${req.file.filename}` : '';
 
     const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url) VALUES (?, ?, ?, ?, ?)`;
     const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url]);
 
     res.status(201).json({ id: results.insertId, image: image_url });
   } catch (err) {
-    console.error('Error:', err.message); // Log any errors
+    console.error('Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-
-// Route to get all blog posts
+// Route to get all blogs
 app.get('/blogs', async (req, res) => {
   try {
     const query = `SELECT * FROM blogs`;
@@ -87,14 +84,15 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
-// Route to update blog post status
+// Route to update blog status
 app.put('/blogs/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const { remarks } = req.body;
 
-    const query = `UPDATE blogs SET status = ? WHERE id = ?`;
-    const [results] = await db.execute(query, [status, id]);
+    const query = `UPDATE blogs SET status = ? , remarks = ? WHERE id = ?`;
+    const [results] = await db.execute(query, [status, remarks , id]);
 
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: 'Blog post not found' });
@@ -107,7 +105,7 @@ app.put('/blogs/:id/status', async (req, res) => {
 });
 
 // Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join('uploads')));
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
