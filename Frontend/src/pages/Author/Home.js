@@ -1,12 +1,15 @@
 import React from 'react'
+import Blogs from '../../Components/Blogs'
 
 const Home = () => {
   return (
     <div>Home
 
-        <h1> Approved Blogs </h1>
+        
 
-        <h1> Rejected Blogs </h1>
+        <Blogs />
+
+     
     </div>
   )
 }

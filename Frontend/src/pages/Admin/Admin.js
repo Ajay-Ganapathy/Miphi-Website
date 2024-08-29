@@ -3,7 +3,8 @@ import axios from 'axios';
 import Modal from '../../Components/Modal';
 import Modal2 from '../../Components/Modal2';
 
-const Admin = () => {
+const Admin = (props) => {
+ 
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const Admin = () => {
   if (window.confirm(message)) {
     try {
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
-      setBlogs(blogs.map(blog => 
+      props.setBlogs(props.blogs.map(blog => 
         blog.id === id ? { ...blog, status: status } : blog
       ));
     } catch (error) {
@@ -78,8 +79,15 @@ const Admin = () => {
             </tr>
           </thead>
           <tbody>
+
+            {
+              blogs.map((blog) => {
+                console.log(blog)
+              })
+            }
             
-            {blogs.map((blog) => (
+            {blogs.map((blog) =>  (
+              
               <tr key={blog.id} className="hover:bg-gray-50">
                 <td className="py-2 px-4 border-b border-gray-200">{blog.author_name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{blog.blog_title}</td>
@@ -88,7 +96,7 @@ const Admin = () => {
                  // dangerouslySetInnerHTML={ {__html : blog.blog_content}}
                   />
 
-                  <Modal2 id = {blog.id} author = {blog.author_name} blog_title = {blog.blog_title} title = "View Blog" remarks = {blog.remarks} content = {blog.blog_content}  blogs = {blogs} setBlogs = {setBlogs} image = { blog.image_url } />
+                  <Modal2 id = {blog.id} author = {blog.author_name} blog_title = {blog.blog_title} title = "View Blog" remarks = {blog.remarks} content = {blog.blog_content}  blogs = {props.blogs} setBlogs = {props.setBlogs} image = { blog.image_url } />
                 </>}</td>
                 <td className="py-2 px-4 border-b border-gray-200">
                  

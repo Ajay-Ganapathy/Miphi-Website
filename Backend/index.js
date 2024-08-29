@@ -4,14 +4,20 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bodyParser = require('body-parser') 
+const bcrypt = require('bcryptjs')
+
 
 const app = express();
 const port = 5000;
+
+const JWT_SECRET = 'SecretToken_Miphi@12';
 
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json());
 
 // Ensure /uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -27,26 +33,64 @@ const db = mysql.createPool({
   database: process.env.DB_NAME || 'blogDB',
 });
 
+// Route to handle Register
+
+const jwt = require('jsonwebtoken'); // Ensure you require the jwt library
+
+app.post('/register', async (req, res) => {
+  const { name, password } = req.body;
+
+  if (!name || !password) {
+    return res.status(400).json({ message: 'Username and password are required' });
+  }
+
+  try {
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert user into the database
+    const query = 'INSERT INTO users (role, name, password) VALUES (1, ?, ?)';
+    const [results] = await db.execute(query, [name, hashedPassword]);
+
+    // Generate a token
+    const token = jwt.sign({ id: results.insertId, name }, JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(201).json({ message: 'User registered successfully', token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 // Route to handle login
 app.post('/login', async (req, res) => {
   const { name, password } = req.body;
 
   try {
-    const query = 'SELECT * FROM users WHERE name = ? AND password = ?';
-    const [rows] = await db.execute(query, [name, password]);
+    const [results] = await db.execute('SELECT * FROM users WHERE name = ?', [name]);
 
-    console.log(name , password)
-
-    if (rows.length > 0) {
-      res.status(200).send({ message: 'Login successful' });
-    } else {
-      res.status(401).send({ message: 'Invalid name or password' });
+    if (results.length === 0) {
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
-  } catch (err) {
-    console.error('Database query error:', err);
-    res.status(500).send({ message: 'Server error' });
+
+    const user = results[0];
+    const match = await bcrypt.compare(password, user.password);
+
+    if (match) {
+      const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
+      res.json({ token }); 
+    } else {
+      res.status(400).json({ message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.error('Error logging in', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 // Route to handle blog creation
 app.post('/blogs', multer({ storage: multer.diskStorage({
@@ -84,6 +128,33 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
+app.get('/blogs/:status', (req, res) => {
+  const status = req.params.status; // 'approved' or 'rejected'
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const offset = (page - 1) * limit;
+
+  const query = `
+    SELECT * FROM blogs
+    WHERE status = ?
+    ORDER BY id DESC
+    LIMIT ? OFFSET ?`;
+
+  db.query(query, [status, limit, offset], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    // Optionally, you can also send the total count of blogs for more advanced pagination
+    db.query('SELECT COUNT(*) AS count FROM blogs WHERE status = ?', [status], (err, countResult) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      res.json({
+        blogs: results,
+        total: countResult[0].count
+      });
+    });
+  });
+});
+
 // Route to update blog status
 app.put('/blogs/:id/status', async (req, res) => {
   try {
@@ -91,6 +162,9 @@ app.put('/blogs/:id/status', async (req, res) => {
     const { status } = req.body;
     const { remarks } = req.body;
 
+    console.log(id )
+    console.log(status)
+    console.log(remarks)
     const query = `UPDATE blogs SET status = ? , remarks = ? WHERE id = ?`;
     const [results] = await db.execute(query, [status, remarks , id]);
 

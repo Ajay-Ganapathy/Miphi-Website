@@ -2,13 +2,13 @@ import React from 'react'
 import {  Navigate, Route, Routes } from "react-router-dom";
 import Admin from './Admin';
 
-const AdminBase = () => {
+const AdminBase = (props) => {
   return (
     
     <Routes>
       
 
-      <Route path = "/dashboard" element = {<Admin />} />
+      <Route path = "/dashboard" element = {<Admin blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
 
      
 

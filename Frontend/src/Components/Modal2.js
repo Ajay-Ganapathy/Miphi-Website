@@ -4,7 +4,7 @@ import axios from 'axios';
 function Modal2(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [remarks, setRemarks] = useState(props.remarks); // State to store remarks
-  console.log(remarks)
+  //console.log(remarks)
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -14,13 +14,14 @@ function Modal2(props) {
   const handleUpdate = async (id, status) => {
     try {
     setRemarks('')
-    //console.log(remarks)
+    console.log(status)
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status , remarks});
       console.log("Updated Success");
       props.setBlogs(props.blogs.map(blog => 
         blog.id === id ? { ...blog, status  , remarks} : blog
       ));
     } catch (error) {
+      console.log(id)
       console.error('Error updating blog status:', error);
     }
     toggleModal();
