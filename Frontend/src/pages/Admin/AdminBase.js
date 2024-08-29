@@ -8,7 +8,7 @@ const AdminBase = (props) => {
     <Routes>
       
 
-      <Route path = "/dashboard" element = {<Admin blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
+      <Route path = "/" element = {<Admin blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
 
      
 

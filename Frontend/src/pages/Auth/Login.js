@@ -8,6 +8,7 @@ const Login = () => {
     const [name, setName] = useState('');
     const [pass, setPass] = useState('');
     const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -20,14 +21,18 @@ const Login = () => {
                 password: pass,
             });
 
-            console.log('Login submitted successfully:', response.data);
-
-            const { token } = response.data;
+            const { token, role } = response.data;
 
             if (token) {
                 localStorage.setItem('token', token);
+                localStorage.setItem('role', role);
                 toast.success('Login successful!');
-                navigate('/author/home');
+
+                if (role == '1') {
+                    navigate('/author/');
+                } else if (role == '2') {
+                    navigate('/admin/');
+                }
             } else {
                 toast.error('Login failed. No token received.');
             }

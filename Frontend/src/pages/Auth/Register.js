@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function Register() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState(1);
+    const [role, setRole] = useState(2);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

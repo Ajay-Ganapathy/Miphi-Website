@@ -80,13 +80,60 @@ app.post('/login', async (req, res) => {
 
     if (match) {
       const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token }); 
+      res.json({ "token" : token , "role" : user.role}); 
     } else {
       res.status(400).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
     console.error('Error logging in', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// app.post('/login', (req, res) => {
+//   const { name, password } = req.body;
+
+//   db.query('SELECT * FROM users WHERE name = ?', [name], async (err, results) => {
+//     if (err || results.length === 0) {
+//       return res.status(400).json({ message: 'Invalid credentials' });
+//     }
+
+//     const user = results[0];
+//     const match = await bcrypt.compare(password, user.password);
+
+//     if (match) {
+//       const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+//       res.json({ token, role: user.role });
+//     } else {
+//       res.status(400).json({ message: 'Invalid credentials' });
+//     }
+//   });
+// });
+
+
+// Route to fetch user details
+
+
+app.get('/author/details', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET); // Verify the token
+
+    const [results] = await db.execute('SELECT id, name, role FROM users WHERE id = ?', [decoded.id]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(results[0]);
+  } catch (error) {
+    console.error('Error fetching user details', error);
+    res.status(401).json({ message: 'Invalid token' });
   }
 });
 
@@ -103,11 +150,12 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
   },
 }) }).single('image_url'), async (req, res) => {
   try {
-    const { author_name, blog_title, blog_content, status } = req.body;
+    const { author_name, blog_title, blog_content, status , author_id } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
+    console.log(req.body , image_url)
 
-    const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url) VALUES (?, ?, ?, ?, ?)`;
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url]);
+    const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url , author_id) VALUES (?, ?, ?, ?, ? , ?)`;
+    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url , author_id]);
 
     res.status(201).json({ id: results.insertId, image: image_url });
   } catch (err) {
@@ -159,14 +207,14 @@ app.get('/blogs/:status', (req, res) => {
 app.put('/blogs/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
-    const { remarks } = req.body;
+    const { status, remarks = '' } = req.body; // Default value for remarks
 
-    console.log(id )
-    console.log(status)
-    console.log(remarks)
-    const query = `UPDATE blogs SET status = ? , remarks = ? WHERE id = ?`;
-    const [results] = await db.execute(query, [status, remarks , id]);
+    console.log(id);
+    console.log(status);
+    console.log(remarks);
+
+    const query = `UPDATE blogs SET status = ?, remarks = ? WHERE id = ?`;
+    const [results] = await db.execute(query, [status, remarks, id]);
 
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: 'Blog post not found' });
@@ -177,6 +225,7 @@ app.put('/blogs/:id/status', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join('uploads')));

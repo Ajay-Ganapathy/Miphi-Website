@@ -26,22 +26,28 @@ const Navbar = () => {
                
 				<li class="md:px-4 md:py-2 text-indigo-500"><Link to ="/">Home</Link></li>
 
-				{
+				{/* {
 					
 					(localStorage.getItem("isAuthenticated") !== "true" ) && 
 
 					<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to="/admin">Admin Login </Link></li>
-			}
+			} */}
 				
 
 				{
 					
-					(localStorage.getItem("isAuthenticated") === "true" ) && 
+					
+				localStorage.getItem("token") &&
 
 				 <li class="md:px-4 md:py-2 hover:text-indigo-500"><span onClick = {() => {
-					localStorage.setItem("isAuthenticated" , false)
-					navigate("/admin")
-				}}>Logout</span></li>
+					
+						localStorage.removeItem("token") ;
+						localStorage.removeItem("role") ;
+						navigate("/login")
+					 
+
+					
+				}}> Logout </span></li>
 			}
 				
 				

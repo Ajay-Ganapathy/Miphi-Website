@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import axios from 'axios';
 import TextEditor from './TextEditor';
 
@@ -9,20 +9,47 @@ const Form = () => {
   const [message, setMessage] = useState('');
   const [image , setImage] = useState(null);
 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/author/details', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(response.data);
+      } catch (error) {
+        setError(error.response?.data?.message || 'Error fetching user details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     const formData = new FormData();
-    formData.append('author_name', authorName);
+    formData.append('author_name', user.name);
     formData.append('blog_title', title);
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
     
-    // Append the image file if it exists
+    
     if (image) {
       formData.append('image_url', image);
     }
+
+    formData.append('author_id', user.id);
   
     try {
       const response = await axios.post('http://localhost:5000/blogs', formData, {
@@ -49,7 +76,7 @@ const Form = () => {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="w-full max-w-xl">
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-8" onSubmit={handleSubmit}>
-          <div>
+          {/* <div>
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="authorname">
               Author Name
             </label>
@@ -63,7 +90,7 @@ const Form = () => {
               onChange={(e) => setAuthorName(e.target.value)}
               required
             />
-          </div>
+          </div> */}
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
               Title

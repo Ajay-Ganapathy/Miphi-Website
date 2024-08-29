@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function Modal2(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [remarks, setRemarks] = useState(props.remarks); // State to store remarks
+  const [remarks, setRemarks] = useState(props.remarks ? props.remarks : ''); // State to store remarks
   //console.log(remarks)
 
   const toggleModal = () => {
@@ -35,6 +35,8 @@ function Modal2(props) {
         blog.id === id ? { ...blog, status, remarks } : blog
       ));
     } catch (error) {
+      console.log(remarks);
+      console.log(id , status)
       console.error('Error updating blog status:', error);
     }
     toggleModal();
