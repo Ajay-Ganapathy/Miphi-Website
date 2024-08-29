@@ -11,6 +11,7 @@ import ResetPassword from './pages/Auth/ResetPassword';
 import Base from './pages/Author/Base';
 import axios from 'axios';
 import ProtectedRoute from './Routes/ProtectedRoutes';
+import "./App.css"
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);

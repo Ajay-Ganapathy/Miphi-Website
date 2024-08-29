@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-in.in-view {
+  opacity: 1;
+}
+
+/* Smooth transition for highlighted elements */
+.transition-colors {
+  transition: color 0.3s ease-in-out;
+}
+
+/* Style for the highlighted text */
+
+
+/* Optional: Add a smooth transition effect for the paragraphs */
+.paragraph-transition {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Optional: Highlight the paragraph with a purple background */
+.paragraph-highlighted {
+  background-color: #f5f3f5; /* Light purple background */
+}
+
+
+
