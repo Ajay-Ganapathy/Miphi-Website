@@ -323,6 +323,34 @@ app.put('/blogs/:id/status', async (req, res) => {
   }
 });
 
+// Route to Delete a blog
+
+app.delete('/blogs/:id', (req, res) => {
+  const { id } = req.params;
+
+  // Validate that the id is a number
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const query = 'DELETE FROM blogs WHERE id = ?';
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error deleting record:', err);
+      return res.status(500).json({ error: 'An error occurred while deleting the record' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Record not found' });
+    }
+
+    console.log("Successfully Deleted ")
+
+    res.status(200).json({ message: 'Record deleted successfully' });
+  });
+});
+
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join('uploads')));

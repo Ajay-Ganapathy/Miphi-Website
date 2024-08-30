@@ -11,14 +11,25 @@ function Modal({ id, title, author, blog_title, content, image, blogs, setBlogs 
 
   const handleUpdate = async (status) => {
     try {
+     
+      console.log(status === "Accept")
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success");
 
-      setBlogs(
-        blogs.map(blog =>
-          blog.id === id ? { ...blog, status, remarks } : blog
-        )
-      );
+      if(status === "Accept"){
+        setBlogs(
+          blogs.map(blog =>
+            blog.id === id ? { ...blog, status, remarks : " "} : blog
+          )
+        );
+      }else{
+        setBlogs(
+          blogs.map(blog =>
+            blog.id === id ? { ...blog, status, remarks } : blog
+          )
+        );
+      }
+     
     } catch (error) {
       console.error('Error updating blog status:', error);
     }

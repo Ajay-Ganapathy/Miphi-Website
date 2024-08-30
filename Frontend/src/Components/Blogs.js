@@ -13,8 +13,10 @@ const Blogs = () => {
     const [rejectedBlogs, setRejectedBlogs] = useState([]);
     const [pendingBlogs, setPendingBlogs] = useState([]);
     const [user, setUser] = useState(null);
+    const [blogs , setBlogs] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
 
     useEffect(() => {
         const fetchBlogs = async (userId) => {
@@ -23,6 +25,7 @@ const Blogs = () => {
                 const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
                 const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
                 const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
+                setBlogs(response.data.blogs);
                 setApprovedBlogs(filteredApproved);
                 setRejectedBlogs(filteredRejected);
                 setPendingBlogs(filteredPending);
@@ -51,12 +54,29 @@ const Blogs = () => {
         fetchUserDetails();
     }, []);
 
+    // const handleDelete = async (id) => {
+    //     try {
+    //         await axios.delete(`http://localhost:5000/blogs/${id}`);
+    //         console.log("Deleted Successfully");
+
+    //         // Remove the deleted blog from the respective lists
+    //         setApprovedBlogs(approvedBlogs.filter(blog => blog.id !== id));
+    //         setRejectedBlogs(rejectedBlogs.filter(blog => blog.id !== id));
+    //         setPendingBlogs(pendingBlogs.filter(blog => blog.id !== id));
+
+    //         // Close the modal
+    //         setModalInfo({ isOpen: false, blogId: null });
+    //     } catch (error) {
+    //         console.error('Error deleting blog:', error);
+    //     }
+    // };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     return (
         <div>
-            <section className="dark:bg-gray-100 dark:text-gray-800">
+              <section className="dark:bg-gray-100 dark:text-gray-800">
                 <div className="p-6 space-y-2 lg:col-span-5">
                     <h1>Accepted Blogs</h1>
                     <div className="grid justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -125,7 +145,7 @@ const Blogs = () => {
                 </div>
             </section>
 
-            
+
             <section className="dark:bg-gray-100 dark:text-gray-800">
                 <h1>Pending Blogs</h1>
                 <div className="p-6 space-y-2 lg:col-span-5">
@@ -148,12 +168,16 @@ const Blogs = () => {
                                         <span className="text-xs dark:text-gray-600">{blog.author_name}</span>
                                         <div>
                                             <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 100) }}></div>
-                                            <Link to={`/author/blogs/${blog.id}` } state = {{blog}}  className="text-blue-500 hover:underline">Read More</Link>
+                                            <Link to={`/author/blogs/${blog.id}`} state={{ blog }} className="text-blue-500 hover:underline">Read More</Link>
                                             <br />
-                                           
-                                            <Link to={`/author/blogs/${blog.id}/edit` } state = {{blog}}  className="text-blue-500 hover:underline" >Edit </Link>
-                                         
-                                            
+                                            <Modal2
+                                                title="Delete"
+                                                id={blog.id}
+                                                isOpen={modalInfo.isOpen && modalInfo.blogId === blog.id}
+                                                onClose={() => setModalInfo({ isOpen: false, blogId: null })}
+                                                blogs = {pendingBlogs}
+                                                setBlogs = {setPendingBlogs}
+                                            />
                                         </div>
                                     </div>
                                 </div>

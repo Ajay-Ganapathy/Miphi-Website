@@ -14,7 +14,7 @@ const Base = (props) => {
     <Routes>
       
 
-    <Route path = "/" element = {<Home user = {props.user} />} />
+    <Route path = "/home" element = {<Home user = {props.user} />} />
     <Route path = "/blogs" element = {<AuthorBlogs user = {props.user} />} />
     <Route path = "/blogs/:id" element = {<BlogDetail user = {props.user} />} />
     <Route path = "/blogs/:id/edit" element = {<EditBlog user = {props.user} />} />

@@ -24,7 +24,7 @@ const Navbar = () => {
 		<div class="text-gray-500 order-3 w-full md:w-auto md:order-2">
 			<ul class="flex font-semibold justify-between">
                
-				<li class="md:px-4 md:py-2 text-indigo-500"><Link to ="/">Home</Link></li>
+				<li class="md:px-4 md:py-2 text-indigo-500"><Link to ="/author/home">Home</Link></li>
 
 				{/* {
 					

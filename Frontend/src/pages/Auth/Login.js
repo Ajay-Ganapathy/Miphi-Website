@@ -29,7 +29,7 @@ const Login = () => {
                 toast.success('Login successful!');
 
                 if (role == '1') {
-                    navigate('/author/');
+                    navigate('/author/home');
                 } else if (role == '2') {
                     navigate('/admin/');
                 }
