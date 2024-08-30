@@ -1,44 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BlogContent from '../../Components/BlogContent';
 
-const BlogSingle = () => {
+const BlogDetail = () => {
     const { id } = useParams();
-    const [blogs, setBlogs] = useState([]);
+    const location = useLocation();
+    const {blog } = location.state || {}
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchBlogs();
-    }, [id]);
 
-    const fetchBlogs = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/blogs');
-            const filteredBlogs = response.data.blogs.filter((blog) => blog.id === Number(id));
-            setBlogs(filteredBlogs);
-        } catch (error) {
-            setError('Error fetching blogs:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <p>Loading...</p>;
+    
     if (error) return <p>{error}</p>;
-    if (blogs.length === 0) return <p>No blog found</p>;
+
+    if (!blog) return <p>Blog not found.</p>;
 
     return (
         <div className="max-w-screen-xl mx-auto px-4 lg:px-0">
             <main className="mt-12">
             <h1 className="text-center lg:text-left mb-8 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800">
-                    {blogs[0].blog_title}
+                    {blog.blog_title}
                 </h1>
                 <div className="mb-4 md:mb-0 w-full lg:w-3/4 mx-auto lg:ml-0 relative" style={{ height: '24em' }}>
                     <div className="absolute left-0 bottom-0 w-full h-full z-10" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
                     <img
-                        src={`http://localhost:5000/${blogs[0].image_url}`}
+                        src={`http://localhost:5000/${blog.image_url}`}
                         className="absolute left-0 top-0 w-full h-full z-0 object-cover"
                         alt="Blog cover"
                     />
@@ -47,7 +35,7 @@ const BlogSingle = () => {
                
 
                 <div className="mt-6">
-                    <BlogContent blogContent={blogs[0].blog_content} author_name={blogs[0].author_name} />
+                    <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} />
                 </div>
             </main>
 
@@ -77,4 +65,4 @@ const BlogSingle = () => {
     );
 };
 
-export default BlogSingle;
+export default BlogDetail;

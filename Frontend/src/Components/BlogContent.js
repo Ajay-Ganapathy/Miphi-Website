@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-// Function to add IDs to <strong> tags and return HTML with IDs and an array of IDs
 const addIdToParagraphs = (html) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
@@ -21,14 +20,13 @@ const addIdToParagraphs = (html) => {
     return { html: tempDiv.innerHTML, ids };
 };
 
-const BlogContent = ({ blogContent }) => {
+const BlogContent = ({ blogContent, author_name }) => {
     const { html: modifiedHtmlContent, ids } = addIdToParagraphs(blogContent);
     const sanitizedHtmlContent = DOMPurify.sanitize(modifiedHtmlContent);
 
     const [highlightedId, setHighlightedId] = useState(null);
 
     useEffect(() => {
-        // Add scroll event listener to highlight the paragraph in view
         const handleScroll = () => {
             const paragraphs = ids.map(({ id }) => document.getElementById(id));
             const inView = paragraphs.find(p => {
@@ -40,23 +38,23 @@ const BlogContent = ({ blogContent }) => {
         };
 
         window.addEventListener('scroll', handleScroll);
-        handleScroll(); // Check on mount
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, [ids]);
 
     return (
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row lg:justify-start">
             {/* Main Content */}
-            <div className="flex-1 px-4 lg:px-0 mt-12 text-gray-700 max-w-screen-md ml-32 text-lg leading-relaxed">
+            <div className="flex-1 px-4 lg:px-0 mt-12 mb-12 text-gray-700 max-w-screen-md text-lg leading-relaxed lg:mr-16">
                 <div
                     dangerouslySetInnerHTML={{ __html: sanitizedHtmlContent }}
                 ></div>
             </div>
 
             {/* Fixed Highlights */}
-            <nav className="fixed top-24 right-4 w-60 mt-12">
-                <h3>Highlights</h3>
-                <ul className="space-y-2">
+            <nav className="lg:fixed lg:top-24 lg:right-16 w-full lg:w-60 mt-8 lg:mt-4">
+                <strong className="text-2xl mb-8 block text-center lg:text-left">Highlights</strong>
+                <ul className="mt-4 space-y-2 text-center lg:text-left">
                     {ids.map(({ id, content }) => (
                         <li key={id}>
                             <a
@@ -71,6 +69,11 @@ const BlogContent = ({ blogContent }) => {
                             </a>
                         </li>
                     ))}
+                    <br />
+                    <hr />
+
+                    <h4 className="mt-4">Author</h4>
+                    <h3>{author_name}</h3>
                 </ul>
             </nav>
         </div>

@@ -72,6 +72,10 @@ const Admin = (props) => {
                 Blog Content
               </th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Action
+              </th>
+
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Status
               </th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -95,10 +99,17 @@ const Admin = (props) => {
                 <td className="py-2 px-4 border-b border-gray-200">
                 <Link to={`/admin/blogs/${blog.id}`} 
         className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
+      
       >
         View Blog
       </Link>
+    
+                </td>
+
+                <td>
+
+                 <Modal id = {blog.id} blogs = {blogs} setBlogs = {setBlogs} title = "Accept / Reject"  />
+
                 </td>
              
 
@@ -122,11 +133,7 @@ const Admin = (props) => {
                 
                 
 
-                {/* <td>
-
-                 <Modal id = {blog.id} blogs = {blogs} setBlogs = {setBlogs} title = "Edit"  />
-
-                </td> */}
+               
               </tr>
             ))}
           </tbody>

@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function Modal(props) {
+function Modal({ id, title, author, blog_title, content, image, blogs, setBlogs }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [remarks, setRemarks] = useState(''); // State to store remarks
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleUpdate = async (id, status) => {
-   
+  const handleUpdate = async (status) => {
     try {
-      await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
-      console.log("Updated Success")
-      props.setBlogs(props.blogs.map(blog => 
-        blog.id === id ? { ...blog, status: status } : blog
-      ));
-    
+      await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
+      console.log("Updated Success");
+
+      setBlogs(
+        blogs.map(blog =>
+          blog.id === id ? { ...blog, status, remarks } : blog
+        )
+      );
     } catch (error) {
       console.error('Error updating blog status:', error);
     }
-    
-  
+    toggleModal(); // Close the modal after the update
   };
 
   return (
@@ -29,42 +30,52 @@ function Modal(props) {
       <button
         onClick={toggleModal}
         className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="button"
       >
-        {props.title}
+        {title}
       </button>
 
       {isOpen && (
         <div
-          id="popup-modal"
+          id="default-modal"
           tabIndex="-1"
-          className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-[calc(100%-1rem)] max-h-full overflow-y-auto overflow-x-hidden"
+          aria-hidden="true"
+          className="fixed inset-0 z-50 flex items-center justify-center w-full h-full overflow-y-auto overflow-x-hidden bg-black bg-opacity-50"
         >
-          <div className="relative p-4 w-full max-w-md max-h-full">
+          <div className="relative w-full max-w-2xl max-h-full p-4">
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-              <button
-                onClick={toggleModal}
-                type="button"
-                className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                <svg
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
+              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                
+                <button
+                  type="button"
+                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  onClick={toggleModal}
                 >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-                <span className="sr-only">Close modal</span>
-              </button>
-              <div className="p-4 md:p-5 text-center">
-                <svg
+                  <svg
+                    className="w-3 h-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 14"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                  <span className="sr-only">Close modal</span>
+                </button>
+              </div>
+
+              
+             
+
+              <div className="flex flex-col p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+              <svg
                   className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
@@ -80,27 +91,35 @@ function Modal(props) {
                   />
                 </svg>
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  Do you want to edit permissions ? 
+                  Remarks
                 </h3>
+                <textarea
+                  className="w-full p-2 border rounded-md dark:bg-gray-600 dark:text-white"
+                  placeholder="Enter remarks (optional)"
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                ></textarea>
 
-                <button
-                  onClick={() => handleUpdate(props.id , "Accept")}
-                  className="text-white bg-green-600 hover:bg-red-800 focus:ring-4 m-3 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleUpdate(props.id , "Reject")}
-                  className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                >
-                  Reject
-                </button>
-                <button
-                  onClick={toggleModal}
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  No, cancel
-                </button>
+                <div className="flex justify-end space-x-2 mt-4">
+                  <button
+                    className="bg-green-600 text-white p-2 m-2"
+                    onClick={() => handleUpdate('Accept')}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="bg-red-700 text-white p-2 m-2"
+                    onClick={() => handleUpdate('Reject')}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={toggleModal}
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>

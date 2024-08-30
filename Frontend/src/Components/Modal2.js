@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Form from './Form';
 
 function Modal2(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,6 +102,7 @@ function Modal2(props) {
 
               <div className="p-4 md:p-5 space-y-4" dangerouslySetInnerHTML={{ __html: props.content }}>
               </div>
+              <Form />
 
               <div className="flex flex-col p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
               

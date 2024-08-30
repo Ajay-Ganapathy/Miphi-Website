@@ -32,6 +32,19 @@ const Navbar = () => {
 
 					<li class="md:px-4 md:py-2 hover:text-indigo-400"><Link to="/admin">Admin Login </Link></li>
 			} */}
+
+			{
+				localStorage.getItem("role") === '1' &&
+				<li  class="md:px-4 md:py-2 hover:text-indigo-500">
+					<span onClick = {() => {
+					
+					navigate("/author/blogs")
+				 
+
+				
+			}}> Blog </span>
+				</li>
+			}
 				
 
 				{

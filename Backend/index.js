@@ -176,6 +176,103 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
+// Route to get a single blog
+
+app.get("/blogs/:id", async (req, res) => {
+  const id = req.params.id;
+
+  // Validate ID
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ error: "Invalid blog ID" });
+  }
+
+  try {
+    const query = `SELECT * FROM blogs WHERE id = ?`;
+    db.execute(query, [id], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: "Error fetching blog" });
+      }
+
+      // Check if blog was found
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Blog not found" });
+      }
+
+      // Return the blog data
+      res.json({ blog: results[0] });
+    });
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Route to update Blog
+
+app.put('/blogs/:id/', multer({ 
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix);
+    },
+  }) 
+}).single('image_url'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { author_name, blog_title, blog_content, status, author_id } = req.body;
+    const image_url = req.file ? `uploads/${req.file.filename}` : '';
+
+    // Construct the update query
+
+    if(image_url != ''){
+      const query = `
+      UPDATE blogs
+      SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?
+      WHERE id = ?
+    `;
+    
+    // Execute the update query
+    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url, author_id, id]);
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
+
+    res.status(200).json({ id: id, image: image_url });
+
+    }else{
+      const query = `
+      UPDATE blogs
+      SET author_name = ?, blog_title = ?, blog_content = ?, status = ? , author_id = ?
+      WHERE id = ?
+    `;
+    
+    // Execute the update query
+    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status , author_id, id]);
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
+
+    res.status(200).json({ id: id, image: image_url });
+    }
+    
+
+    
+  } catch (err) {
+    console.error('Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+
+// Route to get status
+
 app.get('/blogs/:status', (req, res) => {
   const status = req.params.status; // 'approved' or 'rejected'
   const page = parseInt(req.query.page) || 1;
