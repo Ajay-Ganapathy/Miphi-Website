@@ -14,6 +14,8 @@ const BlogDetail = () => {
 
     
     if (error) return <p>{error}</p>;
+    // console.log(blog)
+    // console.log(id)
 
     if (!blog) return <p>Blog not found.</p>;
 

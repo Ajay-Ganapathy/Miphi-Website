@@ -56,7 +56,7 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <Navbar />
+        {/* <Navbar /> */}
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login user = {user}/>} />
