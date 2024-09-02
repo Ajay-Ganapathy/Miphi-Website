@@ -3,11 +3,14 @@ import { useState , useEffect } from 'react';
 import axios from 'axios';
 import TextEditor from '../../Components/TextEditor';
 import { useLocation } from 'react-router-dom';
+import Sidebar from '../../Components/Sidebar';
+import Navbar from '../../Components/Navbar';
 
 const EditBlog = () => {
 
     const location = useLocation();
     const {blog } = location.state || {}
+    const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
     const [authorName, setAuthorName] = useState(blog.author_name);
     const [title, setTitle] = useState(blog.blog_title);
@@ -81,9 +84,30 @@ const EditBlog = () => {
 
   return (
     <div>
+
+            
+<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
+
+
+<Sidebar />
+
+<div class="flex flex-col flex-1 w-full overflow-y-auto">
+
+<Navbar />
+<main class="">
+          
+          <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
+          <div class="grid grid-cols-12 gap-6">
+                        <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
+                          
+                            <div class="col-span-12 mt-8">
+                             
+                            
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="w-full max-w-xl">
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-8" onSubmit={handleSubmit}>
+
+        <h1 className="block text-gray-700 text-center text-sm font-bold uppercase mb-2 mt-2">Edit your Blog</h1>
           {/* <div>
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="authorname">
               Author Name
@@ -153,6 +177,25 @@ const EditBlog = () => {
         </form>
       </div>
     </div>
+                                <div class="flex items-center h-10 intro-y">
+                                    
+                                </div>
+                            </div>
+                        </div>
+            </div>
+            </div>
+      </main>
+          
+       
+    </div>
+
+
+     
+
+  
+        </div>
+
+        
     </div>
   )
 }

@@ -1,151 +1,56 @@
-import React, { useState , useEffect } from 'react';
-import axios from 'axios';
-import TextEditor from '../../Components/TextEditor';
 
-const Home = (props) => {
-  const [authorName, setAuthorName] = useState('');
-  const [title, setTitle] = useState('');
-  const [blogContent, setBlogContent] = useState('');
-  const [message, setMessage] = useState('');
-  const [image , setImage] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+import React from 'react'
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/author/details', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error) {
-        setError(error.response?.data?.message || 'Error fetching user details');
-      } finally {
-        setLoading(false);
-      }
-    };
+import { useState } from 'react';
+import Sidebar from '../../Components/Sidebar';
+import { Link } from 'react-router-dom';
+import Form from '../../Components/Form';
+import Navbar from '../../Components/Navbar';
 
-    fetchUserDetails();
-  }, []);
+const Home = () => {
 
-  
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const formData = new FormData();
-    formData.append('author_name', user.name);
-    formData.append('blog_title', title);
-    formData.append('blog_content', blogContent);
-    formData.append('status', 'Pending');
-    
-    
-    if (image) {
-      formData.append('image_url', image);
-    }
-
-    formData.append('author_id', user.id);
-  
-    try {
-      const response = await axios.post('http://localhost:5000/blogs', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      console.log('Blog submitted successfully:', response.data);
-      setMessage('Blog submitted successfully!'); 
-  
-      setAuthorName('');
-      setTitle('');
-      setBlogContent('');
-      setImage(null);
-    } catch (error) {
-      console.error('Error submitting blog:', error);
-      setMessage('Error submitting blog. Please try again.');
-    }
-  };
-  
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="w-full max-w-xl">
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-8" onSubmit={handleSubmit}>
-          {/* <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="authorname">
-              Author Name
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="authorname"
-              name="authorname"
-              type="text"
-              placeholder="Author Name"
-              value={authorName}
-              onChange={(e) => setAuthorName(e.target.value)}
-              required
-            />
-          </div> */}
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
-              Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="title"
-              name="title"
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
+    <div>
+      
+      
+<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
 
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
-              Image
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="image_url"
-              name="image_url"
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])} 
-            />
 
-          </div>
+<Sidebar />
 
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="blogcontent">
-            Blog Content
-          </label>
+<div class="flex flex-col flex-1 w-full overflow-y-auto">
 
+<Navbar />
+<main class="">
           
-          <TextEditor value={blogContent} onChange={setBlogContent} />
-
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-            type="submit"
-          >
-            Submit
-          </button>
-
-          {message && (
-            <div className="mt-4 text-center">
-              <p className={`text-sm ${message.includes('Error') ? 'text-red-500' : 'text-green-500'}`}>
-                {message}
-              </p>
+          <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
+          <div class="grid grid-cols-12 gap-6">
+                        <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
+                          
+                            <div class="col-span-12 mt-8">
+                             
+                            <Form />
+                                <div class="flex items-center h-10 intro-y">
+                                    
+                                </div>
+                            </div>
+                        </div>
             </div>
-          )}
-        </form>
-      </div>
+            </div>
+      </main>
+          
+       
     </div>
-  );
-};
+
+
+     
+
+  
+        </div>
+      </div>
+  )
+}
 
 export default Home;
