@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
 function Modal2(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [remarks, setRemarks] = useState(props.remarks || '');
@@ -11,13 +16,22 @@ function Modal2(props) {
 
   const handleDelete = async (id) => {
     try {
-      toggleModal();
+     
       const response = await axios.delete(`http://localhost:5000/blogs/${id}`);
-      console.log("Deleted Successfully", response);
-      props.setBlogs(props.blogs.filter(blog => blog.id !== id));
+      MySwal.fire({
+        icon: 'success',
+        title: 'Deleted successful!',
+    }).then(() => {
+      props.setPendingBlogs(props.pendingBlogs.filter(blog => blog.id !== id));
+      toggleModal();
+    })
+   
+     
+     
     } catch (error) {
       console.error('Error deleting blog:', error);
     }
+    
   };
 
   return (
@@ -49,17 +63,24 @@ function Modal2(props) {
               </button>
             </div>
             <div className="p-4 space-y-4">
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+           {
+            props.title === "Delete" ? <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Are you sure to delete?
+          </p>:
+          <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                
                 {remarks}
               </p>
+           }   
             </div>
             <div className="flex items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button 
-                onClick={toggleModal} 
+                onClick={props.title == "Delete" ?  () => handleDelete(props.id) : toggleModal} 
+               
                 type="button" 
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-                Close
+               {props.title == "Delete" ? "Delete" : "Close"} 
               </button>
             
             </div>

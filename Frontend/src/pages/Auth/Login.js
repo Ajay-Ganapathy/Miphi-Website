@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const Login = () => {
     const [name, setName] = useState('');
@@ -26,15 +28,24 @@ const Login = () => {
             if (token) {
                 localStorage.setItem('token', token);
                 localStorage.setItem('role', role);
-                toast.success('Login successful!');
 
-                if (role == '1') {
-                    navigate('/author/home');
-                } else if (role == '2') {
-                    navigate('/admin/');
-                }
+                MySwal.fire({
+                    icon: 'success',
+                    title: 'Login successful!',
+                }).then(() => {
+                    if (role === '1') {
+                        navigate('/author/home');
+                    } else if (role === '2') {
+                        navigate('/admin/');
+                    }
+                });
+
             } else {
-                toast.error('Login failed. No token received.');
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'Login failed',
+                    text: 'No token received.',
+                });
             }
 
             setName('');
@@ -42,7 +53,11 @@ const Login = () => {
         } catch (error) {
             console.error('Error logging in', error);
             const errorMessage = error.response?.data?.message || 'Error logging in';
-            toast.error(errorMessage);
+            MySwal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+            });
         } finally {
             setLoading(false);
         }
@@ -91,11 +106,9 @@ const Login = () => {
                         {loading ? 'Logging in...' : 'Submit'}
                     </button>
                 </form>
-                <ToastContainer />
             </div>
         </div>
     );
 };
 
 export default Login;
-

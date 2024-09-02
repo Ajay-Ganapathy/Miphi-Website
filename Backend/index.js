@@ -176,6 +176,29 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
+// Route to get blogs count
+
+app.get('/blogs/count', async (req, res) => {
+  try {
+    const query = `SELECT COUNT(*) AS total_count FROM blogs`;
+    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending"`;
+    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept"`;
+    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject"`;
+
+
+    const results = await db.execute(query);
+    const [results1] = await db.execute(q1);
+    const [results2] = await db.execute(q2);
+    const [results3] = await db.execute(q3);
+    console.log(results , results1 , results2 , results3 );
+
+    res.json({ total : results[0].total_count  , pending : results1[0].pending_count , accept : results2[0].accepted_count , reject : results3[0].rejected_count });
+  } catch (err) {
+    
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Route to get a single blog
 
 app.get("/blogs/:id", async (req, res) => {
@@ -325,7 +348,7 @@ app.put('/blogs/:id/status', async (req, res) => {
 
 // Route to Delete a blog
 
-app.delete('/blogs/:id', (req, res) => {
+app.delete('/blogs/:id', async (req, res) => {
   const { id } = req.params;
 
   // Validate that the id is a number
@@ -333,22 +356,21 @@ app.delete('/blogs/:id', (req, res) => {
     return res.status(400).json({ error: 'Invalid ID format' });
   }
 
-  const query = 'DELETE FROM blogs WHERE id = ?';
-
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      console.error('Error deleting record:', err);
-      return res.status(500).json({ error: 'An error occurred while deleting the record' });
-    }
+  try {
+    const query = 'DELETE FROM blogs WHERE id = ?';
+    const [results] = await db.query(query, [id]);
 
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: 'Record not found' });
     }
 
-    console.log("Successfully Deleted ")
+    console.log("Successfully Deleted");
 
     res.status(200).json({ message: 'Record deleted successfully' });
-  });
+  } catch (err) {
+    console.error('Error deleting record:', err);
+    res.status(500).json({ error: 'An error occurred while deleting the record' });
+  }
 });
 
 

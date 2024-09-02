@@ -28,6 +28,8 @@ const Dashboard2 = () => {
   const closeNotificationsMenu = () => setIsNotificationsMenuOpen(false);
   const closeProfileMenu = () => setIsProfileMenuOpen(false);
   const [remarks, setRemarks] = useState(''); 
+  const [count , setCount] = useState([])
+  const [error , setError] = useState('')
 
   const [blogs, setBlogs] = useState([]);
 
@@ -35,17 +37,38 @@ const Dashboard2 = () => {
 
   useEffect(() => {
     fetchBlogs();
+    
   }, []);
+
+  useEffect(() => {
+    fetchCount();
+    
+  }, []);
+
+ 
 
   const fetchBlogs = async () => {
     try {
       const response = await axios.get('http://localhost:5000/blogs');
       setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
-      console.log(blogs)
+      //console.log(blogs)
     } catch (error) {
       console.error('Error fetching blogs:', error);
     }
   };
+
+  const fetchCount = async () => {
+    try{
+      const response = await axios.get("http://localhost:5000/blogs/count");
+      console.log(response)
+      setCount(response.data);
+      
+
+    }catch(error){
+      console.log("Error occured " , error);
+      setError("Error Fetching Count ! ");
+    }
+  }
 
   const handleAccept = async (id , status) => {
     try {
@@ -53,6 +76,7 @@ const Dashboard2 = () => {
       console.log(status === "Accept")
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success");
+      fetchCount();
 
       if(status === "Accept"){
         setBlogs(
@@ -81,6 +105,7 @@ const Dashboard2 = () => {
   
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success" , remarks);
+      fetchCount();
 
       if(remarks === ""){
         setBlogs(
@@ -127,6 +152,8 @@ const Dashboard2 = () => {
 
        
        <Sidebar />
+
+      
       
 
         <div class="flex flex-col flex-1 w-full overflow-y-auto">
@@ -149,20 +176,20 @@ const Dashboard2 = () => {
                                         href="#">
                                         <div class="p-5">
                                             <div class="flex justify-between">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-400"
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-400"
                                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
                                                         d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                                 </svg>
                                                 <div
-                                                    class="bg-green-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">30%</span>
+                                                    class="bg-yellow-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
+                                                    <span class="flex items-center">{ Math.round(((count.pending) / (count.pending + count.reject + count.accept) * 100),2)}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">4.510</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.pending} </div>
 
                                                     <div class="mt-1 text-base text-gray-600">Pending</div>
                                                 </div>
@@ -173,20 +200,20 @@ const Dashboard2 = () => {
                                         href="#">
                                         <div class="p-5">
                                             <div class="flex justify-between">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-400"
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-400"
                                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
                                                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                                 </svg>
                                                 <div
-                                                    class="bg-red-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">30%</span>
+                                                    class="bg-green-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
+                                                    <span class="flex items-center">{ Math.round(((count.accept) / (count.pending + count.reject + count.accept) * 100) , 2)}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">4.510</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.accept}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Accepted</div>
                                                 </div>
@@ -207,13 +234,13 @@ const Dashboard2 = () => {
                                                         d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
                                                 </svg>
                                                 <div
-                                                    class="bg-yellow-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">30%</span>
+                                                    class="bg-red-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
+                                                    <span class="flex items-center">{ Math.round(((count.reject) / (count.pending + count.reject + count.accept) * 100))}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">4.510</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.reject}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Rejected</div>
                                                 </div>
@@ -232,12 +259,13 @@ const Dashboard2 = () => {
                                                 </svg>
                                                 <div
                                                     class="bg-blue-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">30%</span>
+                                                    <span class="flex items-center">100%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">4.510</div>
+                                                    
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.pending + count.reject + count.accept}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Total</div>
                                                 </div>

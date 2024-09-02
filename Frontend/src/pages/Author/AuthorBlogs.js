@@ -245,6 +245,7 @@ const truncateContent = (content, length = 100) => {
   return content.slice(0, length) + '...';
 };
 
+
 const Home = () => {
 
 
@@ -256,42 +257,48 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+   
 
     useEffect(() => {
-        const fetchBlogs = async (userId) => {
-            try {
-                const response = await axios.get('http://localhost:5000/blogs');
-                const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
-                const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
-                const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
-                setBlogs(response.data.blogs);
-                setApprovedBlogs(filteredApproved);
-                setRejectedBlogs(filteredRejected);
-                setPendingBlogs(filteredPending);
-            } catch (error) {
-                console.error('Error fetching blogs:', error);
-                setError('Error fetching blogs');
-            } finally {
-                setLoading(false);
-            }
-        };
+       
 
-        const fetchUserDetails = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/author/details', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setUser(response.data);
-                fetchBlogs(response.data.id); // Fetch blogs after user details are fetched
-            } catch (error) {
-                setError(error.response?.data?.message || 'Error fetching user details');
-                setLoading(false);
-            }
-        };
 
         fetchUserDetails();
     }, []);
+
+    const fetchBlogs = async (userId) => {
+      try {
+          const response = await axios.get('http://localhost:5000/blogs');
+          const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
+          const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
+          const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
+          setBlogs(response.data.blogs);
+          setApprovedBlogs(filteredApproved);
+          setRejectedBlogs(filteredRejected);
+          setPendingBlogs(filteredPending);
+      } catch (error) {
+          console.error('Error fetching blogs:', error);
+          setError('Error fetching blogs');
+      } finally {
+          setLoading(false);
+      }
+  };
+
+    const fetchUserDetails = async () => {
+      try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get('http://localhost:5000/author/details', {
+              headers: { Authorization: `Bearer ${token}` },
+          });
+          setUser(response.data);
+          fetchBlogs(response.data.id); // Fetch blogs after user details are fetched
+      } catch (error) {
+          setError(error.response?.data?.message || 'Error fetching user details');
+          setLoading(false);
+      }
+  };
+
+
 
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -419,7 +426,7 @@ const Home = () => {
                   </Link>
 
 
-                  <Modal2 title = "Remarks" remarks = {blog.remarks} />
+                  <Modal2 title = "Remarks" remarks = {blog.remarks} fetchUserDetails = {fetchUserDetails} />
                 </div>
               </div>
             
@@ -475,6 +482,8 @@ const Home = () => {
                   <Link to={`/author/blogs/${blog.id}`} state={{ blog }} className="btn bg-teal-500 text-white hover:bg-teal-600 py-2 px-4 rounded">
                     Read More
                   </Link>
+
+                  <Modal2 title = "Delete" id = {blog.id} pendingBlogs = {pendingBlogs} setPendingBlogs = {setPendingBlogs}  />
                   
                
                 </div>
