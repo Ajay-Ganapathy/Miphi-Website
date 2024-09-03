@@ -33,9 +33,9 @@ const UserDetails = () => {
     <div>
       {user && (
         <div>
-          <h1>User Details</h1>
-          <p>Name: {user.name}</p>
-          <p>Role: {user.role}</p>
+        
+          <p>{user.name.split(" ")[0]}</p>
+         
         </div>
       )}
     </div>

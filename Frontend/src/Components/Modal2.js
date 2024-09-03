@@ -23,6 +23,7 @@ function Modal2(props) {
         title: 'Deleted successful!',
     }).then(() => {
       props.setPendingBlogs(props.pendingBlogs.filter(blog => blog.id !== id));
+      
       toggleModal();
     })
    

@@ -7,6 +7,10 @@ import Modal from '../../Components/Modal';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../Components/Navbar';
 import Sidebar from '../../Components/Sidebar';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 const Dashboard2 = () => {
 
     const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -73,24 +77,24 @@ const Dashboard2 = () => {
   const handleAccept = async (id , status) => {
     try {
      
-      console.log(status === "Accept")
+      
       await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success");
       fetchCount();
 
-      if(status === "Accept"){
+    
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Accepted!',
+      }).then(
         setBlogs(
           blogs.map(blog =>
             blog.id === id ? { ...blog, status, remarks : " "} : blog
           )
-        );
-      }else{
-        setBlogs(
-          blogs.map(blog =>
-            blog.id === id ? { ...blog, status, remarks } : blog
-          )
-        );
-      }
+        )
+      )
+        
+      
      
     } catch (error) {
       console.error('Error updating blog status:', error);
@@ -108,17 +112,31 @@ const Dashboard2 = () => {
       fetchCount();
 
       if(remarks === ""){
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Rejected!',
+      }).then(
         setBlogs(
           blogs.map(blog =>
             blog.id === id ? { ...blog, status, remarks : " "} : blog
           )
+        )
+       
         );
+        
       }else{
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Rejected!',
+      }).then(
         setBlogs(
           blogs.map(blog =>
             blog.id === id ? { ...blog, status, remarks } : blog
           )
+        )
+       
         );
+        
       }
      
     } catch (error) {
@@ -142,24 +160,14 @@ const Dashboard2 = () => {
     }
     setModalOpen(false);
   };
+ 
 
 
   return (
     <div>
        
 
-<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
 
-       
-       <Sidebar />
-
-      
-      
-
-        <div class="flex flex-col flex-1 w-full overflow-y-auto">
-
-       <Navbar />
-   
           
             <main class="">
           
@@ -473,9 +481,7 @@ const Dashboard2 = () => {
                 </div>
             </main>
         </div>
-    </div>
- 
-    </div>
+   
   )
 }
 

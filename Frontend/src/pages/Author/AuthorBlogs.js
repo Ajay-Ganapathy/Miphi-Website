@@ -257,6 +257,8 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+
+   
    
 
     useEffect(() => {
@@ -307,14 +309,7 @@ const Home = () => {
     <div>
       
       
-<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
 
-
-<Sidebar />
-
-<div class="flex flex-col flex-1 w-full overflow-y-auto">
-
-<Navbar />
 <main class="">
           
           <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
@@ -325,6 +320,19 @@ const Home = () => {
                              
                                  <div>
       {/* <Blogs user = {props.user}/> */}
+
+      {
+        (approvedBlogs.length == 0 && rejectedBlogs.length == 0 && pendingBlogs.length == 0) &&  <div class="max-w-lg mx-auto text-center">
+          
+        <h1 className={styles.mainHeading+" mb-16 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
+          You havent updated
+          <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+            any Blogs yet
+          </span>
+          <div className={styles.bottomLine}></div>
+        </h1>
+      </div>
+      }
        {console.log(blogs)}
        <div id={"initiatives"}>
        <section class="text-black mt-12">
@@ -350,7 +358,7 @@ const Home = () => {
 
             
              
-              <div className={styles.boxBorder+" block p-8 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
+              <div className={styles.boxBorder+" block p-12 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
                
                 <img  src={`http://localhost:5000/${blog.image_url}`} alt=" Ariia img" style = {{height : "50%"}} />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
@@ -520,11 +528,7 @@ const Home = () => {
     </div>
 
 
-     
-
-  
-        </div>
-      </div>
+    
   )
 }
 

@@ -29,37 +29,16 @@ const App = () => {
     }
   };
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/author/details', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error) {
-        setError(error.response?.data?.message || 'Error fetching user details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserDetails();
-  }, []);
 
   return (
     <div>
+      
       <BrowserRouter>
         {/* <Navbar /> */}
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login user = {user}/>} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset" element={<ResetPassword />} />
           <Route path="/reset/:token" element={<ResetPassword />} />
@@ -71,7 +50,7 @@ const App = () => {
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['1']} />}>
-            <Route path="/author/*" element={<Base user = {user} />} />
+            <Route path="/author/*" element={<Base  />} />
           </Route>
 
           {/* Default Routes

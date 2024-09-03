@@ -15,14 +15,7 @@ const Home = () => {
     <div>
       
       
-<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
 
-
-<Sidebar />
-
-<div class="flex flex-col flex-1 w-full overflow-y-auto">
-
-<Navbar />
 <main class="">
           
           <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
@@ -48,8 +41,6 @@ const Home = () => {
      
 
   
-        </div>
-      </div>
   )
 }
 

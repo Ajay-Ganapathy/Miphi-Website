@@ -103,6 +103,26 @@ html {
   scrollbar-width: none;  /* Firefox */
 }
 
+.waves {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes wave-animation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.parallax {
+  animation: wave-animation 10s linear infinite;
+}
+
+
 
 
 

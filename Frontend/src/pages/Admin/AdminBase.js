@@ -5,9 +5,30 @@ import Admin from './Admin';
 import BlogSingle from './BlogSingle';
 import Dashboard from './Dashboard';
 import Dashboard2 from './Dashboard2';
+import Sidebar from '../../Components/Sidebar';
+import { useState } from 'react';
+import Navbar from '../../Components/Navbar';
+
 
 const AdminBase = (props) => {
+
+  const [isSideMenuOpen , setIsSideMenuOpen] = useState(false);
+  
+  const content = [
+   
+   ["Dashboard" , "/admin"]
+    
+ ]
   return (
+
+    <div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
+    
+    
+    <Sidebar content = {content} />
+    
+    <div class="flex flex-col flex-1 w-full overflow-y-auto">
+    
+    <Navbar />
     
     <Routes>
       
@@ -19,6 +40,9 @@ const AdminBase = (props) => {
 
       
     </Routes>
+
+    </div>
+    </div>
     
     
   )

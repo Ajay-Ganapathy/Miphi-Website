@@ -5,6 +5,11 @@ import TextEditor from '../../Components/TextEditor';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '../../Components/Sidebar';
 import Navbar from '../../Components/Navbar';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content'; 
+import { useNavigate } from 'react-router-dom';
+
+const MySwal = withReactContent(Swal);
 
 const EditBlog = () => {
 
@@ -22,6 +27,8 @@ const EditBlog = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const navigate = useNavigate()
+
    
     
     useEffect(() => {
@@ -34,6 +41,7 @@ const EditBlog = () => {
             },
           });
           setUser(response.data);
+          
         } catch (error) {
           setError(error.response?.data?.message || 'Error fetching user details');
         } finally {
@@ -69,16 +77,31 @@ const EditBlog = () => {
           },
         });
     
-        console.log('Blog submitted successfully:', response.data);
-        setMessage('Blog submitted successfully!'); 
+        MySwal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Blog Updated successfully!',
+        }).then(
+          navigate("/author")
+        );
+  
+        // setTitle('');
+        // setBlogContent('');
+        // setImage(null);
+        //setMessage('Blog submitted successfully!'); 
     
         setAuthorName('');
         setTitle('');
         setBlogContent('');
         setImage(null);
       } catch (error) {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error submitting blog. Please try again.',
+        });
         console.error('Error submitting blog:', error);
-        setMessage('Error submitting blog. Please try again.');
+        //setMessage('Error submitting blog. Please try again.');
       }
     };
 
@@ -86,14 +109,7 @@ const EditBlog = () => {
     <div>
 
             
-<div className={`flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`}>
 
-
-<Sidebar />
-
-<div class="flex flex-col flex-1 w-full overflow-y-auto">
-
-<Navbar />
 <main class="">
           
           <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
@@ -191,12 +207,6 @@ const EditBlog = () => {
 
 
      
-
-  
-        </div>
-
-        
-    </div>
   )
 }
 

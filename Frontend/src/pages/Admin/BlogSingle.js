@@ -30,10 +30,8 @@ const BlogDetail = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className={`flex h-screen bg-gray-800 ${isSideMenuOpen && 'overflow-hidden'}`}>
-            <Sidebar />
-            <div className="flex flex-col flex-1 w-full overflow-y-auto">
-                <Navbar />
+        <div >
+            
                 <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100" >
                 <div className="max-w-screen-xl mx-auto px-4 lg:px-0 ">
                     <main className="mt-12">
@@ -60,7 +58,7 @@ const BlogDetail = () => {
                 </div>
                 </div>
             </div>
-        </div>
+      
     );
 };
 

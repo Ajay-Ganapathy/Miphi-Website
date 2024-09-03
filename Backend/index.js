@@ -82,7 +82,7 @@ app.post('/login', async (req, res) => {
       const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
       res.json({ "token" : token , "role" : user.role}); 
     } else {
-      res.status(400).json({ message: 'Invalid credentials' });
+      res.status(400).json({ message: 'Please check your credentials' });
     }
   } catch (error) {
     console.error('Error logging in', error);
