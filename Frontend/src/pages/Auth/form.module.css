@@ -96,3 +96,76 @@
     border-color: #03045e;
     width: 85px;
 }
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.formLabel {
+    margin-bottom: 0.5rem;
+    /*text-align: center;*/
+}
+
+.formInput {
+    width: 100%;
+    max-width: 300px; /* Adjust as needed */
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+}
+
+.formButton {
+    width: 100%;
+    max-width: 300px; /* Adjust as needed */
+    background-color: #007bff;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.formButton:hover {
+    background-color: #0056b3;
+}
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.formLabel {
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.formInput {
+    width: 100%;
+    max-width: 300px; /* Adjust as needed */
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+}
+
+.formButton {
+    width: 100%;
+    max-width: 300px; /* Adjust as needed */
+    background-color: #007bff;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.formButton:hover {
+    background-color: #0056b3;
+}

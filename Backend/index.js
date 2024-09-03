@@ -35,25 +35,36 @@ const db = mysql.createPool({
 
 // Route to handle Register
 
-const jwt = require('jsonwebtoken'); // Ensure you require the jwt library
+const jwt = require('jsonwebtoken'); 
 
 app.post('/register', async (req, res) => {
-  const { name, password } = req.body;
+  const { username, name, password } = req.body;
+  if(!name){
+    return res.status(400).json({ message: 'Name is required' });
+  }
 
-  if (!name || !password) {
+  if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required' });
   }
 
   try {
-    // Hash the password
+   
+    const checkUserQuery = 'SELECT * FROM users WHERE username = ?';
+    const [userResults] = await db.execute(checkUserQuery, [username]);
+
+    if (userResults.length > 0) {
+      return res.status(409).json({ message: 'Username already exists' });
+    }
+
+ 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user into the database
-    const query = 'INSERT INTO users (role, name, password) VALUES (1, ?, ?)';
-    const [results] = await db.execute(query, [name, hashedPassword]);
+    
+    const query = 'INSERT INTO users (role, username, name, password) VALUES (1, ?, ?, ?)';
+    const [results] = await db.execute(query, [username, name, hashedPassword]);
 
-    // Generate a token
-    const token = jwt.sign({ id: results.insertId, name }, JWT_SECRET, { expiresIn: '1h' });
+   
+    const token = jwt.sign({ id: results.insertId, username }, JWT_SECRET, { expiresIn: '1h' });
 
     res.status(201).json({ message: 'User registered successfully', token });
   } catch (error) {
@@ -69,7 +80,7 @@ app.post('/login', async (req, res) => {
   const { name, password } = req.body;
 
   try {
-    const [results] = await db.execute('SELECT * FROM users WHERE name = ?', [name]);
+    const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [name]);
 
     if (results.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
