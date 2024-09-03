@@ -79,7 +79,7 @@ const Admin = (props) => {
                 Status
               </th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Remarks
+                Remarksss
               </th>
             </tr>
           </thead>
@@ -97,12 +97,16 @@ const Admin = (props) => {
                 <td className="py-2 px-4 border-b border-gray-200">{blog.author_name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{blog.blog_title}</td>
                 <td className="py-2 px-4 border-b border-gray-200">
-                <Link to={`/admin/blogs/${blog.id}`} 
+                <Link to={`/admin/blogs/${blog.id}`} state={{ blog }} 
         className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       
       >
         View Blog
       </Link>
+
+      <Link to={`/admin/blogs/${blog.id}`} state={{ blog }} className="btn bg-teal-500 text-white hover:bg-teal-600 py-2 px-4 rounded">
+                    Read More
+                  </Link>
     
                 </td>
 
