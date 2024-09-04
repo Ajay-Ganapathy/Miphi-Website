@@ -12,6 +12,7 @@ import Base from './pages/Author/Base';
 import axios from 'axios';
 import ProtectedRoute from './Routes/ProtectedRoutes';
 import "./App.css"
+import BlogPostForm from './Components/BlogPostForm';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -56,6 +57,8 @@ const App = () => {
           {/* Default Routes
           <Route path="/" element={<Form />} />
           <Route path="/blogs" element={<BlogPage />} /> */}
+
+<Route path="/posts" element={<BlogPostForm />} />
 
           {/* Redirect to login if not authenticated */}
           <Route path="*" element={<Navigate to="/login" />} />

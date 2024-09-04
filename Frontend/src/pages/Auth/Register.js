@@ -214,7 +214,7 @@ const Register = () => {
                     <div className="w-70 mt-7 mb-10">
                         <div className="transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                             <div className="p-5">
-                                <div style = {{width : "35vw"}} className="m-8 w-full flex-1">
+                                <div style = {{width : "30vw"}} className="m-8 w-full flex-1">
                                     <div style={{display : "flex" , flexDirection : "column" , alignItems : "center" , "justifyContent" : "center"}}>
                                         <div className="mt-3 text-3xl font-bold leading-8 mb-4">Register Now!</div>
                                         <form onSubmit={handleSubmit}>
