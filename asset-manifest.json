@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Miphi-Website/static/css/main.96022c24.css",
-    "main.js": "/Miphi-Website/static/js/main.251dd960.js",
+    "main.js": "/Miphi-Website/static/js/main.df9c1cd1.js",
     "static/js/453.99dcf01f.chunk.js": "/Miphi-Website/static/js/453.99dcf01f.chunk.js",
     "index.html": "/Miphi-Website/index.html",
     "main.96022c24.css.map": "/Miphi-Website/static/css/main.96022c24.css.map",
-    "main.251dd960.js.map": "/Miphi-Website/static/js/main.251dd960.js.map",
+    "main.df9c1cd1.js.map": "/Miphi-Website/static/js/main.df9c1cd1.js.map",
     "453.99dcf01f.chunk.js.map": "/Miphi-Website/static/js/453.99dcf01f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.96022c24.css",
-    "static/js/main.251dd960.js"
+    "static/js/main.df9c1cd1.js"
   ]
 }
