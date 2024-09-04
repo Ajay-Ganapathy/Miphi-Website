@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Miphi-Website/static/css/main.7f1ac409.css",
+    "main.js": "/Miphi-Website/static/js/main.ab15c5dc.js",
+    "static/js/453.99dcf01f.chunk.js": "/Miphi-Website/static/js/453.99dcf01f.chunk.js",
+    "index.html": "/Miphi-Website/index.html",
+    "main.7f1ac409.css.map": "/Miphi-Website/static/css/main.7f1ac409.css.map",
+    "main.ab15c5dc.js.map": "/Miphi-Website/static/js/main.ab15c5dc.js.map",
+    "453.99dcf01f.chunk.js.map": "/Miphi-Website/static/js/453.99dcf01f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7f1ac409.css",
+    "static/js/main.ab15c5dc.js"
+  ]
+}
