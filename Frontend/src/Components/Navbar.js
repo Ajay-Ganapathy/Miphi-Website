@@ -115,7 +115,7 @@ const Navbar = () => {
 	<div>
 		 <header className="z-40 py-4 bg-gray-800">
       <div className="flex items-center justify-between h-8 px-6 mx-auto">
-        <button
+        {/* <button
           className="p-1 mr-5 -ml-1 rounded-md md:hidden focus:outline-none focus:shadow-outline-purple"
           onClick={toggleSideMenu}
           aria-label="Menu"
@@ -123,7 +123,8 @@ const Navbar = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
           </svg>
-        </button>
+        </button> */}
+        <span></span>
 
         <div className="flex justify-center mt-2 mr-4">
           <div className="relative flex w-full flex-wrap items-stretch mb-3">
