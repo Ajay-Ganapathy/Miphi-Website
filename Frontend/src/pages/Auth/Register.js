@@ -162,6 +162,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import styles from './form.module.css';
+import Icon from '../../Components/Icon';
 
 const Register = () => {
     const MySwal = withReactContent(Swal);
@@ -194,31 +195,35 @@ const Register = () => {
     };
 
     return (
-        <div className={styles.main} style={{ background: "linear-gradient(to right, #FF7E5F, #FFB88C)" }}>
+        <div className={styles.main} style={{ background: "linear-gradient(to right, #FF7E5F, #FFB88C)" , height : "100%"}}>
+            <br />
+            <br />
+            <br />
+            
             <div className="px-24 mb-11">
                 <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center justify-between flex-end">
                     <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+                    <Icon />
+                        
                         <p className="text-3xl tracking-loose w-full text-gray-100 font-bold rounded-full tracking-wider">
-                            Register and Start writing blogs
+                            Have an account ?
                         </p>
-                        <h1 className="my-4 text-5xl font-bold leading-tight">
-                            Welcome to Miphi
-                        </h1>
-                        <p className="leading-normal text-2xl tracking-loose w-full">
-                            Have an account?
-                        </p>
+                        <p className="text-3xl tracking-loose w-full text-gray-100 font-bold rounded-full tracking-wider">Register and Start writing blogs</p>
+
                         <Link to="/login" className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                            Login
+                            Login Now
                         </Link>
                     </div>
                     <div className="w-70 mt-7 mb-10">
                         <div className="transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                             <div className="p-5">
-                                <div style = {{width : "30vw"}} className="m-8 w-full flex-1">
-                                    <div style={{display : "flex" , flexDirection : "column" , alignItems : "center" , "justifyContent" : "center"}}>
-                                        <div className="mt-3 text-3xl font-bold leading-8 mb-4">Register Now!</div>
+                                <div style = {{width : "25vw"}} className="m-8 w-full flex-1">
+                                    <div >
+                                        <div className="mt-3 text-3xl font-bold leading-8 mb-8">Register Now!</div>
                                         <form onSubmit={handleSubmit}>
-                                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+                                            <div className='flex flex-row justify-between'>
+
+                                            <label className="block text-gray-700 text-sm font-bold mb-2  mt-2" htmlFor="username">
                                                 User Name
                                             </label>
                                             <input
@@ -230,10 +235,14 @@ const Register = () => {
                                                 onChange={(e) => setUserName(e.target.value)}
                                                 required
                                             />
-                                            <br />
-                                            <br />
 
-                                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                                            </div>
+                                           
+                                            <br />
+                                            <br />
+                                            <div className='flex flex-row justify-between'>
+
+                                            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="name">
                                                 Name
                                             </label>
                                             <input
@@ -245,10 +254,12 @@ const Register = () => {
                                                 onChange={(e) => setName(e.target.value)}
                                                 required
                                             />
+                                            </div>
                                             <br />
                                             <br />
-
-                                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                                            
+                                            <div className='flex flex-row justify-between'>
+                                            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="password">
                                                 Password
                                             </label>
                                             <input
@@ -260,16 +271,18 @@ const Register = () => {
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
+                                            </div>
                                             <br />
-                                            <br />
-                                            <br />
-                                            <button
-                                                className="text-center mx-auto lg:mx-0 hover:underline bg-blue-500 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                                                type="submit"
-                                                disabled={loading}
-                                            >
-                                                {loading ? 'Registering...' : 'Register'}
-                                            </button>
+                                            
+                                            <div className="flex justify-center">
+                                                <button
+                                                    className="flex flex-row content-center text-center mx-auto lg:mx-0 hover:underline bg-blue-500 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                                                    type="submit"
+                                                    disabled={loading}
+                                                >
+                                                    {loading ? 'Registering...' : 'Register'}
+                                                </button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
