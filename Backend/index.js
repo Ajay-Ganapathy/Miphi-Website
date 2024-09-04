@@ -37,6 +37,10 @@ const db = mysql.createPool({
 
 const jwt = require('jsonwebtoken'); 
 
+app.get("/" , (req,res) => {
+  res.send("hello")
+})
+
 app.post('/register', async (req, res) => {
   const { username, name, password } = req.body;
   if(!name){
