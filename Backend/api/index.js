@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser') 
 const bcrypt = require('bcryptjs')
-
+const serverless = require('serverless-http');
 
 const app = express();
 const port = 5000;
@@ -391,3 +391,5 @@ app.use('/uploads', express.static(path.join('uploads')));
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+module.exports.handler = serverless(app);
