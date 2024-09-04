@@ -53,7 +53,7 @@ const Dashboard2 = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/blogs');
+      const response = await axios.get('http://10.20.1.101:5000/blogs');
       setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
       //console.log(blogs)
     } catch (error) {
@@ -63,7 +63,7 @@ const Dashboard2 = () => {
 
   const fetchCount = async () => {
     try{
-      const response = await axios.get("http://localhost:5000/blogs/count");
+      const response = await axios.get("http://10.20.1.101:5000/blogs/count");
       console.log(response)
       setCount(response.data);
       
@@ -78,7 +78,7 @@ const Dashboard2 = () => {
     try {
      
       
-      await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
+      await axios.put(`http://10.20.1.101:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success");
       fetchCount();
 
@@ -107,7 +107,7 @@ const Dashboard2 = () => {
     try {
      
   
-      await axios.put(`http://localhost:5000/blogs/${id}/status`, { status, remarks });
+      await axios.put(`http://10.20.1.101:5000/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success" , remarks);
       fetchCount();
 

@@ -18,7 +18,7 @@ const Form = () => {
     const fetchUserDetails = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/author/details', {
+        const response = await axios.get('http://10.20.1.101:5000/author/details', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -53,7 +53,7 @@ const Form = () => {
     formData.append('author_id', user.id);
 
     try {
-      const response = await axios.post('http://localhost:5000/blogs', formData, {
+      const response = await axios.post('http://10.20.1.101:5000/blogs', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

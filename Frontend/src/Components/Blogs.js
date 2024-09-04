@@ -21,7 +21,7 @@ const Blogs = () => {
     useEffect(() => {
         const fetchBlogs = async (userId) => {
             try {
-                const response = await axios.get('http://localhost:5000/blogs');
+                const response = await axios.get('http://10.20.1.101:5000/blogs');
                 const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
                 const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
                 const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
@@ -40,7 +40,7 @@ const Blogs = () => {
         const fetchUserDetails = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/author/details', {
+                const response = await axios.get('http://10.20.1.101:5000/author/details', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);

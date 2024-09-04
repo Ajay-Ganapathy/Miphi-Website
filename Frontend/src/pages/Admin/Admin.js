@@ -14,7 +14,7 @@ const Admin = (props) => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/blogs');
+      const response = await axios.get('http://10.20.1.101:5000/blogs');
       setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
       console.log(blogs)
     } catch (error) {
@@ -29,7 +29,7 @@ const Admin = (props) => {
 
   if (window.confirm(message)) {
     try {
-      await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
+      await axios.put(`http://10.20.1.101:5000/blogs/${id}/status`, { status: status });
       props.setBlogs(props.blogs.map(blog => 
         blog.id === id ? { ...blog, status: status } : blog
       ));

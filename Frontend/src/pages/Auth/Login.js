@@ -19,7 +19,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:5000/login', {
+            const response = await axios.post('http://10.20.1.101:5000/login', {
                 name,
                 password: pass,
             });

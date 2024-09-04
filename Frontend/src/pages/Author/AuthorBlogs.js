@@ -270,7 +270,7 @@ const Home = () => {
 
     const fetchBlogs = async (userId) => {
       try {
-          const response = await axios.get('http://localhost:5000/blogs');
+          const response = await axios.get('http://10.20.1.101:5000/blogs');
           const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
           const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
           const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
@@ -289,7 +289,7 @@ const Home = () => {
     const fetchUserDetails = async () => {
       try {
           const token = localStorage.getItem('token');
-          const response = await axios.get('http://localhost:5000/author/details', {
+          const response = await axios.get('http://10.20.1.101:5000/author/details', {
               headers: { Authorization: `Bearer ${token}` },
           });
           setUser(response.data);
@@ -360,7 +360,7 @@ const Home = () => {
              
               <div className={styles.boxBorder+" block p-12 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
                
-                <img  src={`http://localhost:5000/${blog.image_url}`} alt=" Ariia img" style = {{height : "50%"}} />
+                <img  src={`http://10.20.1.101:5000/${blog.image_url}`} alt=" Ariia img" style = {{height : "50%"}} />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>
@@ -415,7 +415,7 @@ const Home = () => {
 
             
                 <div className={`${styles.boxBorder} block p-8 transition-shadow shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10`}>
-                <img src={`http://localhost:5000/${blog.image_url}`} alt="Blog Image" className="w-full h-auto rounded-t-xl" />
+                <img src={`http://10.20.1.101:5000/${blog.image_url}`} alt="Blog Image" className="w-full h-auto rounded-t-xl" />
               
                 
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
@@ -479,7 +479,7 @@ const Home = () => {
              
               <div className={styles.boxBorder+" block p-8 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
                
-                <img  src={`http://localhost:5000/${blog.image_url}`} alt=" Ariia img" />
+                <img  src={`http://10.20.1.101:5000/${blog.image_url}`} alt=" Ariia img" />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>

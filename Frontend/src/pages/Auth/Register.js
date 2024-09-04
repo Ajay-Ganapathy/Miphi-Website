@@ -177,7 +177,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://localhost:5000/register', { username, name, password, role });
+            await axios.post('http://10.20.1.101:5000/register', { username, name, password, role });
             MySwal.fire({
                 icon: 'success',
                 title: 'Registration successful!',
