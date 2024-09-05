@@ -327,7 +327,7 @@ const Home = () => {
       <section class="text-black mt-12">
         <div class="max-w-screen-xl px-4 py-15 mx-auto sm:px-6 lg:px-8">
        { 
-        rejectedBlogs.length > 0 &&
+        revertedBlogs.length > 0 &&
         <div class="max-w-lg mx-auto text-center">
           
           <h1 className={styles.mainHeading+" mb-16 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
