@@ -368,7 +368,7 @@ const Home = () => {
                 <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 120) }} className = "h-20"></div>
                
                 <div className="flex mt-2 justify-center">
-                  <Link to={`/author/blogs/${blog.id}`} state={{ blog }} className="btn bg-teal-500 text-white hover:bg-teal-600 py-2 px-4 rounded">
+                  <Link to={`/author/blogs/${blog.id}`} state={{ blog , user}} className="btn bg-teal-500 text-white hover:bg-teal-600 py-2 px-4 rounded">
                     Read More
                   </Link>
                   

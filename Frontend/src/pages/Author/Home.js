@@ -6,6 +6,7 @@ import Sidebar from '../../Components/Sidebar';
 import { Link } from 'react-router-dom';
 import Form from '../../Components/Form';
 import Navbar from '../../Components/Navbar';
+import BlogPostForm from '../../Components/BlogPostForm';
 
 const Home = () => {
 

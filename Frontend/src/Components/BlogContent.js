@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const addIdToParagraphs = (html) => {
     const tempDiv = document.createElement('div');
@@ -21,6 +23,33 @@ const addIdToParagraphs = (html) => {
 };
 
 const BlogContent = ({ blogContent, author_name }) => {
+
+    const [user, setUser] = useState({
+        profile_img : ''
+});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(response.data);
+      } catch (error) {
+        setError(error.response?.data?.message || 'Error fetching user details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
     const { html: modifiedHtmlContent, ids } = addIdToParagraphs(blogContent);
     const sanitizedHtmlContent = DOMPurify.sanitize(modifiedHtmlContent);
 
@@ -42,21 +71,24 @@ const BlogContent = ({ blogContent, author_name }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [ids]);
 
+    const location = useLocation();
+    
+
     return (
         <div className="flex flex-col lg:flex-row lg:justify-start">
-            {/* Main Content */}
-            <div className="flex-1 px-4 lg:px-0 mt-12 mb-12 text-gray-700 max-w-screen-md text-lg leading-relaxed lg:mr-40">
+           
+            <div style={{ width: '40vw' }} className="flex-1 px-4 lg:px-0 mt-12 mb-12 text-gray-700 max-w-screen-md text-lg leading-relaxed lg:mr-40">
                 <div
                     dangerouslySetInnerHTML={{ __html: sanitizedHtmlContent }}
                 ></div>
             </div>
 
-            {/* Fixed Highlights and Author Section */}
-            <div className="flex flex-col lg:fixed lg:top-24 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-4 h-[80vh]">
+            
+            <div  style={{ width: '20vw' }} className="flex flex-col lg:fixed lg:top-24 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-4 h-[80vh] ">
                 <nav className="flex-1 overflow-y-auto pr-2 scrollbar-hidden">
-                    {/* Sticky Heading */}
+               
                     <strong className="text-2xl mb-8 block text-center lg:text-left top-0  z-10">Highlights</strong>
-                    {/* Scrollable Content */}
+                   
                     <ul className="mt-4 space-y-2 text-center lg:text-left">
                         {ids.map(({ id, content }) => (
                             <li key={id}>
@@ -77,11 +109,19 @@ const BlogContent = ({ blogContent, author_name }) => {
                 </nav>
 
                 {/* Author Info at the Bottom */}
-                <div className="mt-4 mb-4 text-center lg:text-left">
-                    <hr className="my-4" />
-                    <h4 className="text-lg font-semibold">Author</h4>
-                    <h3 className="text-md">{author_name}</h3>
-                </div>
+                <div className="mt-4 mb-8 text-center lg:text-left">
+    <hr className="my-4" />
+    <h4 className="text-lg font-semibold mb-2">Author</h4>
+    <div className="flex items-center space-x-4">  {/* Align image and text */}
+        <h3 className="text-xl font-medium">{author_name}</h3>  {/* Adjust font size */}
+        <img
+            src={`${process.env.REACT_APP_API_URL}/${user.profile_img}`}
+            alt=""
+            className="w-24 h-24 rounded-full dark:bg-gray-500 aspect-square"
+        />
+    </div>
+</div>
+
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ import Navbar from '../../Components/Navbar';
 const BlogDetail = () => {
     const { id } = useParams();
     const location = useLocation();
-    const { blog } = location.state || {};
+    const { blog , user } = location.state || {};
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ const BlogDetail = () => {
         <div >
           
                 <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100" >
-                <div className="max-w-screen-xl mx-auto px-4 lg:px-0 ">
+                <div className="max-w-screen-xl mx-3 px-4 lg:px-0 ">
                     <main className="mt-12">
                     <h1 className="text-center lg:text-left mb-8 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800">
                             {blog.blog_title}
@@ -40,15 +40,15 @@ const BlogDetail = () => {
                     <div>
 
                         <div className="mb-4 md:mb-0 w-full lg:w-3/4  lg:ml-0 relative" style={{ height: '24em' }}>
-                            <div className="absolute left-0 bottom-0 w-full h-full z-10" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
+                            <div className="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg shadow-lg max-w-3xl" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
                             <img
                                 src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`}
-                                className="absolute left-0 top-0 w-full h-full z-0 object-cover"
+                                className="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg shadow-lg max-w-3xl "
                                 alt="Blog cover"
                             />
                         </div>
                         <div className="mt-6">
-                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} />
+                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} state = {{user}} />
                         </div>
 
                     </div>

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import axios from 'axios';
 import UserDetails from '../pages/Auth/UserDetails';
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -36,7 +37,8 @@ const [user,setUser] = useState({
 });
 
 const navigate = useNavigate();
-
+ const location = useLocation();
+  
 useEffect(() => {
   const fetchUserDetails = async () => {
     try {
@@ -46,7 +48,7 @@ useEffect(() => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data)
+     
       setUser(response.data);
     } catch (error) {
       console.log(error)
