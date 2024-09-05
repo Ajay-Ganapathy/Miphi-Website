@@ -26,6 +26,7 @@ const Dashboard2 = () => {
   const [approvedBlogs , setApprovedBlogs] = useState([]);
   const [rejectedBlogs , setRejectedBlogs] = useState([]);
   const [pendingBlogs , setPendingBlogs] = useState([]);
+  const [loading, setLoading] = useState(false);
   
 
   const toggleSideMenu = () => setIsSideMenuOpen(!isSideMenuOpen);
@@ -58,7 +59,7 @@ const Dashboard2 = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
       setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
-      //console.log(blogs)
+      console.log(blogs)
       setApprovedBlogs(response.data.blogs.filter((blog) => blog.status == "Accept").sort((a,b) => b.id - a.id));
       setRejectedBlogs(response.data.blogs.filter((blog) => blog.status == "Reject").sort((a,b) => b.id - a.id));
       setPendingBlogs(response.data.blogs.filter((blog) => blog.status == "Pending").sort((a,b) => b.id - a.id));
@@ -71,6 +72,7 @@ const Dashboard2 = () => {
     try{
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count`);
       console.log(response)
+     
       setCount(response.data);
       
 
@@ -110,29 +112,25 @@ const Dashboard2 = () => {
  
   };
 
-  const handleDelete = async (id  ) => {
+
+  const handleDelete = async (id) => {
+    setLoading(true);
     try {
-     
-  
-      await axios.delete(`${process.env.REACT_APP_API_URL}/blogs/${id}/`);
-      console.log("deleted Successfully" , remarks);
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/soft-delete`);
+      console.log("Deleted successfully", remarks);
       fetchCount();
       fetchBlogs();
-
       
-        MySwal.fire({
-          icon: 'success',
-          title: 'Blog Deleted!',
-      })
-        
-    
-     
+      MySwal.fire({
+        icon: 'success',
+        title: 'Blog Deleted!',
+      });
     } catch (error) {
       console.error('Error updating blog status:', error);
+    } finally {
+      setLoading(false);
     }
- 
   };
-
 
   const handleReject = async (id , status , remarks) => {
     try {

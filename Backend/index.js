@@ -7,6 +7,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser') 
 const bcrypt = require('bcryptjs')
 const serverless = require('serverless-http');
+const cron = require('node-cron');
 
 const app = express();
 const port = 5000;
@@ -300,7 +301,19 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
 // Route to get all blogs
 app.get('/blogs', async (req, res) => {
   try {
-    const query = `SELECT * FROM blogs`;
+    const query = `SELECT * FROM blogs WHERE deleted_at IS NULL`;
+    const [results] = await db.execute(query);
+
+    res.json({ blogs: results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Route to get deleted blogs
+app.get('/deletedblogs', async (req, res) => {
+  try {
+    const query = `SELECT * FROM blogs WHERE deleted_at IS NOT NULL`;
     const [results] = await db.execute(query);
 
     res.json({ blogs: results });
@@ -313,10 +326,10 @@ app.get('/blogs', async (req, res) => {
 
 app.get('/blogs/count', async (req, res) => {
   try {
-    const query = `SELECT COUNT(*) AS total_count FROM blogs`;
-    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending"`;
-    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept"`;
-    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject"`;
+    const query = `SELECT COUNT(*) AS total_count FROM blogs WHERE deleted_at IS NULL`;
+    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending" AND deleted_at IS NULL`;
+    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept" AND deleted_at IS NULL`;
+    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject" AND deleted_at IS NULL`;
 
 
     const results = await db.execute(query);
@@ -425,8 +438,6 @@ app.put('/blogs/:id/', multer({
 
 
 
-
-
 // Route to get status
 
 app.get('/blogs/:status', (req, res) => {
@@ -504,6 +515,69 @@ app.delete('/blogs/:id', async (req, res) => {
     console.error('Error deleting record:', err);
     res.status(500).json({ error: 'An error occurred while deleting the record' });
   }
+});
+
+// Route for soft delete
+
+app.put('/blogs/:id/soft-delete', async (req, res) => {
+  try {
+    const { id } = req.params;
+   
+
+    console.log(id);
+   
+
+    const query = `UPDATE blogs SET deleted_at = NOW() WHERE id = ?`;
+    const [results] = await db.execute(query, [ id]);
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Blog post not found' });
+    }
+
+    res.json({ message: 'Blog deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+// Restore a soft-deleted blog
+
+app.put('/blogs/:id/restore', async (req, res) => {
+  try {
+    const { id } = req.params;
+   
+
+    console.log(id);
+   
+
+    const query = `UPDATE blogs SET deleted_at = NULL WHERE id = ?`;
+    const [results] = await db.execute(query, [ id]);
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Blog post not found' });
+    }
+
+    res.json({ message: 'Blog deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// Event listener
+
+cron.schedule('0 0 * * *', () => {
+  const query = 'DELETE FROM blogs WHERE deleted_at < NOW() - INTERVAL 30 DAY';
+  
+  db.query(query, (err, result) => {
+      if (err) {
+          console.error('Failed to delete old soft-deleted blogs:', err);
+      } else {
+          console.log(`${result.affectedRows} old blogs permanently deleted`);
+      }
+  });
 });
 
 
