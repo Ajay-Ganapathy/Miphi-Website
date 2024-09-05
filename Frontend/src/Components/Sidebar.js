@@ -66,7 +66,7 @@ const navigate = useNavigate();
                     <div class="flex justify-center">
                         <div class="">
                             <img class="hidden h-24 w-24 rounded-full sm:block object-cover mr-2 border-4 border-green-400"
-                                src="https://ajay-ganapathy.github.io/Miphi-Website/default_profile.png" alt="" />
+                               src= {`${process.env.REACT_APP_API_URL}/default_profile.png`}  alt="" />
                             <p class="font-bold text-base  text-gray-400 pt-2 text-center w-24"> <UserDetails /></p>
                         </div>
                     </div>
@@ -271,7 +271,7 @@ const navigate = useNavigate();
             <div>
               <img
                 className="h-24 w-24 rounded-full object-cover mr-2 border-4 border-green-400"
-                src="https://ajay-ganapathy.github.io/Miphi-Website/default_profile.png"
+                src= {`${process.env.REACT_APP_API_URL}/default_profile.png`}
                 alt=""
               />
               <p className="font-bold text-base text-gray-400 pt-2 text-center w-24">

@@ -23,6 +23,9 @@ const Dashboard2 = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentBlogId, setCurrentBlogId] = useState(null);
   const [actionType, setActionType] = useState('');
+  const [approvedBlogs , setApprovedBlogs] = useState([]);
+  const [rejectedBlogs , setRejectedBlogs] = useState([]);
+  const [pendingBlogs , setPendingBlogs] = useState([]);
   
 
   const toggleSideMenu = () => setIsSideMenuOpen(!isSideMenuOpen);
@@ -53,9 +56,12 @@ const Dashboard2 = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get('http://10.20.1.101:5000/blogs');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
       setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
       //console.log(blogs)
+      setApprovedBlogs(response.data.blogs.filter((blog) => blog.status == "Accept").sort((a,b) => b.id - a.id));
+      setRejectedBlogs(response.data.blogs.filter((blog) => blog.status == "Reject").sort((a,b) => b.id - a.id));
+      setPendingBlogs(response.data.blogs.filter((blog) => blog.status == "Pending").sort((a,b) => b.id - a.id));
     } catch (error) {
       console.error('Error fetching blogs:', error);
     }
@@ -63,7 +69,7 @@ const Dashboard2 = () => {
 
   const fetchCount = async () => {
     try{
-      const response = await axios.get("http://10.20.1.101:5000/blogs/count");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count`);
       console.log(response)
       setCount(response.data);
       
@@ -78,18 +84,20 @@ const Dashboard2 = () => {
     try {
      
       
-      await axios.put(`http://10.20.1.101:5000/blogs/${id}/status`, { status, remarks });
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success");
       fetchCount();
+      fetchBlogs();
 
     
         MySwal.fire({
           icon: 'success',
           title: 'Blog Accepted!',
       }).then(
-        setBlogs(
-          blogs.map(blog =>
-            blog.id === id ? { ...blog, status, remarks : " "} : blog
+        
+        setApprovedBlogs(
+          blogs.filter(blog =>
+            blog.id === id && blog.status === "Accept" ? { ...blog, status, remarks : " "} : blog
           )
         )
       )
@@ -102,40 +110,50 @@ const Dashboard2 = () => {
  
   };
 
+  const handleDelete = async (id  ) => {
+    try {
+     
+  
+      await axios.delete(`${process.env.REACT_APP_API_URL}/blogs/${id}/`);
+      console.log("deleted Successfully" , remarks);
+      fetchCount();
+      fetchBlogs();
+
+      
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Deleted!',
+      })
+        
+    
+     
+    } catch (error) {
+      console.error('Error updating blog status:', error);
+    }
+ 
+  };
+
 
   const handleReject = async (id , status , remarks) => {
     try {
      
   
-      await axios.put(`http://10.20.1.101:5000/blogs/${id}/status`, { status, remarks });
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/status`, { status, remarks });
       console.log("Updated Success" , remarks);
       fetchCount();
+      fetchBlogs();
 
       if(remarks === ""){
         MySwal.fire({
           icon: 'success',
           title: 'Blog Rejected!',
-      }).then(
-        setBlogs(
-          blogs.map(blog =>
-            blog.id === id ? { ...blog, status, remarks : " "} : blog
-          )
-        )
-       
-        );
-        
+      })
+
       }else{
         MySwal.fire({
           icon: 'success',
           title: 'Blog Rejected!',
-      }).then(
-        setBlogs(
-          blogs.map(blog =>
-            blog.id === id ? { ...blog, status, remarks } : blog
-          )
-        )
-       
-        );
+      })
         
       }
      
@@ -155,7 +173,10 @@ const Dashboard2 = () => {
   const handleConfirm = (remarks) => {
     if (actionType === "Reject") {
       handleReject(currentBlogId, "Reject" , remarks);
-    } else {
+    }else if(actionType === "Delete"){
+      handleDelete(currentBlogId , "Delete") ;
+    }
+    else {
       handleAccept(currentBlogId , "Accept");
     }
     setModalOpen(false);
@@ -288,85 +309,157 @@ const Dashboard2 = () => {
                                     <div class="bg-white shadow-lg" id="chartpie"></div>
                                 </div>
                             </div> */}
-                            <div class="col-span-12 mt-5">
-                                <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
-                                    <div class="bg-white p-4 shadow-lg rounded-lg">
-                                        <h1 class="font-bold text-base">Blogs Submitted </h1>
-                                        <div class="mt-4">
-                                            <div class="flex flex-col">
-                                                <div class="-my-2 overflow-x-auto">
-                                                    <div class="py-2 align-middle inline-block min-w-full">
-                                                        <div
-                                                            class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
-                                                            <table class="min-w-full divide-y divide-gray-200">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">AUTHOR NAME</span>
-                                                                            </div>
-                                                                        </th>
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">BLOG TITLE</span>
-                                                                            </div>
-                                                                        </th>
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">BLOG CONTENT</span>
-                                                                            </div>
-                                                                        </th>
-                                                                        
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">STATUS</span>
-                                                                            </div>
-                                                                        </th>
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">ACTION</span>
-                                                                            </div>
-                                                                        </th>
-                                                                        <th
-                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                            <div class="flex cursor-pointer">
-                                                                                <span class="mr-2">REMARKS</span>
-                                                                            </div>
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody class="bg-white divide-y divide-gray-200">
-                                                                {
-  blogs.map((blog) => {
-    return (
-      <tr key={blog.id}> {/* Ensure each row has a unique key */}
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-          <p>{blog.author_name}</p>
-        </td>
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-          <p>{blog.blog_title}</p>
-        </td>
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-        <Link to={`/admin/blogs/${blog.id}`} state = {{blog}} 
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      
-      >
-        View Blog
-      </Link>
-        </td>
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+
+{
+                              pendingBlogs.length > 0 && 
+                              <div class="col-span-12 mt-5">
+                              <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
+                                  <div class="bg-white p-4 shadow-lg rounded-lg">
+                                      <h1 class="font-bold text-base">Pending Blogs </h1>
+                                      <div class="mt-4">
+                                          <div class="flex flex-col">
+                                              <div class="-my-2 overflow-x-auto">
+                                                  <div class="py-2 align-middle inline-block min-w-full">
+                                                      <div
+                                                          class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
+                                                          <table class="min-w-full divide-y divide-gray-200">
+                                                              <thead>
+                                                                  <tr>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">AUTHOR NAME</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG TITLE</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG CONTENT</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">STATUS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">ACTION</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">REMARKS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                  </tr>
+                                                              </thead>
+                                                              <tbody class="bg-white divide-y divide-gray-200">
+                                                              {
+pendingBlogs.map((blog) => {
+  return (
+    <tr key={blog.id}> {/* Ensure each row has a unique key */}
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.author_name}</p>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.blog_title}</p>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+      <Link to={`/admin/blogs/${blog.id}`} state = {{blog}} 
+      className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    
+    >
+      View Blog
+    </Link>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+     
+         
+          {blog.status === 'Accept' && <span className="text-green-600">
+              <div className="flex text-green-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+              Accepted
+              </div>
+              </span>}
+                {blog.status === 'Reject' &&<span className="text-red-600">
+              <div className="flex text-red-500">
+              <svg
+xmlns="http://www.w3.org/2000/svg"
+className="w-5 h-5 mr-1"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+>
+<circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+<path
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  d="M6 18L18 6M6 6l12 12"
+/>
+</svg>
+              Rejected
+              </div>
+              </span>}
+                {blog.status === 'Pending' && <span className="text-yellow-600">
+              <div className="flex text-yellow-500">
+         <svg
+xmlns="http://www.w3.org/2000/svg"
+className="w-5 h-5 mr-1"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+>
+<circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+<path
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  d="M12 4v8m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+/>
+</svg>
+              Pending
+              </div>
+              </span>}
        
-           
-            {blog.status === 'Accept' && <span className="text-green-600">
-                <div className="flex text-green-500">
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <div className="flex space-x-4">
+          <button onClick = {() => openModal(blog.id , "Accept")} className="text-green-500 hover:text-green-600">
+
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.707 5.293a1 1 0 00-1.414 0L10 13.586 5.707 9.293a1 1 0 00-1.414 1.414l5.5 5.5a1 1 0 001.414 0l9-9a1 1 0 000-1.414z" fill="#4CAF50"/>
+          </svg>
+            <p>Accept</p>
+          </button>
+          <button onClick = {() => openModal(blog.id , "Reject")}  className="text-red-500 hover:text-red-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 mr-1"
+              className="w-5 h-5 mr-1 ml-3"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -375,107 +468,417 @@ const Dashboard2 = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-                Accepted
-                </div>
-                </span>}
-                  {blog.status === 'Reject' &&<span className="text-red-600">
-                <div className="flex text-red-500">
-                <svg
-  xmlns="http://www.w3.org/2000/svg"
-  className="w-5 h-5 mr-1"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
->
-  <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-    d="M6 18L18 6M6 6l12 12"
-  />
-</svg>
-                Rejected
-                </div>
-                </span>}
-                  {blog.status === 'Pending' && <span className="text-yellow-600">
-                <div className="flex text-yellow-500">
-           <svg
-  xmlns="http://www.w3.org/2000/svg"
-  className="w-5 h-5 mr-1"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
->
-  <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-    d="M12 4v8m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-  />
-</svg>
-                Pending
-                </div>
-                </span>}
-         
-        </td>
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-          <div className="flex space-x-4">
-            <button onClick = {() => openModal(blog.id , "Accept")} className="text-green-500 hover:text-green-600">
+            <p>Reject</p>
+          </button>
 
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20.707 5.293a1 1 0 00-1.414 0L10 13.586 5.707 9.293a1 1 0 00-1.414 1.414l5.5 5.5a1 1 0 001.414 0l9-9a1 1 0 000-1.414z" fill="#4CAF50"/>
-            </svg>
-              <p>Accept</p>
-            </button>
-            <button onClick = {() => openModal(blog.id , "Reject")}  className="text-red-500 hover:text-red-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 mr-1 ml-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-              <p>Reject</p>
-            </button>
-
-            <Modal
-            isOpen={modalOpen}
-            onClose={() => setModalOpen(false)}
-            onConfirm={handleConfirm}
-            status={actionType}
-        />
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-          <p>{blog.remarks}</p>
-        </td>
-      </tr>
-    );
-  })
+          <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={handleConfirm}
+          status={actionType}
+      />
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.remarks}</p>
+      </td>
+    </tr>
+  );
+})
 }
+                                                        
+                                                              </tbody>
+                                                          </table>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                            }
+                            { approvedBlogs.length > 0 &&
+                              <div class="col-span-12 mt-5">
+                              <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
+                                  <div class="bg-white p-4 shadow-lg rounded-lg">
+                                      <h1 class="font-bold text-base">Approved Blogs</h1>
+                                      <div class="mt-4">
+                                          <div class="flex flex-col">
+                                              <div class="-my-2 overflow-x-auto">
+                                                  <div class="py-2 align-middle inline-block min-w-full">
+                                                      <div
+                                                          class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
+                                                          <table class="min-w-full divide-y divide-gray-200">
+                                                              <thead>
+                                                                  <tr>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">AUTHOR NAME</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG TITLE</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG CONTENT</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">STATUS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">ACTION</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">REMARKS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                  </tr>
+                                                              </thead>
+                                                              <tbody class="bg-white divide-y divide-gray-200">
+                                                              {
+                                                      approvedBlogs.map((blog) => {
+                                                        return (
+                                                          <tr key={blog.id}> {/* Ensure each row has a unique key */}
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                              <p>{blog.author_name}</p>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                              <p>{blog.blog_title}</p>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                            <Link to={`/admin/blogs/${blog.id}`} state = {{blog}} 
+                                                            className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                                           
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                                          >
+                                                            View Blog
+                                                          </Link>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                          
+                                                              
+                                                                {blog.status === 'Accept' && <span className="text-green-600">
+                                                                    <div className="flex text-green-500">
+                                                                <svg
+                                                                  xmlns="http://www.w3.org/2000/svg"
+                                                                  className="w-5 h-5 mr-1"
+                                                                  fill="none"
+                                                                  viewBox="0 0 24 24"
+                                                                  stroke="currentColor"
+                                                                >
+                                                                  <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth="2"
+                                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                                  />
+                                                                </svg>
+                                                                    Accepted
+                                                                    </div>
+                                                                    </span>}
+                                                                      {blog.status === 'Reject' &&<span className="text-red-600">
+                                                                    <div className="flex text-red-500">
+                                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      className="w-5 h-5 mr-1"
+                                                      fill="none"
+                                                      viewBox="0 0 24 24"
+                                                      stroke="currentColor"
+                                                      >
+                                                      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+                                                      <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M6 18L18 6M6 6l12 12"
+                                                      />
+                                                      </svg>
+                                                                    Rejected
+                                                                    </div>
+                                                                    </span>}
+                                                                      {blog.status === 'Pending' && <span className="text-yellow-600">
+                                                                    <div className="flex text-yellow-500">
+                                                              <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      className="w-5 h-5 mr-1"
+                                                      fill="none"
+                                                      viewBox="0 0 24 24"
+                                                      stroke="currentColor"
+                                                      >
+                                                      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+                                                      <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M12 4v8m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                      />
+                                                      </svg>
+                                                                    Pending
+                                                                    </div>
+                                                                    </span>}
+                                                            
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                              <div className="flex space-x-4">
+                                                              
+                                                                <button onClick = {() => openModal(blog.id , "Delete")}  className="text-red-500 hover:text-red-600">
+                                                                  <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    className="w-5 h-5 mr-1 ml-3"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke="currentColor"
+                                                                  >
+                                                                    <path
+                                                                      strokeLinecap="round"
+                                                                      strokeLinejoin="round"
+                                                                      strokeWidth="2"
+                                                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                                    />
+                                                                  </svg>
+                                                                  <p>Delete</p>
+                                                                </button>
+
+                                                                <Modal
+                                                                isOpen={modalOpen}
+                                                                onClose={() => setModalOpen(false)}
+                                                                onConfirm={handleConfirm}
+                                                                status={actionType}
+                                                            />
+                                                              </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                              <p>{blog.remarks}</p>
+                                                            </td>
+                                                          </tr>
+                                                        );
+                                                      })
+                                                      }
+                                                        
+                                                              </tbody>
+                                                          </table>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                            }
+
+                           
+
+                            {
+                              rejectedBlogs.length > 0 &&
+                              <div class="col-span-12 mt-5">
+                              <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
+                                  <div class="bg-white p-4 shadow-lg rounded-lg">
+                                      <h1 class="font-bold text-base">Rejected Blogs </h1>
+                                      <div class="mt-4">
+                                          <div class="flex flex-col">
+                                              <div class="-my-2 overflow-x-auto">
+                                                  <div class="py-2 align-middle inline-block min-w-full">
+                                                      <div
+                                                          class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
+                                                          <table class="min-w-full divide-y divide-gray-200">
+                                                              <thead>
+                                                                  <tr>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">AUTHOR NAME</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG TITLE</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">BLOG CONTENT</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">STATUS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">ACTION</span>
+                                                                          </div>
+                                                                      </th>
+                                                                      <th
+                                                                          class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                          <div class="flex cursor-pointer">
+                                                                              <span class="mr-2">REMARKS</span>
+                                                                          </div>
+                                                                      </th>
+                                                                  </tr>
+                                                              </thead>
+                                                              <tbody class="bg-white divide-y divide-gray-200">
+                                                              {
+rejectedBlogs.map((blog) => {
+  return (
+    <tr key={blog.id}> 
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.author_name}</p>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.blog_title}</p>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+      <Link to={`/admin/blogs/${blog.id}`} state = {{blog}} 
+      className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    
+    >
+      View Blog
+    </Link>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+     
+         
+          {blog.status === 'Accept' && <span className="text-green-600">
+              <div className="flex text-green-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+              Accepted
+              </div>
+              </span>}
+                {blog.status === 'Reject' &&<span className="text-red-600">
+              <div className="flex text-red-500">
+              <svg
+xmlns="http://www.w3.org/2000/svg"
+className="w-5 h-5 mr-1"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+>
+<circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+<path
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  d="M6 18L18 6M6 6l12 12"
+/>
+</svg>
+              Rejected
+              </div>
+              </span>}
+                {blog.status === 'Pending' && <span className="text-yellow-600">
+              <div className="flex text-yellow-500">
+         <svg
+xmlns="http://www.w3.org/2000/svg"
+className="w-5 h-5 mr-1"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+>
+<circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+<path
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  d="M12 4v8m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+/>
+</svg>
+              Pending
+              </div>
+              </span>}
+       
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <div className="flex space-x-4">
+          <button onClick = {() => openModal(blog.id , "Accept")} className="text-green-500 hover:text-green-600">
+
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.707 5.293a1 1 0 00-1.414 0L10 13.586 5.707 9.293a1 1 0 00-1.414 1.414l5.5 5.5a1 1 0 001.414 0l9-9a1 1 0 000-1.414z" fill="#4CAF50"/>
+          </svg>
+            <p>Accept</p>
+          </button>
+          {/* <button onClick = {() => openModal(blog.id , "Reject")}  className="text-red-500 hover:text-red-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 mr-1 ml-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            <p>Reject</p>
+          </button> */}
+
+          <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={handleConfirm}
+          status={actionType}
+      />
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+        <p>{blog.remarks}</p>
+      </td>
+    </tr>
+  );
+})
+}
+                                                        
+                                                              </tbody>
+                                                          </table>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                            }
                         </div>
                     </div>
                 </div>

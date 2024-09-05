@@ -158,7 +158,7 @@ const Modal = ({ isOpen, onClose, onConfirm, status }) => {
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow-lg w-1/3">
         <h2 className="text-lg font-semibold mb-4">
-          {status === "Reject" ? "Do you want to Reject ? " : "Do you want to Accept ? "}
+          {status === "Reject" ? "Do you want to Reject ? " : status === "Delete" ?  "Do you want to Delete? " : "Do you want to Accept ? "}
         </h2>
         {status === "Reject" && (
           <textarea
@@ -179,7 +179,7 @@ const Modal = ({ isOpen, onClose, onConfirm, status }) => {
             onClick={handleConfirm}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            {status === "Reject" ? "Reject" : "Accept"}
+            {status === "Reject" ? "Reject" : status === "Delete" ? "Delete" : "Accept"}
           </button>
         </div>
       </div>

@@ -49,7 +49,6 @@ const BlogPostForm = () => {
   );
 };
 
-// Configure Quill modules and formats
 const modules = {
   toolbar: [
     [{ 'header': '1'}, { 'header': '2' }],

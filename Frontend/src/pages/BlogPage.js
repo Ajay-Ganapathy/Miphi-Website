@@ -10,7 +10,7 @@ const BlogPage = () => {
 
   const fetchApprovedBlogs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/blogs');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
       console.log(response)
       const filteredBlogs = response.data.blogs.filter(blog => blog.status === 'Accept');
       setApprovedBlogs(filteredBlogs);

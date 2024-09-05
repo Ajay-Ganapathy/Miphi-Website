@@ -42,7 +42,7 @@ const BlogDetail = () => {
                         <div className="mb-4 md:mb-0 w-full lg:w-3/4  lg:ml-0 relative" style={{ height: '24em' }}>
                             <div className="absolute left-0 bottom-0 w-full h-full z-10" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
                             <img
-                                src={`http://10.20.1.101:5000/${blog.image_url}`}
+                                src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`}
                                 className="absolute left-0 top-0 w-full h-full z-0 object-cover"
                                 alt="Blog cover"
                             />

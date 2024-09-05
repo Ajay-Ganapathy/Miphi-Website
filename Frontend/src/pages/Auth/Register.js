@@ -165,6 +165,7 @@ import styles from './form.module.css';
 import Icon from '../../Components/Icon';
 
 const Register = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const MySwal = withReactContent(Swal);
     const [username, setUserName] = useState('');
     const [name, setName] = useState('');
@@ -177,7 +178,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://10.20.1.101:5000/register', { username, name, password, role });
+            await axios.post(`${apiUrl}/register`, { username, name, password, role });
             MySwal.fire({
                 icon: 'success',
                 title: 'Registration successful!',

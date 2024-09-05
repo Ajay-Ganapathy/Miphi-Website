@@ -8,6 +8,9 @@ import Icon from '../../Components/Icon';
 import Bear from '../../Components/Bear';
 
 const Login = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+  
+
     const MySwal = withReactContent(Swal);
     const [name, setName] = useState('');
     const [pass, setPass] = useState('');
@@ -19,7 +22,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://10.20.1.101:5000/login', {
+            const response = await axios.post(`${apiUrl}/login`, {
                 name,
                 password: pass,
             });
@@ -30,16 +33,13 @@ const Login = () => {
                 localStorage.setItem('token', token);
                 localStorage.setItem('role', role);
 
-                MySwal.fire({
-                    icon: 'success',
-                    title: 'Login successful!',
-                }).then(() => {
+              
                     if (role === '1') {
                         navigate("/author");
                     } else {
                         navigate("/admin");
                     }
-                });
+             
 
             } else {
                 MySwal.fire({

@@ -17,7 +17,7 @@ function Modal2(props) {
   const handleDelete = async (id) => {
     try {
      
-      const response = await axios.delete(`http://10.20.1.101:5000/blogs/${id}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/blogs/${id}`);
       MySwal.fire({
         icon: 'success',
         title: 'Deleted successful!',
