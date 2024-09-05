@@ -31,9 +31,37 @@ const closeNotificationsMenu = () => setIsNotificationsMenuOpen(false);
 const closeProfileMenu = () => setIsProfileMenuOpen(false);
 const [remarks, setRemarks] = useState(''); 
 const [isMenu , setIsMenu] = useState(false);
+const [user,setUser] = useState({
+  profile_img : ""
+});
+
 const navigate = useNavigate();
 
+useEffect(() => {
+  const fetchUserDetails = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data)
+      setUser(response.data);
+    } catch (error) {
+      console.log(error)
+      //setError(error.response?.data?.message || 'Error fetching user details');
+    } finally {
+     // setLoading(false);
+    }
+  };
+
+  fetchUserDetails();
+}, []);
+
+
   return (
+    
     <div>
       <button
         className="md:hidden fixed top-4 left-4 z-30 text-white bg-gray-800 p-2 rounded"
@@ -66,7 +94,8 @@ const navigate = useNavigate();
                     <div class="flex justify-center">
                         <div class="">
                             <img class="hidden h-24 w-24 rounded-full sm:block object-cover mr-2 border-4 border-green-400"
-                               src= {`${process.env.REACT_APP_API_URL}/default_profile.png`}  alt="" />
+                               src= {`${process.env.REACT_APP_API_URL}/${user.profile_img}`}  alt= {`${user.profile_img}`} />
+                              
                             <p class="font-bold text-base  text-gray-400 pt-2 text-center w-24"> <UserDetails /></p>
                         </div>
                     </div>
@@ -271,7 +300,7 @@ const navigate = useNavigate();
             <div>
               <img
                 className="h-24 w-24 rounded-full object-cover mr-2 border-4 border-green-400"
-                src= {`${process.env.REACT_APP_API_URL}/default_profile.png`}
+                src= {`${process.env.REACT_APP_API_URL}/${user.profile_img}`}
                 alt=""
               />
               <p className="font-bold text-base text-gray-400 pt-2 text-center w-24">

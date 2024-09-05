@@ -4,8 +4,9 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const bodyParser = require('body-parser') 
-const bcrypt = require('bcryptjs')
+const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const serverless = require('serverless-http');
 
 const app = express();
@@ -25,6 +26,11 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
+const profilesDir = path.join(__dirname, 'profile');
+if (!fs.existsSync(profilesDir)) {
+  fs.mkdirSync(profilesDir);
+}
+
 // Set up MySQL connection using promises
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -33,19 +39,36 @@ const db = mysql.createPool({
   database: process.env.DB_NAME || 'blogdb',
 });
 
-console.log(db)
+// Configure multer
+const upload = multer({ 
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix);
+    },
+  })
+});
 
+const profile_upload = multer({ 
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, profilesDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix);
+    },
+  })
+});
 // Route to handle Register
-
-const jwt = require('jsonwebtoken'); 
-
-app.get("/" , (req,res) => {
-  res.send("hello")
-})
-
-app.post('/register', async (req, res) => {
+app.post('/register', profile_upload.single('profile'), async (req, res) => {
   const { username, name, password } = req.body;
-  if(!name){
+  const profileImg = req.file ? req.file.filename : ''; // Get filename from uploaded file
+
+  if (!name) {
     return res.status(400).json({ message: 'Name is required' });
   }
 
@@ -54,7 +77,6 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-   
     const checkUserQuery = 'SELECT * FROM users WHERE username = ?';
     const [userResults] = await db.execute(checkUserQuery, [username]);
 
@@ -62,31 +84,36 @@ app.post('/register', async (req, res) => {
       return res.status(409).json({ message: 'Username already exists' });
     }
 
- 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    
-    const query = 'INSERT INTO users (role, username, name, password) VALUES (1, ?, ?, ?)';
-    const [results] = await db.execute(query, [username, name, hashedPassword]);
+    let query;
+    let params;
 
-   
+    if (profileImg) {
+      query = 'INSERT INTO users (role, username, name, password, profile_img) VALUES (1, ?, ?, ?, ?)';
+      params = [username, name, hashedPassword, profileImg];
+    } else {
+      query = 'INSERT INTO users (role, username, name, password) VALUES (1, ?, ?, ?)';
+      params = [username, name, hashedPassword];
+    }
+
+    const [results] = await db.execute(query, params);
+
     const token = jwt.sign({ id: results.insertId, username }, JWT_SECRET, { expiresIn: '1h' });
-
     res.status(201).json({ message: 'User registered successfully', token });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-
-
 // Route to handle login
 app.post('/login', async (req, res) => {
-  const { name, password } = req.body;
+  const { username, password } = req.body; // Changed from 'name' to 'username'
 
   try {
-    const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [name]);
+    const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
 
     if (results.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -96,10 +123,10 @@ app.post('/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (match) {
-      const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
-      res.json({ "token" : token , "role" : user.role}); 
+      const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+      res.json({ token, role: user.role });
     } else {
-      res.status(400).json({ message: 'Please check your credentials' });
+      res.status(400).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
     console.error('Error logging in', error);
@@ -107,41 +134,18 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// app.post('/login', (req, res) => {
-//   const { name, password } = req.body;
-
-//   db.query('SELECT * FROM users WHERE name = ?', [name], async (err, results) => {
-//     if (err || results.length === 0) {
-//       return res.status(400).json({ message: 'Invalid credentials' });
-//     }
-
-//     const user = results[0];
-//     const match = await bcrypt.compare(password, user.password);
-
-//     if (match) {
-//       const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-//       res.json({ token, role: user.role });
-//     } else {
-//       res.status(400).json({ message: 'Invalid credentials' });
-//     }
-//   });
-// });
-
-
 // Route to fetch user details
-
-
 app.get('/author/details', async (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+  const token = req.headers.authorization?.split(' ')[1]; 
 
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET); // Verify the token
+    const decoded = jwt.verify(token, JWT_SECRET); 
 
-    const [results] = await db.execute('SELECT id, name, role FROM users WHERE id = ?', [decoded.id]);
+    const [results] = await db.execute('SELECT id, name, role , profile_img FROM users WHERE id = ?', [decoded.id]);
 
     if (results.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -154,25 +158,15 @@ app.get('/author/details', async (req, res) => {
   }
 });
 
-
-
 // Route to handle blog creation
-app.post('/blogs', multer({ storage: multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix);
-  },
-}) }).single('image_url'), async (req, res) => {
+app.post('/blogs', upload.single('image_url'), async (req, res) => {
   try {
-    const { author_name, blog_title, blog_content, status , author_id } = req.body;
+    const { author_name, blog_title, blog_content, status, author_id } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
-    console.log(req.body , image_url)
+    console.log(req.body, image_url)
 
-    const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url , author_id) VALUES (?, ?, ?, ?, ? , ?)`;
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url , author_id]);
+    const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url, author_id) VALUES (?, ?, ?, ?, ?, ?)`;
+    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url, author_id]);
 
     res.status(201).json({ id: results.insertId, image: image_url });
   } catch (err) {
@@ -194,7 +188,6 @@ app.get('/blogs', async (req, res) => {
 });
 
 // Route to get blogs count
-
 app.get('/blogs/count', async (req, res) => {
   try {
     const query = `SELECT COUNT(*) AS total_count FROM blogs`;
@@ -202,200 +195,110 @@ app.get('/blogs/count', async (req, res) => {
     const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept"`;
     const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject"`;
 
+    const [totalCount] = await db.execute(query);
+    const [pendingCount] = await db.execute(q1);
+    const [acceptedCount] = await db.execute(q2);
+    const [rejectedCount] = await db.execute(q3);
 
-    const results = await db.execute(query);
-    const [results1] = await db.execute(q1);
-    const [results2] = await db.execute(q2);
-    const [results3] = await db.execute(q3);
-    console.log(results , results1 , results2 , results3 );
-
-    res.json({ total : results[0].total_count  , pending : results1[0].pending_count , accept : results2[0].accepted_count , reject : results3[0].rejected_count });
+    res.json({ total: totalCount[0].total_count, pending: pendingCount[0].pending_count, accept: acceptedCount[0].accepted_count, reject: rejectedCount[0].rejected_count });
   } catch (err) {
-    
     res.status(500).json({ error: err.message });
   }
 });
 
 // Route to get a single blog
-
-app.get("/blogs/:id", async (req, res) => {
+app.get('/blogs/:id', async (req, res) => {
   const id = req.params.id;
 
   // Validate ID
   if (!id || isNaN(id)) {
-    return res.status(400).json({ error: "Invalid blog ID" });
+    return res.status(400).json({ error: 'Invalid blog ID' });
   }
 
   try {
     const query = `SELECT * FROM blogs WHERE id = ?`;
-    db.execute(query, [id], (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: "Error fetching blog" });
-      }
+    const [results] = await db.execute(query, [id]);
 
-      // Check if blog was found
-      if (results.length === 0) {
-        return res.status(404).json({ error: "Blog not found" });
-      }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
 
-      // Return the blog data
-      res.json({ blog: results[0] });
-    });
+    res.json({ blog: results[0] });
   } catch (err) {
     console.error('Server error:', err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
 // Route to update Blog
-
-app.put('/blogs/:id/', multer({ 
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + path.extname(file.originalname);
-      cb(null, file.fieldname + '-' + uniqueSuffix);
-    },
-  }) 
-}).single('image_url'), async (req, res) => {
+app.put('/blogs/:id', upload.single('image_url'), async (req, res) => {
   try {
     const { id } = req.params;
     const { author_name, blog_title, blog_content, status, author_id } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
 
-    // Construct the update query
+    let query;
+    let params;
 
-    if(image_url != ''){
-      const query = `
-      UPDATE blogs
-      SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?
-      WHERE id = ?
-    `;
-    
-    // Execute the update query
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url, author_id, id]);
+    if (image_url) {
+      query = `
+        UPDATE blogs
+        SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?
+        WHERE id = ?
+      `;
+      params = [author_name, blog_title, blog_content, status, image_url, author_id, id];
+    } else {
+      query = `
+        UPDATE blogs
+        SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, author_id = ?
+        WHERE id = ?
+      `;
+      params = [author_name, blog_title, blog_content, status, author_id, id];
+    }
+
+    const [results] = await db.execute(query, params);
+
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: 'Blog not found' });
     }
 
     res.status(200).json({ id: id, image: image_url });
-
-    }else{
-      const query = `
-      UPDATE blogs
-      SET author_name = ?, blog_title = ?, blog_content = ?, status = ? , author_id = ?
-      WHERE id = ?
-    `;
-    
-    // Execute the update query
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status , author_id, id]);
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ error: 'Blog not found' });
-    }
-
-    res.status(200).json({ id: id, image: image_url });
-    }
-    
-
-    
   } catch (err) {
-    console.error('Error:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('Error updating blog:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
-
-
-
-
-// Route to get status
-
-app.get('/blogs/:status', (req, res) => {
-  const status = req.params.status; // 'approved' or 'rejected'
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
-  const offset = (page - 1) * limit;
-
-  const query = `
-    SELECT * FROM blogs
-    WHERE status = ?
-    ORDER BY id DESC
-    LIMIT ? OFFSET ?`;
-
-  db.query(query, [status, limit, offset], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    
-    // Optionally, you can also send the total count of blogs for more advanced pagination
-    db.query('SELECT COUNT(*) AS count FROM blogs WHERE status = ?', [status], (err, countResult) => {
-      if (err) return res.status(500).json({ error: err.message });
-
-      res.json({
-        blogs: results,
-        total: countResult[0].count
-      });
-    });
-  });
-});
-
-// Route to update blog status
-app.put('/blogs/:id/status', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status, remarks = '' } = req.body; // Default value for remarks
-
-    console.log(id);
-    console.log(status);
-    console.log(remarks);
-
-    const query = `UPDATE blogs SET status = ?, remarks = ? WHERE id = ?`;
-    const [results] = await db.execute(query, [status, remarks, id]);
-
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: 'Blog post not found' });
-    }
-
-    res.json({ message: 'Status updated successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Route to Delete a blog
-
+// Route to delete Blog
 app.delete('/blogs/:id', async (req, res) => {
-  const { id } = req.params;
-
-  // Validate that the id is a number
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'Invalid ID format' });
-  }
-
   try {
-    const query = 'DELETE FROM blogs WHERE id = ?';
-    const [results] = await db.query(query, [id]);
+    const id = req.params.id;
 
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: 'Record not found' });
+    // Validate ID
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid blog ID' });
     }
 
-    console.log("Successfully Deleted");
+    const query = `DELETE FROM blogs WHERE id = ?`;
+    const [results] = await db.execute(query, [id]);
 
-    res.status(200).json({ message: 'Record deleted successfully' });
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
+
+    res.status(200).json({ message: 'Blog deleted successfully' });
   } catch (err) {
-    console.error('Error deleting record:', err);
-    res.status(500).json({ error: 'An error occurred while deleting the record' });
+    console.error('Error deleting blog:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 // Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join('uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/profile', express.static(path.join(__dirname, 'profile')));
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
-
+module.exports.handler = serverless(app);
