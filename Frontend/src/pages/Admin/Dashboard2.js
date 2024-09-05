@@ -670,21 +670,11 @@ stroke="currentColor"
                                                             <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                               <div className="flex space-x-4">
                                                               
-                                                                <button onClick = {() => openModal(blog.id , "Revert")}  className="text-red-500 hover:text-red-600">
-                                                                  <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    className="w-5 h-5 mr-1 ml-3"
-                                                                    fill="none"
-                                                                    viewBox="0 0 24 24"
-                                                                    stroke="currentColor"
-                                                                  >
-                                                                    <path
-                                                                      strokeLinecap="round"
-                                                                      strokeLinejoin="round"
-                                                                      strokeWidth="2"
-                                                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                                    />
-                                                                  </svg>
+                                                                <button onClick = {() => openModal(blog.id , "Revert")}  className="text-yellow-500 hover:text-yellow-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <path d="M12 4V1L8 5l4 4V6.5C14.33 6.5 16.5 8.67 16.5 11s-2.17 4.5-4.5 4.5S7.5 13.33 7.5 11H6.5c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5S16.64 4 12 4z" fill="#F59E0B"/>
+</svg>
+
                                                                   <p>Revert</p>
                                                                 </button>
 
