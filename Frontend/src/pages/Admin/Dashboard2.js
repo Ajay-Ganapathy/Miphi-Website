@@ -163,6 +163,35 @@ const Dashboard2 = () => {
  
   };
 
+  const handleRevert = async (id , status , remarks) => {
+    try {
+     
+  
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/status`, { status, remarks });
+      console.log("Updated Success" , remarks);
+      fetchCount();
+      fetchBlogs();
+
+      if(remarks === ""){
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Reverted!',
+      })
+
+      }else{
+        MySwal.fire({
+          icon: 'success',
+          title: 'Blog Reverted!',
+      })
+        
+      }
+     
+    } catch (error) {
+      console.error('Error updating blog status:', error);
+    }
+ 
+  };
+
 
   const openModal = (id, type) => {
     setCurrentBlogId(id);
@@ -175,6 +204,9 @@ const Dashboard2 = () => {
       handleReject(currentBlogId, "Reject" , remarks);
     }else if(actionType === "Delete"){
       handleDelete(currentBlogId , "Delete") ;
+    }
+    else if(actionType === "Revert"){
+      handleRevert(currentBlogId , "Revert" , remarks);
     }
     else {
       handleAccept(currentBlogId , "Accept");
@@ -640,7 +672,7 @@ stroke="currentColor"
                                                             <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                               <div className="flex space-x-4">
                                                               
-                                                                <button onClick = {() => openModal(blog.id , "Delete")}  className="text-red-500 hover:text-red-600">
+                                                                <button onClick = {() => openModal(blog.id , "Revert")}  className="text-red-500 hover:text-red-600">
                                                                   <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
                                                                     className="w-5 h-5 mr-1 ml-3"
@@ -655,7 +687,7 @@ stroke="currentColor"
                                                                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                                                     />
                                                                   </svg>
-                                                                  <p>Delete</p>
+                                                                  <p>Revert</p>
                                                                 </button>
 
                                                                 <Modal

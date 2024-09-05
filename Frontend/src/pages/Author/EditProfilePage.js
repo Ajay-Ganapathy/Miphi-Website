@@ -60,7 +60,7 @@ const EditProfilePage = () => {
           title: 'Success',
           text: 'Blog Updated successfully!',
         }).then(
-          navigate("/author")
+          navigate("/author/profile")
         );
   
         // setTitle('');
