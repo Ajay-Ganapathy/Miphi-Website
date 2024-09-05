@@ -84,7 +84,7 @@ const BlogContent = ({ blogContent, author_name }) => {
             </div>
 
             
-            <div  style={{ width: '20vw' }} className="flex flex-col lg:fixed lg:top-24 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-4 h-[80vh] ">
+            <div  style={{ width: '20vw' }} className="flex flex-col lg:fixed lg:top-44 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-4 h-[80vh] ">
                 <nav className="flex-1 overflow-y-auto pr-2 scrollbar-hidden">
                
                     <strong className="text-2xl mb-8 block text-center lg:text-left top-0  z-10">Highlights</strong>
@@ -109,7 +109,7 @@ const BlogContent = ({ blogContent, author_name }) => {
                 </nav>
 
                 {/* Author Info at the Bottom */}
-                <div className="mt-4 mb-8 text-center lg:text-left">
+                <div className="mt-4 mb-12 text-center lg:text-left">
     <hr className="my-4" />
     <h4 className="text-lg font-semibold mb-2">Author</h4>
     <div className="flex items-center space-x-4">  {/* Align image and text */}

@@ -425,14 +425,14 @@ const Home = () => {
              
               <div className={styles.boxBorder+" block p-12 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
                
-                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" style = {{height : "50%"}} />
+                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" className="w-full h-auto rounded-t-xl" />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>
                 
                 <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 120) }} className = "h-20"></div>
                
-                <div className="flex mt-2 justify-center">
+                <div className="flex mt-2 justify-center ">
                   <Link to={`/author/blogs/${blog.id}`} state={{ blog , user}} className="btn bg-teal-500 text-white hover:bg-teal-600 py-2 px-4 rounded">
                     Read More
                   </Link>
@@ -544,7 +544,7 @@ const Home = () => {
              
               <div className={styles.boxBorder+" block p-8 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
                
-                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" />
+                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" className="w-full h-auto rounded-t-xl" />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>

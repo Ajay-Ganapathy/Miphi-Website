@@ -58,7 +58,7 @@ const EditProfilePage = () => {
         MySwal.fire({
           icon: 'success',
           title: 'Success',
-          text: 'Blog Updated successfully!',
+          text: 'Profile Updated successfully!',
         }).then(
           navigate("/author/profile")
         );
@@ -146,7 +146,7 @@ const EditProfilePage = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              
+              disabled
             />
           </div>
 
