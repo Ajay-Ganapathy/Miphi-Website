@@ -8,6 +8,8 @@ import Dashboard2 from './Dashboard2';
 import Sidebar from '../../Components/Sidebar';
 import { useState } from 'react';
 import Navbar from '../../Components/Navbar';
+import Register from '../Auth/Register';
+import AddUser from './AddUser';
 
 
 const AdminBase = (props) => {
@@ -16,7 +18,8 @@ const AdminBase = (props) => {
   
   const content = [
    
-   ["Dashboard" , "/admin"]
+   ["Dashboard" , "/admin"],
+   ["Add User" , "/admin/register"]
     
  ]
   return (
@@ -37,6 +40,7 @@ const AdminBase = (props) => {
 
       <Route path = "/" element = {<Dashboard2 />} />
       <Route path = "/blogs/:id" element = {<BlogSingle blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
+      <Route path = "/register" element = {<Register />} />
 
       
     </Routes>
