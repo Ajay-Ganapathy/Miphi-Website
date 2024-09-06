@@ -14,7 +14,7 @@ import Card from '../../Components/Card';
 import Table from '../../Components/Table';
 
 const MySwal = withReactContent(Swal);
-const Dashboard2 = () => {
+const RejectedBlogs = () => {
 
     const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
@@ -317,23 +317,11 @@ const Dashboard2 = () => {
                                         </div>
                                     </Link>
                                 </div>
-
-                                {
-                                  approvedBlogs.length > 0 &&  <Table title = "Approved" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
-                             
-                                }
-
-{
-                                  pendingBlogs.length > 0 &&     <Table title = "Pending" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
-                             
-                                }
-
-{
-                                  rejectedBlogs.length > 0 &&  <Table title = "Rejected" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />  
-                             
-                                }
-                                
-                              
+                               
+                               
+                               <section id = "rejected" className='mt-12'>
+                                <Table title = "Rejected" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
+                              </section>
                             </div>
                         </div>
                     </div>
@@ -344,4 +332,4 @@ const Dashboard2 = () => {
   )
 }
 
-export default Dashboard2
+export default RejectedBlogs

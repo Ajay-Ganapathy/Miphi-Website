@@ -11,6 +11,9 @@ import Navbar from '../../Components/Navbar';
 import Register from '../Auth/Register';
 import AddUser from './AddUser';
 import DeletedBlogs from './DeletedBlogs';
+import ApprovedBlogs from './ApprovedBlogs';
+import RejectedBlogs from './RejectedBlogs';
+import PendingBlogs from './PendingBlogs';
 
 
 const AdminBase = (props) => {
@@ -21,7 +24,8 @@ const AdminBase = (props) => {
    
    ["Dashboard" , "/admin"],
    ["Add User" , "/admin/register"] ,
-   ["Deleted Blogs " , "/admin/deletedblogs"]
+   ["Deleted Blogs " , "/admin/deletedblogs"],
+   
     
  ]
   return (
@@ -44,8 +48,9 @@ const AdminBase = (props) => {
       <Route path = "/blogs/:id" element = {<BlogSingle blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
       <Route path = "/register" element = {<AddUser />} />
       <Route path = "/deletedblogs" element = {<DeletedBlogs />} />
-
-      
+      <Route path = "/approvedblogs" element = {<ApprovedBlogs />} />
+      <Route path = "/rejectedblogs" element = {<RejectedBlogs />} />
+      <Route path = "/pendingblogs" element = {<PendingBlogs />} />
     </Routes>
 
     </div>

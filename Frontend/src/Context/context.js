@@ -110,6 +110,6 @@ const fetchCount = async () => {
   }
 
 
-  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , count , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount };
+  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , count , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount , fetchUserBlogs};
   return <AddContext.Provider value = {value} >{children}</AddContext.Provider>
 }

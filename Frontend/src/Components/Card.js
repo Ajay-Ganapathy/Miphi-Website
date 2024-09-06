@@ -5,6 +5,7 @@ import { useState , useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useLocalContext } from '../Context/context';
 import axios from 'axios';
 
 import Modal2 from './Modal2';
@@ -16,7 +17,7 @@ const truncateContent = (content, length = 100) => {
 
 
 const Card = (props) => {
-    const revertedBlogs = []
+  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count } = useLocalContext();
   return (
     <div>
               
@@ -35,11 +36,11 @@ const Card = (props) => {
       <section class="text-black mt-12">
         <div class="max-w-screen-xl px-4 py-15 mx-auto sm:px-6 lg:px-8">
        { 
-        props.revertedBlogs.length > 0 &&
+        blogs.length > 0 &&
         <div class="max-w-lg mx-auto text-center">
           
           <h1 className={styles.mainHeading+" mb-16 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
-            Reverted 
+            {props.title}
             <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
               Blogs
             </span>
@@ -49,8 +50,8 @@ const Card = (props) => {
 
           <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-3">        
           {
-             props.revertedBlogs.length > 0 &&
-             revertedBlogs.map((blog) => {
+             props.blogs.length > 0 &&
+             blogs.map((blog) => {
               return(
 
             

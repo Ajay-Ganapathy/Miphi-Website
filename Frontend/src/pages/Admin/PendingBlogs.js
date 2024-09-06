@@ -14,7 +14,7 @@ import Card from '../../Components/Card';
 import Table from '../../Components/Table';
 
 const MySwal = withReactContent(Swal);
-const Dashboard2 = () => {
+const PendingBlogs = () => {
 
     const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
@@ -195,14 +195,14 @@ const Dashboard2 = () => {
 
 
   return (
-    <div>
+    <div >
        
 
 
        
-            <main class="">
+            <main class="" >
           
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400">
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400" style = {{height : "80vh"}}>
                
                     <div class="grid grid-cols-12 gap-6">
                         <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
@@ -317,23 +317,12 @@ const Dashboard2 = () => {
                                         </div>
                                     </Link>
                                 </div>
-
-                                {
-                                  approvedBlogs.length > 0 &&  <Table title = "Approved" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
-                             
-                                }
-
-{
-                                  pendingBlogs.length > 0 &&     <Table title = "Pending" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
-                             
-                                }
-
-{
-                                  rejectedBlogs.length > 0 &&  <Table title = "Rejected" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />  
-                             
-                                }
-                                
                               
+                                <section id = "pending" className='mt-12'>
+                                <Table title = "Pending" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
+                                </section>
+                               
+                           
                             </div>
                         </div>
                     </div>
@@ -344,4 +333,4 @@ const Dashboard2 = () => {
   )
 }
 
-export default Dashboard2
+export default PendingBlogs
