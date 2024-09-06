@@ -239,6 +239,7 @@ import Navbar from '../../Components/Navbar';
 import axios from 'axios';
 import styles from "./AuthorBlogs.modules.css";
 import Modal2 from '../../Components/Modal2';
+import { useLocalContext } from '../../Context/context';
 
 const truncateContent = (content, length = 100) => {
   if (content.length <= length) return content;
@@ -249,15 +250,17 @@ const truncateContent = (content, length = 100) => {
 const Home = () => {
 
 
-  const [approvedBlogs, setApprovedBlogs] = useState([]);
-    const [rejectedBlogs, setRejectedBlogs] = useState([]);
-    const [pendingBlogs, setPendingBlogs] = useState([]);
-    const [revertedBlogs , setRevertedBlogs ] = useState([]);
-    const [user, setUser] = useState(null);
-    const [blogs , setBlogs] = useState([])
+  // const [approvedBlogs, setApprovedBlogs] = useState([]);
+  //   const [rejectedBlogs, setRejectedBlogs] = useState([]);
+  //   const [pendingBlogs, setPendingBlogs] = useState([]);
+  //   const [revertedBlogs , setRevertedBlogs ] = useState([]);
+  //   const [user, setUser] = useState(null);
+  //   const [blogs , setBlogs] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+
+    const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setPendingBlogs, user , fetchUserBlogs} = useLocalContext();
 
    
    
@@ -266,42 +269,10 @@ const Home = () => {
        
 
 
-        fetchUserDetails();
+        fetchUserBlogs(user.id);
     }, []);
 
-    const fetchBlogs = async (userId) => {
-      try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
-          const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
-          const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
-          const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
-          const filteredReverted = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Revert');
-          setBlogs(response.data.blogs);
-          setApprovedBlogs(filteredApproved);
-          setRejectedBlogs(filteredRejected);
-          setPendingBlogs(filteredPending);
-          setRevertedBlogs(filteredReverted)
-      } catch (error) {
-          console.error('Error fetching blogs:', error);
-          setError('Error fetching blogs');
-      } finally {
-          setLoading(false);
-      }
-  };
-
-    const fetchUserDetails = async () => {
-      try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
-              headers: { Authorization: `Bearer ${token}` },
-          });
-          setUser(response.data);
-          fetchBlogs(response.data.id); // Fetch blogs after user details are fetched
-      } catch (error) {
-          setError(error.response?.data?.message || 'Error fetching user details');
-          setLoading(false);
-      }
-  };
+   
 
 
 
@@ -366,7 +337,7 @@ const Home = () => {
                   </Link>
 
 
-                  <Modal2 title = "Remarks" remarks = {blog.remarks} fetchUserDetails = {fetchUserDetails} />
+                  <Modal2 title = "Remarks" remarks = {blog.remarks}  />
                 </div>
               </div>
             
@@ -398,7 +369,7 @@ const Home = () => {
         </h1>
       </div>
       }
-       {console.log(blogs)}
+       {console.log(blogs )}
        <div id={"initiatives"}>
        <section class="text-black mt-12">
          <div class="max-w-screen-xl px-4 py-15 mx-auto sm:px-6 lg:px-8">
@@ -499,7 +470,7 @@ const Home = () => {
                   </Link>
 
 
-                  <Modal2 title = "Remarks" remarks = {blog.remarks} fetchUserDetails = {fetchUserDetails} />
+                  <Modal2 title = "Remarks" remarks = {blog.remarks}  />
                 </div>
               </div>
             
@@ -549,7 +520,7 @@ const Home = () => {
                 {blog.blog_title}
                 </h3>
                 
-                <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 120) }}></div>
+                <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 100) }}></div>
                
                 <div className="mt-4 flex flex-start items-center">
                   <Link to={`/author/blogs/${blog.id}`} state={{ blog }} className="btn bg-teal-500 mr-3 text-white hover:bg-teal-600 py-2 px-4 rounded">

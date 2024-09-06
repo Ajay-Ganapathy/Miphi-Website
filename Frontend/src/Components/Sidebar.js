@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import UserDetails from '../pages/Auth/UserDetails';
 import { useLocation } from 'react-router-dom';
+import { useLocalContext } from '../Context/context';
 
 
 
@@ -32,34 +33,11 @@ const closeNotificationsMenu = () => setIsNotificationsMenuOpen(false);
 const closeProfileMenu = () => setIsProfileMenuOpen(false);
 const [remarks, setRemarks] = useState(''); 
 const [isMenu , setIsMenu] = useState(false);
-const [user,setUser] = useState({
-  profile_img : ""
-});
 
+const {user} = useLocalContext()
 const navigate = useNavigate();
  const location = useLocation();
   
-useEffect(() => {
-  const fetchUserDetails = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-     
-      setUser(response.data);
-    } catch (error) {
-      console.log(error)
-      //setError(error.response?.data?.message || 'Error fetching user details');
-    } finally {
-     // setLoading(false);
-    }
-  };
-
-  fetchUserDetails();
-}, []);
 
 
   return (

@@ -42,7 +42,7 @@ const AdminBase = (props) => {
 
       <Route path = "/" element = {<Dashboard2 />} />
       <Route path = "/blogs/:id" element = {<BlogSingle blogs = {props.blogs}  setBlogs = {props.setBlogs} />} />
-      <Route path = "/register" element = {<Register />} />
+      <Route path = "/register" element = {<AddUser />} />
       <Route path = "/deletedblogs" element = {<DeletedBlogs />} />
 
       

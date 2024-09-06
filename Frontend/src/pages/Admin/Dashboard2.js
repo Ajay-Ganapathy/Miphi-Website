@@ -9,6 +9,7 @@ import Navbar from '../../Components/Navbar';
 import Sidebar from '../../Components/Sidebar';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useLocalContext } from '../../Context/context';
 
 const MySwal = withReactContent(Swal);
 const Dashboard2 = () => {
@@ -23,9 +24,7 @@ const Dashboard2 = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentBlogId, setCurrentBlogId] = useState(null);
   const [actionType, setActionType] = useState('');
-  const [approvedBlogs , setApprovedBlogs] = useState([]);
-  const [rejectedBlogs , setRejectedBlogs] = useState([]);
-  const [pendingBlogs , setPendingBlogs] = useState([]);
+ 
   const [loading, setLoading] = useState(false);
   
 
@@ -36,10 +35,10 @@ const Dashboard2 = () => {
   const closeNotificationsMenu = () => setIsNotificationsMenuOpen(false);
   const closeProfileMenu = () => setIsProfileMenuOpen(false);
   const [remarks, setRemarks] = useState(''); 
-  const [count , setCount] = useState([])
+  
   const [error , setError] = useState('')
 
-  const [blogs, setBlogs] = useState([]);
+  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count } = useLocalContext();
 
   const navigate = useNavigate();
 
@@ -55,32 +54,9 @@ const Dashboard2 = () => {
 
  
 
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
-      setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
-      console.log(blogs)
-      setApprovedBlogs(response.data.blogs.filter((blog) => blog.status == "Accept").sort((a,b) => b.id - a.id));
-      setRejectedBlogs(response.data.blogs.filter((blog) => blog.status == "Reject").sort((a,b) => b.id - a.id));
-      setPendingBlogs(response.data.blogs.filter((blog) => blog.status == "Pending").sort((a,b) => b.id - a.id));
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
-  };
+  
 
-  const fetchCount = async () => {
-    try{
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count`);
-      console.log(response)
-     
-      setCount(response.data);
-      
 
-    }catch(error){
-      console.log("Error occured " , error);
-      setError("Error Fetching Count ! ");
-    }
-  }
 
   const handleAccept = async (id , status) => {
     try {
@@ -339,6 +315,8 @@ const Dashboard2 = () => {
                                     <div class="bg-white shadow-lg" id="chartpie"></div>
                                 </div>
                             </div> */}
+
+                          
 
 {
                               pendingBlogs.length > 0 && 

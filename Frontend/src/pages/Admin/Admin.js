@@ -3,24 +3,19 @@ import axios from 'axios';
 import { Link } from 'react-router-dom' ;
 import Modal from '../../Components/Modal';
 import Modal2 from '../../Components/Modal2';
+import { useLocalContext } from '../../Context/context';
 
 const Admin = (props) => {
  
-  const [blogs, setBlogs] = useState([]);
+  
+
+  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setBlogs, setPendingBlogs, user} = useLocalContext();
 
   useEffect(() => {
     fetchBlogs();
   }, []);
 
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get('http://10.20.1.101:5000/blogs');
-      setBlogs(response.data.blogs.sort((a,b) => b.id - a.id));
-      console.log(blogs)
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
-  };
+  
 
   const updateBlogStatus = async (id, status) => {
     const message = status === 'Accept' 
@@ -39,21 +34,7 @@ const Admin = (props) => {
   }
   };
 
-  const editBlog = () => {
-
-  }
-
-  // const editBlog = async (id , status) => {
-  //   try{
-
-  //     await axios.put(`http://localhost:5000/blogs/${id}/status`, { status: status });
-  //     setBlogs(blogs.map(blog => 
-  //       blog.id === id ? { ...blog, status: status } : blog
-  //     ));
-  //   } catch (error) {
-  //     console.error('Error updating blog status:', error);
-  //   }
-  // }
+  
 
   return (
     <div className="admin-panel">
