@@ -1,0 +1,88 @@
+/* src/components/BlogPostForm.css */
+.tags-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  
+  .tags-input-tag {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border: 1px solid #91d5ff;
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 0 5px 5px 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tags-input-tag span {
+    margin-right: 5px;
+  }
+  
+  .tags-input-remove {
+    color: red;
+    cursor: pointer;
+  }
+  
+  .react-tag {
+    background-color: green;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+  }
+  
+  .react-tag .tag-text {
+    margin-right: 8px;
+  }
+  
+  .react-tag .remove-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .react-tag .remove-button:hover {
+    color: red;
+  }
+
+  .title-input-container {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.title-input {
+    width: 100%;
+    font-size: 48px; /* Adjust size as needed */
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid transparent;
+    outline: none;
+    font-family: 'Playfair Display', serif; /* You can change to Montserrat or Roboto Slab */
+    
+    padding: 10px 0;
+    color: #333;
+    background-color: transparent;
+}
+
+.title-input::placeholder {
+    color: #ccc;
+    font-size: 48px; /* Same size as the input */
+    font-family: 'Roboto Slab'; /* Same font as input */
+    font-weight: bold;
+}
+
+.title-input:focus {
+    border-bottom: 2px solid #000;
+    outline: none;
+}
+
+  
