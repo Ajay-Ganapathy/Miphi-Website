@@ -73,8 +73,7 @@ import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useRef } from 'react';
-import { TagsInput } from "react-tag-input-component";
-import "./BlogPostForm.css";
+import TagsInput from './TagsInput';
 import { ReactTags } from 'react-tag-autocomplete'
 import { useCallback } from 'react';
 
@@ -98,6 +97,10 @@ function BlogPostForm() {
     // Trigger file input click when button is clicked
     const handleButtonClick = () => {
         fileInputRef.current.click();
+    };
+
+    const selectedTags = tags => {
+      console.log(tags);
     };
 
     // Handle image change
@@ -130,10 +133,10 @@ function BlogPostForm() {
     };
 
     return (
-        <div className='bg-gray-100 ' style = {{ height : "100vh" }}>
-          <div style = {{width : "70vw" , height : "80vh" , backgroundColor : "white"}} className='m-8  shadow-xl  rounded-xl mx-auto border-solid border-2 border-indigo-600'>
+        <div className='bg-gray-100 ' style = {{ height : "100vh" , width : "100vw" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , justifyContent : "center"}}>
+          <div style = {{width : "70vw" , height : "80vh" , backgroundColor : "white" }} className=' p-8 shadow-xl  rounded-xl mx-auto border-solid '>
           <div >
-            <h2>Create a Blog Post</h2>
+          
 
              {/* Button to trigger file input */}
              <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
@@ -170,11 +173,18 @@ function BlogPostForm() {
           {/* Tags Input */}
           <br />
             
-    
+      <TagsInput selectedTags={selectedTags}  tags={['Nodejs', 'MongoDB']} />
+      <br />
            
         </div>
             {/* Rich Text Editor */}
-            <ReactQuill theme="snow" style={{ height: '30vh' , margin : '10px'  }} value={content} onChange={setContent} />
+            <ReactQuill 
+  theme="snow" 
+  className="custom-quill" 
+  style={{ height: '30vh', margin: '10px' }} 
+  value={content} 
+  onChange={setContent} 
+/>
 
           
 
@@ -194,7 +204,13 @@ function BlogPostForm() {
 
 
             {/* Buttons */}
-            <button
+           
+
+          </div>
+
+          <div className='m-8'>
+
+          <button
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
             type="submit"
           >
@@ -214,9 +230,11 @@ function BlogPostForm() {
           >
             Revert new changes
           </button>
-           
 
           </div>
+
+         
+           
             
         </div>
     );
