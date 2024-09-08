@@ -78,9 +78,16 @@ import { ReactTags } from 'react-tag-autocomplete'
 import { useCallback } from 'react';
 import styles from "./BlogPostForm.modules.css"
 import TextEditor from './TextEditor';
+import { useLocalContext } from '../Context/context';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
+const MySwal = withReactContent(Swal);
 
 function BlogPostForm() {
+
+  const {user} = useLocalContext();
 
   const sugg = ["react" , "node"]
  
@@ -95,6 +102,7 @@ function BlogPostForm() {
     const [coverImage, setCoverImage] = useState(null);
     const [title, setTitle] = useState('');
     const fileInputRef = useRef(null); // Reference to the hidden file input
+    const [blogContent , setBlogContent] = useState('')
 
     // Trigger file input click when button is clicked
     const handleButtonClick = () => {
@@ -129,10 +137,45 @@ function BlogPostForm() {
   )
    
 
-    const handleSubmit = () => {
-        // Handle form submission
-        console.log('Form submitted');
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('author_name', user.name);
+    formData.append('blog_title', title);
+    formData.append('blog_content', blogContent);
+    formData.append('status', 'Pending');
+    if (coverImage) {
+      formData.append('image_url', coverImage);
+    }
+    formData.append('author_id', user.id);
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/blogs`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      MySwal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Blog submitted successfully!',
+      });
+
+      setTitle('');
+      setBlogContent('');
+      setCoverImage(null);
+    } catch (error) {
+      console.error('Error submitting blog:', error);
+
+      MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error submitting blog. Please try again.',
+      });
+    }
+  };
 
     return (
 
@@ -150,6 +193,9 @@ function BlogPostForm() {
           
 
              {/* Button to trigger file input */}
+             <form>
+              
+             </form>
              {
               !coverImage && <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
               Add a Cover Image
@@ -215,7 +261,7 @@ function BlogPostForm() {
         </div>
             {/* Rich Text Editor */}
 
-            <TextEditor style={{ height: '30vh', margin: '10px' }}  />
+            <TextEditor style={{ height: '30vh', margin: '10px' }} value={blogContent} onChange={setBlogContent} />
             {/* <ReactQuill 
   theme="snow" 
   className="custom-quill" 
@@ -251,6 +297,7 @@ function BlogPostForm() {
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
             type="submit"
+            
           >
             Publish
           </button>
