@@ -31,6 +31,7 @@ const TextEditor = (props) => {
       onChange={props.onChange} 
       modules={modules}
       formats={formats}
+      style={{ height: '30vh', margin: '10px' }} 
       theme="snow"
     />
   );

@@ -10,6 +10,7 @@ import Sidebar from '../../Components/Sidebar'
 import Navbar from '../../Components/Navbar'
 import ProfilePage from './ProfilePage'
 import EditProfilePage from './EditProfilePage'
+import BlogPostForm from '../../Components/BlogPostForm'
 const Base = (props) => {
 
   const content = [
@@ -44,6 +45,7 @@ const Base = (props) => {
     <Route path = "/blogs/:id/edit" element = {<EditBlog />} />
     <Route path = "/profile" element = {<ProfilePage />} />
     <Route path = "/profile/edit" element = {<EditProfilePage />} />
+    <Route path="/posts" element={<BlogPostForm />} />
     
   </Routes>
 

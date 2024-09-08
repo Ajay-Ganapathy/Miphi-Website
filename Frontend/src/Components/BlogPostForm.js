@@ -76,6 +76,8 @@ import { useRef } from 'react';
 import TagsInput from './TagsInput';
 import { ReactTags } from 'react-tag-autocomplete'
 import { useCallback } from 'react';
+import styles from "./BlogPostForm.modules.css"
+import TextEditor from './TextEditor';
 
 
 function BlogPostForm() {
@@ -133,15 +135,27 @@ function BlogPostForm() {
     };
 
     return (
-        <div className='bg-gray-100 ' style = {{ height : "100vh" , width : "100vw" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , justifyContent : "center"}}>
+
+      <main class="">
+          
+          <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
+          <div class="grid grid-cols-12 gap-6">
+                        <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
+                          
+                            <div class="col-span-12 mt-8">
+                             
+                            <div className='bg-gray-100 ' style = {{ height : "100vh" ,  display : "flex" , flexDirection : "column" , alignItems : "flexStart" , justifyContent : "center"}}>
           <div style = {{width : "70vw" , height : "80vh" , backgroundColor : "white" }} className=' p-8 shadow-xl  rounded-xl mx-auto border-solid '>
           <div >
           
 
              {/* Button to trigger file input */}
-             <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
-                Add a Cover Image
-            </button>
+             {
+              !coverImage && <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
+              Add a Cover Image
+          </button>
+             }
+             
 
             {/* Hidden file input */}
             <input
@@ -154,9 +168,31 @@ function BlogPostForm() {
 
             {/* Cover Image Preview */}
             {coverImage && (
-                <div>
+                <div >
                     <h3>Cover Image Preview:</h3>
-                    <img src={coverImage} alt="Cover Preview" width="300" />
+                    <div className='flex flex-row '>
+
+                    <img src={coverImage} alt="Cover Preview"  height = "200"  width="200" />
+                    
+                    <div className='flex flex-row content-center'>
+                    <button
+                    onClick={handleButtonClick}
+            className="bg-blue-600 hover:bg-blue-700 w-40 h-10 text-white font-semibold m-3 py-2 px-2  rounded-lg"
+            type="submit"
+          >
+            Change
+          </button>
+
+          <button
+            className="  text-red-400 w-40 h-10  font-semibold py-2 px-4 rounded-lg m-3"
+            onClick={() => setCoverImage(null)}
+          >
+            Remove
+          </button>
+          </div>
+
+          </div>
+
                 </div>
             )}
 
@@ -178,13 +214,15 @@ function BlogPostForm() {
            
         </div>
             {/* Rich Text Editor */}
-            <ReactQuill 
+
+            <TextEditor style={{ height: '30vh', margin: '10px' }}  />
+            {/* <ReactQuill 
   theme="snow" 
   className="custom-quill" 
   style={{ height: '30vh', margin: '10px' }} 
   value={content} 
   onChange={setContent} 
-/>
+/> */}
 
           
 
@@ -237,6 +275,15 @@ function BlogPostForm() {
            
             
         </div>
+                                <div class="flex items-center h-10 intro-y">
+                                    
+                                </div>
+                            </div>
+                        </div>
+            </div>
+            </div>
+      </main>
+       
     );
 }
 

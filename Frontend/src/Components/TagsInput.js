@@ -1,4 +1,5 @@
 import React from 'react';
+import './tagsinput.modules.css'
 
 const TagsInput = props => {
 	const [tags, setTags] = React.useState([]);

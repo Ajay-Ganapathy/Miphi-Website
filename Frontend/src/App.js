@@ -58,7 +58,7 @@ const App = () => {
           <Route path="/" element={<Form />} />
           <Route path="/blogs" element={<BlogPage />} /> */}
 
-<Route path="/posts" element={<BlogPostForm />} />
+
 
           {/* Redirect to login if not authenticated */}
           <Route path="*" element={<Navigate to="/login" />} />
