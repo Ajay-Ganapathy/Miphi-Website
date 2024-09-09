@@ -230,8 +230,8 @@ function EditBlog() {
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
   const [tags, setTags] = useState([]);
-  const [coverImage, setCoverImage] = useState(data && data.image ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}`);
-  const [image , setImage] = useState(data && data.image ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}`);
+  const [coverImage, setCoverImage] = useState(data &&  data.image && data.image != ' '  ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
+  const [image , setImage] = useState(data  &&  data.image && data.image != ' ' ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
   const [title, setTitle] = useState(data && data.title ? data.title : blog.blog_title);
   const fileInputRef = useRef(null); 
 
@@ -386,6 +386,7 @@ function EditBlog() {
 
   return (
     <main className="">
+      {console.log(data)}
       
       <div className="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100"
         style={{ height: coverImage ? "auto" : "100vh" }}>
@@ -411,7 +412,8 @@ function EditBlog() {
                     <div  >
                     
                       {/* Cover Image */}
-                      {!image && (
+                      {console.log(image)}
+                      { !image ||   image ===  ' ' && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
                           Add a Cover Image
                         </button>
@@ -425,7 +427,7 @@ function EditBlog() {
                         accept="image/*"
                       />
 
-                      {image && (
+                      {image  &&   image !== ' '  && (
                         <div>
                           
                           <div className='flex flex-row'>
@@ -440,7 +442,7 @@ function EditBlog() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage(null) ; setImage(null)}}
+                                onClick={() => {setCoverImage(' ') ; setImage(' ')}}
                                 type="button"
                               >
                                 Remove

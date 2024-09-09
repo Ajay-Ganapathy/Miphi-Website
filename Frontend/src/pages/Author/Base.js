@@ -42,7 +42,7 @@ const Base = (props) => {
     <Routes>
       
     <Route path = "/" element = {<AuthorBlogs  />} />
-    <Route path = "/submitblog" element = {<Home />} />
+    <Route path = "/submitblog" element = {<BlogPostForm />} />
     
     <Route path = "/blogs/:id" element = {<BlogDetail  />} />
     <Route path = "/blogs/:id/edit" element = {<EditBlog />} />

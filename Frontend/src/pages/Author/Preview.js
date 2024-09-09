@@ -18,7 +18,10 @@ const Preview = () => {
     const data = {
         "blog_content" : blogContent ,
         "title" : title ,
-        "image" : image
+        
+        "image" : !image ? ' ' : image
+        
+       
     }
 
     // Handle loading and error states here (if fetching data from an API)
@@ -38,7 +41,7 @@ const Preview = () => {
     return (
         <div >
           
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100" >
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" style = {{height : "90vh"}}>
                     <div className='flex justify-end'>
 
                     {
@@ -48,8 +51,12 @@ const Preview = () => {
                             Edit
                         </Link>
                         :
+
+                       
                         <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog , data}} className="btn text-black py-2 px-4 rounded">
                         Edit
+
+                        { console.log(data) }
                         </Link>
                     } 
 
@@ -68,7 +75,7 @@ const Preview = () => {
                     <div>
 
                     {
-                            image &&  
+                            image && image != ' ' &&  
                         <div className="mb-4 md:mb-0 w-full lg:w-3/4  lg:ml-0 relative" style={{ height: '24em' }}>
                             <div className="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg shadow-lg max-w-3xl" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
                              <img

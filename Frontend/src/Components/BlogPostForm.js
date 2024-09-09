@@ -6,7 +6,8 @@ import TagsInput from './TagsInput';
 import TextEditor from './TextEditor';
 import { useLocalContext } from '../Context/context';
 import styles from "./BlogPostForm.modules.css";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 
 const MySwal = withReactContent(Swal);
 
@@ -26,7 +27,7 @@ function BlogPostForm() {
   const prevTitle = ''
  
   
- 
+ const navigate = useNavigate();
 
   const blog = {
     "author_name" : user.name
@@ -162,7 +163,7 @@ function BlogPostForm() {
         title: 'Success',
         text: 'Blog saved as draft successfully!',
       }).then(() => {
-        console.log("dRAFT SAVED")
+        navigate("/author/drafts")
       });
 
       setTitle('');
@@ -204,7 +205,8 @@ function BlogPostForm() {
                   <form onSubmit={handleSubmit}>
                     <div  >
                       {/* Cover Image */}
-                      {!image && (
+                      { console.log( image , title)}
+                      {!image || image === ' '  && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
                           Add a Cover Image
                         </button>
@@ -218,7 +220,7 @@ function BlogPostForm() {
                         accept="image/*"
                       />
 
-                      {image && (
+                      {image && image !== ' ' && (
                         <div>
                           <div className='flex flex-row'>
                             <img src={image} alt="Cover Preview" height="200" width="200" />
@@ -232,7 +234,7 @@ function BlogPostForm() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage(null) ; setImage(null)}}
+                                onClick={() => {setCoverImage(' ') ; setImage(' ')}}
                                 type="button"
                               >
                                 Remove
@@ -294,12 +296,16 @@ function BlogPostForm() {
                           if(window.confirm("Do you want to revert changes ? ")){
                             setTitle(prevTitle) ;
                             setBlogContent(prevBlogContent);
-                            setCoverImage(prevCoverImage);
+                            setCoverImage(' ');
+                            setImage(' ')
+                           
                           }
                          
                         }
                       }
                       >
+
+                      
                         Revert new changes
                       </button>
                     </div>
