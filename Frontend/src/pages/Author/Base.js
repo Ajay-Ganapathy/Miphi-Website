@@ -11,12 +11,15 @@ import Navbar from '../../Components/Navbar'
 import ProfilePage from './ProfilePage'
 import EditProfilePage from './EditProfilePage'
 import BlogPostForm from '../../Components/BlogPostForm'
+import Draft from './Draft'
+import Preview from './Preview'
 const Base = (props) => {
 
   const content = [
     ["Submit Blog" , "/author/submitblog"] ,
    ["Dashboard" , "/author"],
-   ["Profile" , "/author/profile"]
+   ["Profile" , "/author/profile"] ,
+   ["Drafts" , "/author/drafts"]
     
  ]
 
@@ -46,6 +49,8 @@ const Base = (props) => {
     <Route path = "/profile" element = {<ProfilePage />} />
     <Route path = "/profile/edit" element = {<EditProfilePage />} />
     <Route path="/posts" element={<BlogPostForm />} />
+    <Route path="/drafts" element={<Draft />} />
+    <Route path="/blogs/preview" element={<Preview />} />
     
   </Routes>
 

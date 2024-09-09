@@ -19,6 +19,7 @@ export function ContextProvider({children})
   const [rejectedBlogs, setRejectedBlogs] = useState([]);
   const [pendingBlogs, setPendingBlogs] = useState([]);
   const [revertedBlogs , setRevertedBlogs ] = useState([]);
+  const [draftedBlogs , setDraftedBlogs] = useState([]);
   const [blogs , setBlogs] = useState([]);
   const [count , setCount] = useState([]);
 
@@ -61,11 +62,13 @@ const fetchUserBlogs = async (userId) => {
       const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
       const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
       const filteredReverted = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Revert');
+      const filteredDrafts = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Draft');
       setBlogs(response.data.blogs);
       setApprovedBlogs(filteredApproved);
       setRejectedBlogs(filteredRejected);
       setPendingBlogs(filteredPending);
-      setRevertedBlogs(filteredReverted)
+      setRevertedBlogs(filteredReverted);
+      setDraftedBlogs(filteredDrafts);
   } catch (error) {
       console.error('Error fetching blogs:', error);
       setError('Error fetching blogs');
@@ -110,6 +113,6 @@ const fetchCount = async () => {
   }
 
 
-  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , count , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount , fetchUserBlogs};
+  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , draftedBlogs , count , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount , fetchUserBlogs};
   return <AddContext.Provider value = {value} >{children}</AddContext.Provider>
 }

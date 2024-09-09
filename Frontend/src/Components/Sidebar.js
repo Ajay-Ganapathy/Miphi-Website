@@ -73,7 +73,7 @@ const navigate = useNavigate();
                     </div>
                     <div class="flex justify-center">
                         <div class="">
-                        <img  src= {`${process.env.REACT_APP_API_URL}/${user.profile_img}`}  alt="" className="w-32 h-32 mx-auto border-4 border-green-400 rounded-full dark:bg-gray-500 aspect-square" />
+                        <img  src= {`${process.env.REACT_APP_API_URL}/${user.profile_img}`}  alt="" className="w-32 h-32 mx-auto border-4 border-orange-400 rounded-full dark:bg-gray-500 aspect-square" />
                               
                             <p class="font-bold text-base  text-gray-400 pt-2 text-center w-24"> <UserDetails /></p>
                         </div>
