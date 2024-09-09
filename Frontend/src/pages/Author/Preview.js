@@ -46,7 +46,7 @@ const Preview = () => {
     Edit
   </Link>
 :
-   <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog ,  image , title , blogContent}} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
+   <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog , data}} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
    Edit
  </Link>
 } 

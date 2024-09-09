@@ -215,7 +215,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
 import TagsInput from '../../Components/TagsInput';
 import TextEditor from '../../Components/TextEditor';
@@ -226,20 +226,22 @@ const MySwal = withReactContent(Swal);
 
 function EditBlog() {
   const location = useLocation();
-  const {blog  } = location.state || {}
+  const {blog , data } = location.state || {}
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
   const [tags, setTags] = useState([]);
-  const [coverImage, setCoverImage] = useState(`${process.env.REACT_APP_API_URL}/${blog.image_url}`);
-  const [image , setImage] = useState(`${process.env.REACT_APP_API_URL}/${blog.image_url}`);
-  const [title, setTitle] = useState(blog.blog_title);
+  const [coverImage, setCoverImage] = useState(data && data.image ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}`);
+  const [image , setImage] = useState(data && data.image ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}`);
+  const [title, setTitle] = useState(data && data.title ? data.title : blog.blog_title);
   const fileInputRef = useRef(null); 
 
-  const [blogContent, setBlogContent] = useState(blog.blog_content);
+  const [blogContent, setBlogContent] = useState(data && data.blog_content ? data.blog_content :blog.blog_content);
+  const navigate = useNavigate()
 
   const prevBlogContent = blog.blog_content;
   const prevCoverImage = `${process.env.REACT_APP_API_URL}/${blog.image_url}`;
   const prevTitle = blog.blog_title;
+
 
  
   const handleButtonClick = () => {
@@ -365,7 +367,7 @@ function EditBlog() {
         title: 'Success',
         text: 'Blog saved as draft successfully!',
       }).then(() => {
-        console.log("dRAFT SAVED")
+        navigate("/author/drafts")
       });
 
       setTitle('');

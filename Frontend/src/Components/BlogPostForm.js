@@ -16,11 +16,11 @@ function BlogPostForm() {
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
   const [tags, setTags] = useState([]);
-  const [coverImage, setCoverImage] = useState(data.image ? data.image : null);
-  const [image , setImage] = useState(data.image ? data.image : null);
-  const [title, setTitle] = useState(data.title ? data.title : '');
+  const [coverImage, setCoverImage] = useState(data && data.image ? data.image : null);
+  const [image , setImage] = useState(data && data.image ? data.image : null);
+  const [title, setTitle] = useState(data && data.title ? data.title : '');
   const fileInputRef = useRef(null); 
-  const [blogContent, setBlogContent] = useState(data.blog_content ? data.blog_content : '');
+  const [blogContent, setBlogContent] = useState(data && data.blog_content ? data.blog_content : '');
   const prevBlogContent = ''
   const prevCoverImage = null;
   const prevTitle = ''
