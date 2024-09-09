@@ -192,10 +192,15 @@ function BlogPostForm() {
                  
                 <div style={{ width: "70vw", backgroundColor: "white" }} className='p-4 shadow-xl rounded-xl mx-auto border-solid'>
                 
+                <div className='flex justify-end '>
 
-              <Link to={`/author/blogs/preview`} state={{  blog , image , title , blogContent }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
+                <Link to={`/author/blogs/preview`} state={{  blog , image , title , blogContent }} className="btn  text-black py-2 px-4 rounded">
                     Preview
                   </Link>
+
+                </div>
+
+             
                   <form onSubmit={handleSubmit}>
                     <div  >
                       {/* Cover Image */}
@@ -286,10 +291,12 @@ function BlogPostForm() {
                         className="text-black font-semibold py-2 px-4 rounded-lg"
                         type="button"
                         onClick = {() => {
-
-                          setTitle(prevTitle) ;
-                          setBlogContent(prevBlogContent);
-                          setCoverImage(prevCoverImage);
+                          if(window.confirm("Do you want to revert changes ? ")){
+                            setTitle(prevTitle) ;
+                            setBlogContent(prevBlogContent);
+                            setCoverImage(prevCoverImage);
+                          }
+                         
                         }
                       }
                       >

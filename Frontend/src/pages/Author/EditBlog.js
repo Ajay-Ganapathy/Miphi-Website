@@ -394,15 +394,19 @@ function EditBlog() {
             <div className="col-span-12 mt-8">
               <div className='bg-gray-100 flex flex-col justify-center items-center'>
 
-              <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
-                    Edit
-                  </Link>
+              
 
-              <Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
-                    Preview
-                  </Link>
+            
+              
                 
                 <div style={{ width: "70vw", backgroundColor: "white" }} className='p-4 shadow-xl rounded-xl mx-auto border-solid'>
+                <div className='flex justify-end'>
+
+<Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent }} className="btn  text-black py-2 px-4 rounded">
+    Preview
+  </Link>
+
+</div>
                   <form onSubmit={handleSubmit}>
                     <div  >
                     

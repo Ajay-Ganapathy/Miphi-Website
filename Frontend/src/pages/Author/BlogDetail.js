@@ -38,15 +38,19 @@ const BlogDetail = () => {
                             {blog.blog_title}
                         </h1>
                     <div>
+                        {
 
+                        blog.image_url &&
                         <div className="mb-4 md:mb-0 w-full lg:w-3/4  lg:ml-0 relative" style={{ height: '24em' }}>
                             <div className="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg shadow-lg max-w-3xl" style={{ backgroundImage: 'linear-gradient(180deg,transparent,rgba(0,0,0,.7))' }}></div>
-                            <img
+                           <img
                                 src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`}
                                 className="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg shadow-lg max-w-3xl "
                                 alt="Blog cover"
                             />
                         </div>
+
+                        }
                         <div className="mt-6">
                             <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} state = {{user}} />
                         </div>
