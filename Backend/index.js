@@ -345,6 +345,45 @@ app.get('/blogs/count', async (req, res) => {
   }
 });
 
+
+// Route to get specific blog count 
+
+
+app.get('/blogs/count/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    // Use parameterized queries to prevent SQL injection
+    const query = `
+      SELECT 
+        COUNT(*) AS total_count,
+        SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS pending_count,
+        SUM(CASE WHEN status = 'Accept' THEN 1 ELSE 0 END) AS accepted_count,
+        SUM(CASE WHEN status = 'Reject' THEN 1 ELSE 0 END) AS rejected_count,
+        SUM(CASE WHEN status = 'Reverted' THEN 1 ELSE 0 END) AS reverted_count
+      FROM blogs
+      WHERE deleted_at IS NULL AND id = ?
+    `;
+
+    const [results] = await db.execute(query, [id]);
+
+    // Log results for debugging
+    console.log(results);
+
+    res.json({
+      total: results[0].total_count,
+      pending: results[0].pending_count,
+      accept: results[0].accepted_count,
+      reject: results[0].rejected_count,
+      reverted: results[0].reverted_count
+    });
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // Route to get a single blog
 
 app.get("/blogs/:id", async (req, res) => {

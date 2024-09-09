@@ -13,12 +13,21 @@ import EditProfilePage from './EditProfilePage'
 import BlogPostForm from '../../Components/BlogPostForm'
 import Draft from './Draft'
 import Preview from './Preview'
+import PendingBlogs from './PendingBlogs'
+import RejectedBlogs from './RejectedBlogs'
+import RevertedBlogs from './RevertedBlogs'
+import ApprovedBlogs from './ApprovedBlogs'
 const Base = (props) => {
 
   const content = [
     ["Submit Blog" , "/author/submitblog"] ,
    ["Dashboard" , "/author"],
    ["Profile" , "/author/profile"] ,
+   ["Drafts" , "/author/drafts"] ,
+   ["Reverted Blogs " , "/author/reverted"] ,
+   ["Rejected Blogs " , "/author/rejected"] ,
+   ["Pending Blogs " , "/author/pending"],
+   ["Approved Blogs " , "/author/approved"],
    ["Drafts" , "/author/drafts"]
     
  ]
@@ -50,6 +59,10 @@ const Base = (props) => {
     <Route path = "/profile/edit" element = {<EditProfilePage />} />
     <Route path="/posts" element={<BlogPostForm />} />
     <Route path="/drafts" element={<Draft />} />
+    <Route path="/pending" element={<PendingBlogs />} />
+    <Route path="/rejected" element={<RejectedBlogs />} />
+    <Route path="/reverted" element={<RevertedBlogs />} />
+    <Route path="/approved" element={<ApprovedBlogs />} />
     <Route path="/blogs/preview" element={<Preview />} />
     
   </Routes>

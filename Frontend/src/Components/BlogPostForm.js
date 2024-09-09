@@ -259,9 +259,7 @@ function BlogPostForm() {
                       <br />
 
                       {/* Tags Input Container */}
-                      <div className="tags-container" style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px" }}>
-                        <TagsInput selectedTags={selectedTags} tags={['Nodejs', 'MongoDB']} />
-                      </div>
+                      <TagsInput selectedTags={selectedTags}  tags={['Nodejs', 'MongoDB']} />
 
                       <br />
 

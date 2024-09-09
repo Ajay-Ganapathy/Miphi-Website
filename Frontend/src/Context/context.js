@@ -22,6 +22,7 @@ export function ContextProvider({children})
   const [draftedBlogs , setDraftedBlogs] = useState([]);
   const [blogs , setBlogs] = useState([]);
   const [count , setCount] = useState([]);
+  const [userCount , setUserCount] = useState([]);
 
 
   const [loading, setLoading] = useState(true);
@@ -112,7 +113,22 @@ const fetchCount = async () => {
     }
   }
 
+  const fetchUserCount = async (userId) => {
+    try{
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count/${userId}`);
+      console.log(response)
+     
+      setUserCount(response.data);
+      
 
-  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , draftedBlogs , count , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount , fetchUserBlogs};
+    }catch(error){
+      console.log("Error occured " , error);
+      setError("Error Fetching Count ! ");
+    }
+  }
+
+
+
+  const value = {user , blogs , approvedBlogs , rejectedBlogs , revertedBlogs , pendingBlogs , draftedBlogs , fetchUserCount, count , userCount , setCount, setApprovedBlogs , setPendingBlogs , setRevertedBlogs , setRejectedBlogs , fetchBlogs , fetchCount , fetchUserBlogs};
   return <AddContext.Provider value = {value} >{children}</AddContext.Provider>
 }
