@@ -52,7 +52,7 @@ const BlogDetail = () => {
 
                         }
                         <div className="mt-6">
-                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} state = {{user}} />
+                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} state = {{user}} />
                         </div>
 
                     </div>
