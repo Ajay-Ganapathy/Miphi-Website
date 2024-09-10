@@ -307,6 +307,7 @@ function EditBlog() {
     addSrcToImages(blogContent)
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
+    formData.append('tags', JSON.stringify(tags));
     if (coverImage) {
       formData.append('image_url', coverImage);
     }
@@ -347,6 +348,7 @@ function EditBlog() {
     formData.append('blog_title', title);
     formData.append('blog_content', blogContent);
     formData.append('status', 'Draft');
+    formData.append('tags', JSON.stringify(tags));
     if (coverImage) {
       formData.append('image_url', coverImage);
     }
@@ -468,7 +470,7 @@ function EditBlog() {
 
                       {/* Tags Input Container */}
                       <div className= "tags-container" style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px" }}>
-                        <TagsInput selectedTags={selectedTags} tags={['Nodejs', 'MongoDB']} />
+                        <TagsInput selectedTags={selectedTags} setTags = {setTags} />
                       </div>
 
                       <br />
