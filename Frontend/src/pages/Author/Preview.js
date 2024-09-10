@@ -41,7 +41,7 @@ const Preview = () => {
     return (
         <div >
           
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" style = {{height : "90vh"}}>
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" >
                     <div className='flex justify-end'>
 
                     {

@@ -7,9 +7,12 @@ import TextEditor from './TextEditor';
 import { useLocalContext } from '../Context/context';
 import styles from "./BlogPostForm.modules.css";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import './tagsinput.modules.css'
 
 
 const MySwal = withReactContent(Swal);
+
+ 
 
 function BlogPostForm() {
   const location  = useLocation();
@@ -25,6 +28,10 @@ function BlogPostForm() {
   const prevBlogContent = ''
   const prevCoverImage = null;
   const prevTitle = ''
+
+
+
+
  
   
  const navigate = useNavigate();
@@ -103,6 +110,8 @@ function BlogPostForm() {
     addSrcToImages(blogContent)
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
+    formData.append('tags', JSON.stringify(tags));
+  console.log(tags)
     if (coverImage) {
       formData.append('image_url', coverImage);
     }
@@ -147,6 +156,7 @@ function BlogPostForm() {
       formData.append('image_url', coverImage);
     }
     formData.append('author_id', user.id);
+    formData.append('tags', JSON.stringify(tags));
     console.log(formData);
 
     try {
@@ -179,6 +189,9 @@ function BlogPostForm() {
       });
     }
   }
+
+  
+
 
   return (
     <main className="">
@@ -259,7 +272,7 @@ function BlogPostForm() {
                       <br />
 
                       {/* Tags Input Container */}
-                      <TagsInput selectedTags={selectedTags}  tags={['Nodejs', 'MongoDB']} />
+                      <TagsInput selectedTags={selectedTags}  tags={['Nodejs', 'MongoDB']} setTags = {setTags} />
 
                       <br />
 

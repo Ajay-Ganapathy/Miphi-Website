@@ -55,6 +55,48 @@ const profile_upload = multer({
   })
 });
 
+
+// Assuming you're using MySQL with a library like 'mysql2' or 'sequelize'
+
+// Insert blog into 'blogs' table
+const insertBlog = async (blogData, tags) => {
+  const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
+
+  // Insert the blog into the 'blogs' table
+  const [blogResult] = await db.execute(
+      `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url, author_id) 
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [author_name, blog_title, blog_content, status, image_url, author_id]
+  );
+  
+  const blogId = blogResult.insertId; // Get the new blog's ID
+
+  // Insert tags into the 'tags' table if they don't exist and link them to the blog
+  for (const tag of tags) {
+    const [tagResult] = await db.execute(
+        `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
+        [tag]
+    );
+    const tagId = tagResult.insertId;
+
+    // Insert mapping into 'blog_tags' table if it doesn't exist
+    await db.execute(
+        `INSERT INTO blog_tags (blog_id, tag_id) 
+         SELECT ?, ? FROM DUAL 
+         WHERE NOT EXISTS (
+            SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
+         )`,
+        [blogId, tagId, blogId, tagId]
+    );
+}
+
+  // Return the inserted blog ID and image URL
+  return {
+      id: blogId,
+      image: image_url
+  };
+};
+
 // Set up MySQL connection using promises
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -284,29 +326,58 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
   },
 }) }).single('image_url'), async (req, res) => {
   try {
-    const { author_name, blog_title, blog_content, status , author_id } = req.body;
+    const { author_name, blog_title, blog_content, status, author_id, tags } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
-    console.log(req.body , image_url)
 
-    const query = `INSERT INTO blogs (author_name, blog_title, blog_content, status, image_url , author_id) VALUES (?, ?, ?, ?, ? , ?)`;
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url , author_id]);
+    // Construct blogData object
+    const blogData = {
+      author_name,
+      blog_title,
+      blog_content,
+      status,
+      image_url,
+      author_id
+    };
 
-    res.status(201).json({ id: results.insertId, image: image_url });
+    // Convert tags from string (if coming as JSON string) to an array
+    const tagsArray = Array.isArray(tags) ? tags : JSON.parse(tags);
+    
+    console.log(blogData)
+    // Insert blog and handle tags
+    const result = await insertBlog(blogData, tagsArray);
+
+    res.status(201).json(result);
   } catch (err) {
     console.error('Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
+
 // Route to get all blogs
 app.get('/blogs', async (req, res) => {
   try {
     const query = `SELECT * FROM blogs WHERE deleted_at IS NULL`;
+    
     const [results] = await db.execute(query);
 
     res.json({ blogs: results });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/blogs/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const query = `SELECT * FROM blogs WHERE id = ?`;
+    const [results] = await db.execute(query, [id] ) 
+      res.json({ blog: results[0] });
+  
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -336,7 +407,7 @@ app.get('/blogs/count', async (req, res) => {
     const [results1] = await db.execute(q1);
     const [results2] = await db.execute(q2);
     const [results3] = await db.execute(q3);
-    console.log(results , results1 , results2 , results3 );
+   // console.log(results , results1 , results2 , results3 );
 
     res.json({ total : results[0].total_count  , pending : results1[0].pending_count , accept : results2[0].accepted_count , reject : results3[0].rejected_count });
   } catch (err) {
@@ -351,70 +422,32 @@ app.get('/blogs/count', async (req, res) => {
 
 app.get('/blogs/count/:id', async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = req.params.id;
+    console.log(id)
+    const query = `SELECT COUNT(*) AS total_count FROM blogs WHERE deleted_at IS NULL `;
+    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending" AND deleted_at IS NULL AND id = ?`;
+    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept" AND deleted_at IS NULL AND id = ?`;
+    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject" AND deleted_at IS NULL AND id = ?`;
 
-    // Use parameterized queries to prevent SQL injection
-    const query = `
-      SELECT 
-        COUNT(*) AS total_count,
-        SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS pending_count,
-        SUM(CASE WHEN status = 'Accept' THEN 1 ELSE 0 END) AS accepted_count,
-        SUM(CASE WHEN status = 'Reject' THEN 1 ELSE 0 END) AS rejected_count,
-        SUM(CASE WHEN status = 'Reverted' THEN 1 ELSE 0 END) AS reverted_count
-      FROM blogs
-      WHERE deleted_at IS NULL AND id = ?
-    `;
 
-    const [results] = await db.execute(query, [id]);
+    const results = await db.execute(query);
+    const [results1] = await db.execute(q1 , [id]);
+    const [results2] = await db.execute(q2, [id]) ;
+    const [results3] = await db.execute(q3 , [id]);
+    console.log(results , results1 , results2 , results3 );
 
-    // Log results for debugging
-    console.log(results);
-
-    res.json({
-      total: results[0].total_count,
-      pending: results[0].pending_count,
-      accept: results[0].accepted_count,
-      reject: results[0].rejected_count,
-      reverted: results[0].reverted_count
-    });
+    res.json({ total : results[0].total_count  , pending : results1[0].pending_count , accept : results2[0].accepted_count , reject : results3[0].rejected_count });
   } catch (err) {
-    console.error(err); // Log the error for debugging
+    
     res.status(500).json({ error: err.message });
   }
 });
 
 
-// Route to get a single blog
 
-app.get("/blogs/:id", async (req, res) => {
-  const id = req.params.id;
 
-  // Validate ID
-  if (!id || isNaN(id)) {
-    return res.status(400).json({ error: "Invalid blog ID" });
-  }
 
-  try {
-    const query = `SELECT * FROM blogs WHERE id = ?`;
-    db.execute(query, [id], (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: "Error fetching blog" });
-      }
 
-      // Check if blog was found
-      if (results.length === 0) {
-        return res.status(404).json({ error: "Blog not found" });
-      }
-
-      // Return the blog data
-      res.json({ blog: results[0] });
-    });
-  } catch (err) {
-    console.error('Server error:', err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
 
 // Route to update Blog
 
@@ -604,6 +637,68 @@ app.put('/blogs/:id/restore', async (req, res) => {
   }
 });
 
+// Get blogs by tag name
+
+app.get('/blogs/tag/:tagName', async (req, res) => {
+  try {
+    const tagName = req.params.tagName;
+
+    const query = `
+      SELECT b.id, b.blog_title, b.author_name, b.blog_content, b.image_url
+      FROM blogs b
+      JOIN blog_tags bt ON b.id = bt.blog_id
+      JOIN tags t ON bt.tag_id = t.id
+      WHERE t.name = ?;
+    `;
+
+    const [blogs] = await db.execute(query, [tagName]);
+
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+// Get tags of each blog
+
+app.get('/blogs/tags/:blogId', async (req, res) => {
+  try {
+    const blogId = req.params.blogId;
+
+    // Debugging: Log the incoming blogId
+    console.log('Fetching tags for blogId:', blogId);
+
+    // SQL Query to fetch tags
+    const query = `
+      SELECT t.name 
+      FROM blogs b 
+      JOIN blog_tags bt ON b.id = bt.blog_id 
+      JOIN tags t ON bt.tag_id = t.id 
+      WHERE bt.blog_id = ?`;
+
+    // Execute the query
+    const [tags] = await db.execute(query, [blogId]);
+
+    // Debugging: Log the fetched tags
+    console.log('Tags found:', tags);
+
+    // Check if any tags were found
+    if (tags.length === 0) {
+      return res.status(404).json({ message: 'No tags found for this blog.' });
+    }
+
+    // Return the tags as JSON
+    res.json(tags);
+  } catch (err) {
+    // Log the error to console for debugging
+    console.error('Error fetching tags:', err.message);
+
+    // Return error response
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Event listener
 

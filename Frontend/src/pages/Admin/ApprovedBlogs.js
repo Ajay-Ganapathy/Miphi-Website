@@ -40,7 +40,7 @@ const ApprovedBlogs = () => {
   
   const [error , setError] = useState('')
 
-  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count } = useLocalContext();
+  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count , fetchUserCount } = useLocalContext();
 
   const navigate = useNavigate();
 
@@ -51,6 +51,7 @@ const ApprovedBlogs = () => {
 
   useEffect(() => {
     fetchCount();
+  
     
   }, []);
 
