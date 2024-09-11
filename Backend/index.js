@@ -97,6 +97,50 @@ const insertBlog = async (blogData, tags) => {
   };
 };
 
+const updateBlog = async (blogId, blogData, tags) => {
+  const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
+
+  // Update the blog in the 'blogs' table
+  await db.execute(
+    `UPDATE blogs 
+     SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
+     WHERE id = ?`,
+    [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
+  );
+
+  // First, clear all existing tag links for this blog in 'blog_tags'
+  await db.execute(
+    `DELETE FROM blog_tags WHERE blog_id = ?`,
+    [blogId]
+  );
+
+  // Insert tags into the 'tags' table if they don't exist and link them to the blog
+  for (const tag of tags) {
+    const [tagResult] = await db.execute(
+      `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
+      [tag]
+    );
+    const tagId = tagResult.insertId;
+
+    // Insert mapping into 'blog_tags' table if it doesn't exist
+    await db.execute(
+      `INSERT INTO blog_tags (blog_id, tag_id) 
+       SELECT ?, ? FROM DUAL 
+       WHERE NOT EXISTS (
+          SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
+       )`,
+      [blogId, tagId, blogId, tagId]
+    );
+  }
+
+  // Return the updated blog ID and image URL
+  return {
+    id: blogId,
+    image: image_url
+  };
+};
+
+
 // Set up MySQL connection using promises
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -451,7 +495,7 @@ app.get('/blogs/count/:id', async (req, res) => {
 
 // Route to update Blog
 
-app.put('/blogs/:id/', multer({ 
+app.put('/blogs/:id', multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'uploads/');
@@ -459,49 +503,33 @@ app.put('/blogs/:id/', multer({
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + path.extname(file.originalname);
       cb(null, file.fieldname + '-' + uniqueSuffix);
-    },
-  }) 
+    }
+  })
 }).single('image_url'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const { author_name, blog_title, blog_content, status, author_id } = req.body;
+    const blogId = req.params.id;
+    const { author_name, blog_title, blog_content, status, author_id, tags } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
 
-    // Construct the update query
+ 
+    const blogData = {
+      author_name,
+      blog_title,
+      blog_content,
+      status,
+      image_url,
+      author_id
+    };
 
-    if(image_url != ''){
-      const query = `
-      UPDATE blogs
-      SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?
-      WHERE id = ?
-    `;
+  
+    const tagsArray = Array.isArray(tags) ? tags : JSON.parse(tags);
     
-    // Execute the update query
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status, image_url, author_id, id]);
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ error: 'Blog not found' });
-    }
+    console.log(`Updating blog with ID: ${blogId}`, blogData);
 
-    res.status(200).json({ id: id, image: image_url });
+ 
+    const result = await updateBlog(blogId, blogData, tagsArray);
 
-    }else{
-      const query = `
-      UPDATE blogs
-      SET author_name = ?, blog_title = ?, blog_content = ?, status = ? , author_id = ?
-      WHERE id = ?
-    `;
-    
-    // Execute the update query
-    const [results] = await db.execute(query, [author_name, blog_title, blog_content, status , author_id, id]);
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ error: 'Blog not found' });
-    }
-
-    res.status(200).json({ id: id, image: image_url });
-    }
-    
-
-    
+    res.status(200).json(result);
   } catch (err) {
     console.error('Error:', err.message);
     res.status(500).json({ error: err.message });

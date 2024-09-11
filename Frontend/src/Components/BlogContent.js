@@ -129,7 +129,15 @@ const BlogContent = ({ blogContent, author_name , blogId }) => {
                         ))}
                     </ul>
 
-                    {
+                  
+                </nav>
+
+                <div className="mt-4 mb-12 text-center lg:text-left">
+    <hr className="my-4" />
+    <h4 className="text-lg font-semibold mb-2"> Tags </h4>
+    <div className="flex flex-column items-center space-x-4"> 
+       
+        {
                         tags.map((tag) => {
                             return(
                                 <>
@@ -140,14 +148,17 @@ const BlogContent = ({ blogContent, author_name , blogId }) => {
                           
                         })
                     }
-                </nav>
+    </div>
+    </div>
 
-                {/* Author Info at the Bottom */}
+              
+
+           
                 <div className="mt-4 mb-12 text-center lg:text-left">
     <hr className="my-4" />
     <h4 className="text-lg font-semibold mb-2">Author</h4>
-    <div className="flex items-center space-x-4">  {/* Align image and text */}
-        <h3 className="text-xl font-medium">{author_name}</h3>  {/* Adjust font size */}
+    <div className="flex items-center space-x-4">  
+        <h3 className="text-xl font-medium">{author_name}</h3> 
         <img
             src={`${process.env.REACT_APP_API_URL}/${user.profile_img}`}
             alt=""

@@ -29,9 +29,9 @@ const BlogDetail = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div >
+        <div className = 'min-h-screen'>
           
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100" >
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100  min-h-screen" >
                 <div className="max-w-screen-xl mx-3 px-4 lg:px-0 ">
                     <main className="mt-12">
                     <h1 className="text-center lg:text-left mb-8 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800">

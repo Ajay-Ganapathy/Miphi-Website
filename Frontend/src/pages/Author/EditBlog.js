@@ -308,7 +308,7 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
     formData.append('tags', JSON.stringify(tags));
-    if (coverImage) {
+    if (coverImage && coverImage != ' ') {
       formData.append('image_url', coverImage);
     }
     formData.append('author_id', user.id);
@@ -349,7 +349,7 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Draft');
     formData.append('tags', JSON.stringify(tags));
-    if (coverImage) {
+    if (coverImage  && coverImage != ' ') {
       formData.append('image_url', coverImage);
     }
     formData.append('author_id', user.id);

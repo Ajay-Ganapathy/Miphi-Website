@@ -334,8 +334,10 @@ const PendingBlogs = () => {
             
              
               <div className={styles.boxBorder+" block p-12 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
+               {
+                 blog.image_url &&  <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" className="w-full h-auto rounded-t-xl" />
+               }
                
-                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" className="w-full h-auto rounded-t-xl" />
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>
