@@ -248,23 +248,36 @@ function EditBlog() {
   const prevTitle = blog.blog_title;
 
 
-  const fetchTags = async (id) => {
-    try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
-      
-        setTags(response.data);
-        
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        setError('Error fetching blogs');
-    } finally {
-        setLoading(false);
-    }
-  };
-
+ 
   useEffect(() => {
+    // This function will only be called once when the component mounts
+    const fetchTags = async (id) => {
+      try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+        
+          setTags(response.data);
+          
+      } catch (error) {
+          console.error('Error fetching blogs:', error);
+          setError('Error fetching blogs');
+      } finally {
+          setLoading(false);
+         
+      }
+    };
+  
     fetchTags(blog.id);
-}, [])
+
+    // Optionally, you can return a cleanup function if needed
+    return () => {
+      // Cleanup logic if needed
+    };
+  }, []);
+  
+
+ 
+   
+
 
 
  
@@ -493,6 +506,7 @@ function EditBlog() {
                       <br />
 
                       {/* Tags Input Container */}
+                   
                       <div className= "tags-container" style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px" }}>
                         <TagsInput selectedTags={selectedTags} setTags = {setTags} tags = {tags} />
                       </div>

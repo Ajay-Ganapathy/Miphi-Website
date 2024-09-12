@@ -1,35 +1,38 @@
-import React from 'react';
-import './tagsinput.modules.css'
+import React, { useState, useEffect } from 'react';
+import './tagsinput.modules.css';
 
 const TagsInput = props => {
-  const [tags, setTags] = React.useState([]);
+  const [tags, setTags] = useState([]);
 
-  props.tags.map((tag) => {
-    tags.push(tag.name)
-  })
-  
+  // Use useEffect to handle initial prop changes
+  useEffect(() => {
+    // Map props.tags to an array of tag names
+    const initialTags = props.tags.map(tag => tag.name);
+    setTags(initialTags);
+  }, [props.tags]); // Depend on props.tags to update tags when props.tags change
+
   const removeTags = indexToRemove => {
     setTags([...tags.filter((_, index) => index !== indexToRemove)]);
   };
 
   const addTags = event => {
-    if (event.target.value !== "") {
-      setTags([...tags, event.target.value]);
-      props.setTags([...tags, event.target.value])
-      props.selectedTags([...tags, event.target.value]);
+    const newTag = event.target.value.trim();
+    if (newTag !== "") {
+      setTags(tags => [...tags, newTag]);
+      // Update parent components or other handlers
+      props.setTags(tags => [...tags, newTag]);
+      props.selectedTags(tags => [...tags, newTag]);
       event.target.value = "";
     }
   };
 
   return (
-    <div className="tags-input" >
+    <div className="tags-input">
       <ul id="tags">
         {tags.map((tag, index) => (
           <li key={index} className="tag">
             <span className='tag-title'>{tag}</span>
-            <span className='tag-close-icon'
-              onClick={() => removeTags(index)}
-            >
+            <span className='tag-close-icon' onClick={() => removeTags(index)}>
               x
             </span>
           </li>
