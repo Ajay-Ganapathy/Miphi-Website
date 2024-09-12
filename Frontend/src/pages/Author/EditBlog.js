@@ -212,7 +212,7 @@
 
 // export default EditBlog
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
@@ -225,11 +225,15 @@ import { useLocation } from 'react-router-dom';
 const MySwal = withReactContent(Swal);
 
 function EditBlog() {
+
+  const [tags, setTags] = useState([]);
   const location = useLocation();
-  const {blog , data } = location.state || {}
+  const {blog , data , tag} = location.state || {}
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState([]);
+ 
+  const [error , setError] = useState([]);
+  const [loading , setLoading] = useState([])
   const [coverImage, setCoverImage] = useState(data &&  data.image && data.image != ' '  ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
   const [image , setImage] = useState(data  &&  data.image && data.image != ' ' ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
   const [title, setTitle] = useState(data && data.title ? data.title : blog.blog_title);
@@ -238,18 +242,39 @@ function EditBlog() {
   const [blogContent, setBlogContent] = useState(data && data.blog_content ? data.blog_content :blog.blog_content);
   const navigate = useNavigate()
 
+  console.log(tag)
   const prevBlogContent = blog.blog_content;
   const prevCoverImage = `${process.env.REACT_APP_API_URL}/${blog.image_url}`;
   const prevTitle = blog.blog_title;
 
 
+  const fetchTags = async (id) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+      
+        setTags(response.data);
+        
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setError('Error fetching blogs');
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTags(blog.id);
+}, [])
+
+
  
+
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
   const selectedTags = tags => {
-    console.log(tags);
+    //console.log(tags.name);
   };
 
 
@@ -388,8 +413,7 @@ function EditBlog() {
 
   return (
     <main className="">
-      {console.log(data)}
-      
+     
       <div className="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100"
         style={{ height: coverImage ? "auto" : "100vh" }}>
         <div className="grid grid-cols-12 gap-6">
@@ -470,7 +494,7 @@ function EditBlog() {
 
                       {/* Tags Input Container */}
                       <div className= "tags-container" style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px" }}>
-                        <TagsInput selectedTags={selectedTags} setTags = {setTags} />
+                        <TagsInput selectedTags={selectedTags} setTags = {setTags} tags = {tags} />
                       </div>
 
                       <br />

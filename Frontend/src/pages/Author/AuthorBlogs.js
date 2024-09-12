@@ -259,8 +259,28 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+    const [tag , setTags] = useState([])
 
     const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setPendingBlogs, user , fetchUserBlogs} = useLocalContext();
+
+    const fetchTags = async (id) => {
+      try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+        
+          setTags(response.data);
+          
+      } catch (error) {
+          console.error('Error fetching blogs:', error);
+          setError('Error fetching blogs');
+      } finally {
+          setLoading(false);
+      }
+    };
+
+    useEffect(() => {
+          fetchTags(user.id);
+    }, [])
+
 
    
    
@@ -465,7 +485,7 @@ const Home = () => {
                     Read More
                   </Link>
                   
-                  <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
+                  <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog , tag }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">
                     Edit
                   </Link>
 

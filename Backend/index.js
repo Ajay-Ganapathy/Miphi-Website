@@ -16,8 +16,8 @@ const JWT_SECRET = 'SecretToken_Miphi@12';
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '200mb' }));
+app.use(express.urlencoded({ limit: '200mb', extended: true }));
 app.use(bodyParser.json());
 
 // Ensure /uploads directory exists
@@ -55,6 +55,26 @@ const profile_upload = multer({
   })
 });
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Set the upload directory
+    const uploadDir = path.join(__dirname, 'uploads/blogs');
+    
+    // Ensure the directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    // Use the original file name
+    cb(null, file.originalname);
+  }
+});
+
+
+const uploadimg = multer({ storage });
 
 // Assuming you're using MySQL with a library like 'mysql2' or 'sequelize'
 
@@ -154,6 +174,18 @@ console.log(db)
 // Route to handle Register
 
 const jwt = require('jsonwebtoken'); 
+
+app.post('/upload-images', uploadimg.array('images[]'), (req, res) => {
+  // Array to hold image URLs
+  const imageUrls = req.files.map(file => `/blogs/${file.filename}`);
+
+  // Send response with image URLs
+  res.json({
+    success: true,
+    imageUrls: imageUrls
+  });
+});
+
 
 app.get("/" , (req,res) => {
   res.send("hello")
@@ -745,6 +777,7 @@ cron.schedule('0 0 * * *', () => {
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join('uploads')));
+app.use('/uploads/blogs', express.static(path.join('uploads')));
 app.use('/profile', express.static(path.join(__dirname, 'profile')));
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

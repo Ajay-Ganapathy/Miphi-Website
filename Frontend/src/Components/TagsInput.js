@@ -3,6 +3,10 @@ import './tagsinput.modules.css'
 
 const TagsInput = props => {
   const [tags, setTags] = React.useState([]);
+
+  props.tags.map((tag) => {
+    tags.push(tag.name)
+  })
   
   const removeTags = indexToRemove => {
     setTags([...tags.filter((_, index) => index !== indexToRemove)]);
