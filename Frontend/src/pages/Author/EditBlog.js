@@ -226,9 +226,10 @@ const MySwal = withReactContent(Swal);
 
 function EditBlog() {
 
-  const [tags, setTags] = useState([]);
+ 
   const location = useLocation();
-  const {blog , data , tag} = location.state || {}
+  const {blog , data } = location.state || {}
+  const [tags, setTags] = useState( location.state.tags || []);
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
 
@@ -259,8 +260,10 @@ function EditBlog() {
     const fetchTags = async (id) => {
       try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
-        
-          setTags(response.data);
+          if(tags.length == 0 ){
+            setTags(response.data.map((data) => data.name));
+          }
+         
           
       } catch (error) {
           console.error('Error fetching blogs:', error);
@@ -448,7 +451,7 @@ function EditBlog() {
                 <div style={{ width: "70vw", backgroundColor: "white" }} className='p-4 shadow-xl rounded-xl mx-auto border-solid'>
                 <div className='flex justify-end'>
 
-<Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent }} className="btn  text-black py-2 px-4 rounded">
+<Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent , tags  }} className="btn  text-black py-2 px-4 rounded">
     Preview
   </Link>
 
@@ -457,7 +460,8 @@ function EditBlog() {
                     <div  >
                     
                       {/* Cover Image */}
-                      {console.log(image)}
+                      {console.log(tags)}
+                     
                       { (!image ||   image ===  ' ') && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
                           Add a Cover Image
@@ -514,7 +518,8 @@ function EditBlog() {
                       {/* Tags Input Container */}
                    
                       <div className= "tags-container" style={{ backgroundColor: "white", padding: "20px", borderRadius: "10px" }}>
-                        <TagsInput selectedTags={selectedTags} setTags = {setTags} tags = {tags} />
+                      <TagsInput selectedTags={selectedTags}  tags={tags} setTags = {setTags} />
+
                       </div>
 
                       <br />

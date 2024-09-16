@@ -2,28 +2,26 @@ import React, { useState, useEffect } from 'react';
 import './tagsinput.modules.css';
 
 const TagsInput = props => {
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState([...props.tags]);
 
-  // Use useEffect to handle initial prop changes
   useEffect(() => {
-    // Map props.tags to an array of tag names
-    const initialTags = props.tags.map(tag => tag.name);
-    props.setTags(initialTags);
-  }, [props.tags]); // Depend on props.tags to update tags when props.tags change
+    setTags([...props.tags]);
+  }, [props.tags]);
 
   const removeTags = indexToRemove => {
-    props.setTags([...tags.filter((_, index) => index !== indexToRemove)]);
+    const updatedTags = tags.filter((_, index) => index !== indexToRemove);
+    setTags(updatedTags);
+    props.setTags(updatedTags); 
   };
 
-  //console.log(tags)
   const addTags = event => {
     const newTag = event.target.value.trim();
     if (newTag !== "") {
-      setTags(tags => [...tags, newTag]);
-      // Update parent components or other handlers
-      props.setTags(tags => [...tags, newTag]);
-      props.selectedTags(tags => [...tags, newTag]);
-      event.target.value = "";
+      const updatedTags = [...tags, newTag];
+      setTags(updatedTags);
+      props.setTags(updatedTags); 
+      props.selectedTags(updatedTags);
+      event.target.value = ""; 
     }
   };
 
@@ -44,7 +42,7 @@ const TagsInput = props => {
         style={{ outline: "none" }}
         onKeyDown={event => {
           if (event.key === "Enter") {
-            event.preventDefault();  
+            event.preventDefault();
             addTags(event);
           }
         }}

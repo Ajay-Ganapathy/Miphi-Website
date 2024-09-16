@@ -24,29 +24,35 @@ const addIdToParagraphs = (html) => {
 
 
 const BlogContent = ({ blogContent, author_name , blogId }) => {
+    const location = useLocation();
 
     const [user, setUser] = useState({
         profile_img : ''
 });
+
+const tags = location.state || {}
+
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [tags , setTags] = useState([]);
+  const [tag , setTags] = useState(tags.tags.map((tag) => tag));
+  console.log(tag)
 
   
-  const fetchTags = async (id) => {
-      try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+//   const fetchTags = async (id) => {
+//       try {
+//           const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
         
-          setTags(response.data);
+//           setTags(response.data);
           
-      } catch (error) {
-          console.error('Error fetching blogs:', error);
-          setError('Error fetching blogs');
-      } finally {
-          setLoading(false);
-      }
-    };
+//       } catch (error) {
+//           console.error('Error fetching blogs:', error);
+//           setError('Error fetching blogs');
+//       } finally {
+//           setLoading(false);
+//       }
+//     };
   
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -89,11 +95,11 @@ const BlogContent = ({ blogContent, author_name , blogId }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [ids]);
 
-    useEffect(() => {
-        fetchTags(blogId)
-    }, []);
+    // useEffect(() => {
+    //     fetchTags(blogId)
+    // }, []);
 
-    const location = useLocation();
+   
     
 
     return (
@@ -138,10 +144,10 @@ const BlogContent = ({ blogContent, author_name , blogId }) => {
     <div className="flex flex-column items-center space-x-4"> 
        
         {
-                        tags.map((tag) => {
+                        tag.map((ta) => {
                             return(
                                 <>
-                                <h1><span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-2 mb-4 rounded dark:bg-green-900 dark:text-green-300">{tag.name}</span></h1> 
+                                <h1><span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-2 mb-4 rounded dark:bg-green-900 dark:text-green-300">{ta}</span></h1> 
                                 <br />
                                 </>
                             )

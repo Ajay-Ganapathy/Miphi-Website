@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const Preview = () => {
     const { id } = useParams();
     const location = useLocation();
-    const { blog , user , title , image , blogContent } = location.state || {};
+    const { blog , user , title , image , blogContent , tags } = location.state || {};
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -53,7 +53,7 @@ const Preview = () => {
                         :
 
                        
-                        <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog , data}} className="btn text-black py-2 px-4 rounded">
+                        <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog , data , tags}} className="btn text-black py-2 px-4 rounded">
                         Edit
 
                         { console.log(data) }
@@ -87,7 +87,7 @@ const Preview = () => {
                         </div>
 }
                         <div className="mt-6">
-                            <BlogContent blogContent={blogContent} author_name={blog.author_name} state = {{user}} />
+                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} tags = {tags} state = {{user}} />
                         </div>
 
                     </div>
