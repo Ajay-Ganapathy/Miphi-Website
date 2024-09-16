@@ -81,10 +81,10 @@ const fetchUserBlogs = async (userId) => {
 const fetchBlogs = async () => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
-        const filteredApproved = response.data.blogs.filter(blog => blog.status === 'Accept');
-        const filteredRejected = response.data.blogs.filter(blog =>  blog.status === 'Reject');
-        const filteredPending = response.data.blogs.filter(blog =>  blog.status === 'Pending');
-        const filteredReverted = response.data.blogs.filter(blog =>  blog.status === 'Revert');
+        const filteredApproved = response.data.blogs.filter(blog =>  (blog.status === 'Accept' && blog.deleted_at == null) );
+        const filteredRejected = response.data.blogs.filter(blog =>  (blog.status === 'Reject'  && blog.deleted_at == null));
+        const filteredPending = response.data.blogs.filter(blog =>  (blog.status === 'Pending'  && blog.deleted_at == null));
+        const filteredReverted = response.data.blogs.filter(blog =>  (blog.status === 'Revert'  && blog.deleted_at == null));
         setBlogs(response.data.blogs);
         setApprovedBlogs(filteredApproved);
         setRejectedBlogs(filteredRejected);
