@@ -212,7 +212,7 @@ const Table = (props) => {
                                         <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">{blog.author_name}</td>
                                         <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">{blog.blog_title}</td>
                                         <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                          <Link to={`/admin/blogs/${blog.id}`} state={{ blog , blogContent  }} className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                          <Link to={`/admin/blogs/${blog.id}`} state={{ blog  }} className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                             View Blog
                                           </Link>
                                         </td>

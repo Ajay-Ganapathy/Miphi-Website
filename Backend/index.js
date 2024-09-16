@@ -493,7 +493,7 @@ app.get('/blogs/count', async (req, res) => {
     const [results1] = await db.execute(q1);
     const [results2] = await db.execute(q2);
     const [results3] = await db.execute(q3);
-   // console.log(results , results1 , results2 , results3 );
+   console.log(results , results1 , results2 , results3 );
 
     res.json({ total : results[0].total_count  , pending : results1[0].pending_count , accept : results2[0].accepted_count , reject : results3[0].rejected_count });
   } catch (err) {
