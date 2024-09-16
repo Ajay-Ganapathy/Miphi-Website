@@ -8,13 +8,14 @@ const TagsInput = props => {
   useEffect(() => {
     // Map props.tags to an array of tag names
     const initialTags = props.tags.map(tag => tag.name);
-    setTags(initialTags);
+    props.setTags(initialTags);
   }, [props.tags]); // Depend on props.tags to update tags when props.tags change
 
   const removeTags = indexToRemove => {
-    setTags([...tags.filter((_, index) => index !== indexToRemove)]);
+    props.setTags([...tags.filter((_, index) => index !== indexToRemove)]);
   };
 
+  //console.log(tags)
   const addTags = event => {
     const newTag = event.target.value.trim();
     if (newTag !== "") {

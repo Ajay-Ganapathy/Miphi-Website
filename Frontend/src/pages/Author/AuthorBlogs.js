@@ -278,10 +278,11 @@ const Home = () => {
     };
 
     useEffect(() => {
-          fetchTags(user.id);
-    }, [])
+      fetchTags(user.id);
+}, [])
 
 
+   
    
    
 

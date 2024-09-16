@@ -335,8 +335,15 @@ const Draft = () => {
             
              
               <div className={styles.boxBorder+" block p-12 transition shadow-xl rounded-xl hover:shadow-pink-500/10 hover:border-pink-500/10"}>
+
+                {console.log(blog.image_url , blog.blog_title , blog.image_url == '' )}
                
-                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" Ariia img" className="w-full h-auto rounded-t-xl" />
+               {
+                
+                (blog.image_url == null || blog.image_url != '' )  &&
+                <img  src={`${process.env.REACT_APP_API_URL}/${blog.image_url}`} alt=" sample" className="w-full h-auto rounded-t-xl" />
+
+               }
                 <h3 className="mt-4 text-xl font-bold text-center text-indigo-600">
                 {blog.blog_title}
                 </h3>

@@ -345,7 +345,7 @@ function BlogPostForm() {
                     <div  >
                       {/* Cover Image */}
                       { console.log( image , title)}
-                      {!image || image === ' '  && (
+                      { (!image || image === ' ')  && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
                           Add a Cover Image
                         </button>
@@ -359,7 +359,7 @@ function BlogPostForm() {
                         accept="image/*"
                       />
 
-                      {image && image !== ' ' && (
+                      { (image && image !== ' ') && (
                         <div>
                           <div className='flex flex-row'>
                             <img src={image} alt="Cover Preview" height="200" width="200" />

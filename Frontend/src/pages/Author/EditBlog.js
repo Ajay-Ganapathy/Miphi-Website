@@ -231,20 +231,25 @@ function EditBlog() {
   const {blog , data , tag} = location.state || {}
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
+
+
  
   const [error , setError] = useState([]);
   const [loading , setLoading] = useState([])
-  const [coverImage, setCoverImage] = useState(data &&  data.image && data.image != ' '  ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
-  const [image , setImage] = useState(data  &&  data.image && data.image != ' ' ? data.image : `${process.env.REACT_APP_API_URL}/${blog.image_url}` );
-  const [title, setTitle] = useState(data && data.title ? data.title : blog.blog_title);
+  const [coverImage, setCoverImage] = useState(blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null);
+  const [image , setImage] = useState(blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null);
+  const [title, setTitle] = useState( blog.blog_title);
   const fileInputRef = useRef(null); 
 
-  const [blogContent, setBlogContent] = useState(data && data.blog_content ? data.blog_content :blog.blog_content);
+  const [blogContent, setBlogContent] = useState(blog.blog_content);
   const navigate = useNavigate()
 
-  console.log(tag)
+
   const prevBlogContent = blog.blog_content;
-  const prevCoverImage = `${process.env.REACT_APP_API_URL}/${blog.image_url}`;
+  let prevCoverImage = null;
+  if(blog.image_url != ' '){
+     prevCoverImage = `${process.env.REACT_APP_API_URL}/${blog.image_url}`;
+  }
   const prevTitle = blog.blog_title;
 
 
@@ -346,6 +351,7 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
     formData.append('tags', JSON.stringify(tags));
+    console.log(coverImage)
     if (coverImage && coverImage != ' ') {
       formData.append('image_url', coverImage);
     }
@@ -452,7 +458,7 @@ function EditBlog() {
                     
                       {/* Cover Image */}
                       {console.log(image)}
-                      { !image ||   image ===  ' ' && (
+                      { (!image ||   image ===  ' ') && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
                           Add a Cover Image
                         </button>
@@ -466,7 +472,7 @@ function EditBlog() {
                         accept="image/*"
                       />
 
-                      {image  &&   image !== ' '  && (
+                      { (image  &&   image !== ' ')  && (
                         <div>
                           
                           <div className='flex flex-row'>
