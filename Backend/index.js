@@ -121,12 +121,22 @@ const updateBlog = async (blogId, blogData, tags) => {
   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
 
   // Update the blog in the 'blogs' table
-  await db.execute(
-    `UPDATE blogs 
-     SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
-     WHERE id = ?`,
-    [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
-  );
+  if(image_url === ''){
+    await db.execute(
+      `UPDATE blogs 
+       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? 
+       WHERE id = ?`,
+      [author_name, blog_title, blog_content, status, author_id, blogId]
+    );
+  }else{
+    await db.execute(
+      `UPDATE blogs 
+       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
+       WHERE id = ?`,
+      [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
+    );
+  }
+ 
 
   // First, clear all existing tag links for this blog in 'blog_tags'
   await db.execute(

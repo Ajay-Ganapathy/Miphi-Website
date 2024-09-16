@@ -357,8 +357,8 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Pending');
     formData.append('tags', JSON.stringify(tags));
-    console.log(coverImage)
-    if (coverImage && coverImage != ' ') {
+    console.log(coverImage , prevCoverImage)
+    if (coverImage && coverImage != ' ' && coverImage != prevCoverImage) {
       formData.append('image_url', coverImage);
     }
     formData.append('author_id', user.id);
@@ -399,7 +399,7 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Draft');
     formData.append('tags', JSON.stringify(tags));
-    if (coverImage  && coverImage != ' ') {
+    if (coverImage && coverImage != ' ' && coverImage !== prevCoverImage) {
       formData.append('image_url', coverImage);
     }
     formData.append('author_id', user.id);
@@ -463,7 +463,7 @@ function EditBlog() {
                     <div  >
                     
                       {/* Cover Image */}
-                      {console.log(tags)}
+                      {console.log(coverImage === prevCoverImage)}
                      
                       { (!image ||   image ===  ' ') && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
