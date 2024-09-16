@@ -19,7 +19,7 @@ const Preview = () => {
         "blog_content" : blogContent ,
         "title" : title ,
         
-        "image" : image
+        "image" : !image ? ' ' : image
         
        
     }
@@ -29,6 +29,7 @@ const Preview = () => {
         if (!blog) {
             // Simulate a delay and setting error
             setLoading(false);
+            
             setError('Blog not found.');
         } else {
             setLoading(false);
@@ -40,14 +41,14 @@ const Preview = () => {
 
     return (
         <div >
-          
+          {console.log(tags)}
                 <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" >
                     <div className='flex justify-end'>
 
                     {
 
                         !blog.id ?
-                            <Link to={`/author/posts`} state={{ data }} className="btn  text-black  py-2 px-4 rounded">
+                            <Link to={`/author/posts`} state={{ data ,  tags }} className="btn  text-black  py-2 px-4 rounded">
                             Edit
                         </Link>
                         :

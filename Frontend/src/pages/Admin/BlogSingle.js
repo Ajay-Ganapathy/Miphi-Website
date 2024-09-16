@@ -51,6 +51,7 @@ const BlogSingle = () => {
 
     return (
         <div >
+            {console.log(blog)}
           
                 <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100" >
                 <div className="max-w-screen-xl mx-3 px-4 lg:px-0 ">
@@ -70,7 +71,8 @@ const BlogSingle = () => {
                         </div>
                         }
                         <div className="mt-6">
-                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} tags = {tag} state = {{user}} />
+                            {console.log(blog)}
+                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} profile_img = {blog.profile_img} blogId = {blog.id} tags = {tag} state = {{user}} />
                         </div>
 
                     </div>

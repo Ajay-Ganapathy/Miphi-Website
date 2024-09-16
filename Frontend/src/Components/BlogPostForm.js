@@ -20,7 +20,7 @@ function BlogPostForm() {
   const {data} = location.state || {}
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(location.state.tags || []);
   const [coverImage, setCoverImage] = useState(data && data.image ? data.image : null);
   const [image , setImage] = useState(data && data.image ? data.image : null);
   const [title, setTitle] = useState(data && data.title ? data.title : '');
@@ -334,11 +334,12 @@ function BlogPostForm() {
                 
                 <div className='flex justify-end '>
 
-                <Link to={`/author/blogs/preview`} state={{  blog , image , title , blogContent }} className="btn  text-black py-2 px-4 rounded">
+                <Link to={`/author/blogs/preview`} state={{  blog , image , title , blogContent , tags }} className="btn  text-black py-2 px-4 rounded">
                     Preview
                   </Link>
 
                 </div>
+                {console.log(tags)}
 
              
                   <form onSubmit={handleSubmit}>
@@ -398,7 +399,7 @@ function BlogPostForm() {
                       <br />
 
                       {/* Tags Input Container */}
-                      <TagsInput selectedTags={selectedTags}  tags={['Nodejs', 'MongoDB']} setTags = {setTags} />
+                      <TagsInput selectedTags={selectedTags}  tags={tags} setTags = {setTags} />
 
                       <br />
 

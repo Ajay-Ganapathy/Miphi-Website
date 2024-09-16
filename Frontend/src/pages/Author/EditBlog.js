@@ -233,8 +233,7 @@ function EditBlog() {
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
 
-  {console.log(blog )}
-  
+ 
 
 
  
@@ -453,6 +452,7 @@ function EditBlog() {
                 
                 <div style={{ width: "70vw", backgroundColor: "white" }} className='p-4 shadow-xl rounded-xl mx-auto border-solid'>
                 <div className='flex justify-end'>
+                  {console.log(tags)}
 
 <Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent , tags  }} className="btn  text-black py-2 px-4 rounded">
     Preview

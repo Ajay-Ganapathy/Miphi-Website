@@ -23,7 +23,7 @@ const addIdToParagraphs = (html) => {
 };
 
 
-const BlogContent = ({ blogContent, author_name , blogId , tags}) => {
+const BlogContent = ({ blogContent, author_name , blogId , tags , profile_img }) => {
     const location = useLocation();
 
     const [user, setUser] = useState({
@@ -169,7 +169,7 @@ const BlogContent = ({ blogContent, author_name , blogId , tags}) => {
     <div className="flex items-center space-x-4">  
         <h3 className="text-xl font-medium">{author_name}</h3> 
         <img
-            src={`${process.env.REACT_APP_API_URL}/${user.profile_img}`}
+            src={`${process.env.REACT_APP_API_URL}/${profile_img}`}
             alt=""
             className="w-24 h-24 rounded-full dark:bg-gray-500 aspect-square"
         />
