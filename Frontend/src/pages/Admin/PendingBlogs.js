@@ -191,6 +191,10 @@ const PendingBlogs = () => {
         section.scrollIntoView({ behavior: 'smooth' });
     }
 };
+
+count.pending = approvedBlogs.length;
+count.reject = rejectedBlogs.length;
+count.accept = approvedBlogs.length;
  
 
 

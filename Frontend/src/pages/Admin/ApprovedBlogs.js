@@ -55,7 +55,9 @@ const ApprovedBlogs = () => {
     
   }, []);
 
- 
+  count.pending = approvedBlogs.length;
+  count.reject = rejectedBlogs.length;
+  count.accept = approvedBlogs.length;
 
   
 
@@ -112,6 +114,7 @@ const ApprovedBlogs = () => {
   };
 
   const handleReject = async (id , status , remarks) => {
+    
     try {
      
   
