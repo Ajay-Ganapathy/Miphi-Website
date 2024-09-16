@@ -20,7 +20,7 @@ function BlogPostForm() {
   const {data} = location.state || {}
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState(location.state.tags || []);
+  const [tags, setTags] = useState((location.state && location.state.tags) || []);
   const [coverImage, setCoverImage] = useState(data && data.image ? data.image : null);
   const [image , setImage] = useState(data && data.image ? data.image : null);
   const [title, setTitle] = useState(data && data.title ? data.title : '');
