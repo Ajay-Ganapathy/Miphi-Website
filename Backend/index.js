@@ -736,8 +736,6 @@ app.get('/blogs/tag/:tagName', async (req, res) => {
 app.get('/blogs/tags/:blogId', async (req, res) => {
   try {
     const blogId = req.params.blogId;
-
-    // Debugging: Log the incoming blogId
     console.log('Fetching tags for blogId:', blogId);
 
     // SQL Query to fetch tags
@@ -749,23 +747,14 @@ app.get('/blogs/tags/:blogId', async (req, res) => {
       WHERE bt.blog_id = ?`;
 
     // Execute the query
-    const [tags] = await db.execute(query, [blogId]);
+    const [rows] = await db.execute(query, [blogId]);
 
-    // Debugging: Log the fetched tags
-    console.log('Tags found:', tags);
+    console.log('Tags found:', rows);
 
-    // Check if any tags were found
-    if (tags.length === 0) {
-      return res.status(404).json({ message: 'No tags found for this blog.' });
-    }
-
-    // Return the tags as JSON
-    res.json(tags);
+    // Return the tags as JSON (even if empty)
+    res.json(rows);
   } catch (err) {
-    // Log the error to console for debugging
     console.error('Error fetching tags:', err.message);
-
-    // Return error response
     res.status(500).json({ error: err.message });
   }
 });

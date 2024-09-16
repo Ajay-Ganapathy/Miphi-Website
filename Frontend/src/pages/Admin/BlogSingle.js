@@ -8,7 +8,7 @@ import Navbar from '../../Components/Navbar';
 const BlogSingle = () => {
     const { id } = useParams();
     const location = useLocation();
-    const { blog , user } = location.state || {};
+    const { blog , user , blogContent , tags} = location.state || {};
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ const BlogSingle = () => {
                         </div>
                         }
                         <div className="mt-6">
-                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} state = {{user}} />
+                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} tags = {tags} state = {{user}} />
                         </div>
 
                     </div>

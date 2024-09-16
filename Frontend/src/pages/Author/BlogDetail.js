@@ -13,6 +13,27 @@ const BlogDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+    const [tag , setTags] = useState([]);
+
+    const fetchTags = async (id) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+          
+            setTags(response.data.map((val) => val.name));
+            
+        } catch (error) {
+            console.error('Error fetching blogs:', error);
+            setError('Error fetching blogs');
+        } finally {
+            setLoading(false);
+        }
+      };
+  
+      useEffect(() => {
+        fetchTags(blog.id);
+  }, [])
+  
+  
 
     // Handle loading and error states here (if fetching data from an API)
     useEffect(() => {
@@ -51,8 +72,10 @@ const BlogDetail = () => {
                         </div>
 
                         }
+
+                        {console.log(tag)}
                         <div className="mt-6">
-                            <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} state = {{user}} />
+                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} tags = {tag} blogId = {blog.id} state = {{user }} />
                         </div>
 
                     </div>

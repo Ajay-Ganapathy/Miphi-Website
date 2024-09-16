@@ -23,21 +23,21 @@ const addIdToParagraphs = (html) => {
 };
 
 
-const BlogContent = ({ blogContent, author_name , blogId }) => {
+const BlogContent = ({ blogContent, author_name , blogId , tags}) => {
     const location = useLocation();
 
     const [user, setUser] = useState({
         profile_img : ''
 });
 
-const tags = location.state || {}
+
 
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [tag , setTags] = useState(tags.tags.map((tag) => tag));
-  console.log(tag)
+  //const [tag , setTags] = useState(tags.tags ? tags.tags.map((tag) => tag) :  []) ;
+  
 
   
 //   const fetchTags = async (id) => {
@@ -142,9 +142,12 @@ const tags = location.state || {}
     <hr className="my-4" />
     <h4 className="text-lg font-semibold mb-2"> Tags </h4>
     <div className="flex flex-column items-center space-x-4"> 
-       
+
+      
         {
-                        tag.map((ta) => {
+              tags.length > 0 &&
+       
+                        tags.map((ta) => {
                             return(
                                 <>
                                 <h1><span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-2 mb-4 rounded dark:bg-green-900 dark:text-green-300">{ta}</span></h1> 

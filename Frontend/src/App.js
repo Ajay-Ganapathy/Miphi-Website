@@ -13,6 +13,7 @@ import axios from 'axios';
 import ProtectedRoute from './Routes/ProtectedRoutes';
 import "./App.css"
 import BlogPostForm from './Components/BlogPostForm';
+import Sample from './Components/Sample';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -39,6 +40,7 @@ const App = () => {
         {/* <Navbar /> */}
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Sample />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset" element={<ResetPassword />} />
