@@ -398,9 +398,15 @@ function EditBlog() {
     formData.append('blog_content', blogContent);
     formData.append('status', 'Draft');
     formData.append('tags', JSON.stringify(tags));
-    if (coverImage && coverImage != ' ' && coverImage !== prevCoverImage) {
+
+    if(coverImage === 'rem'){
+      formData.append('image_url', 'rem');
+    }
+    else if (coverImage && coverImage != ' ' && coverImage !== prevCoverImage ) {
       formData.append('image_url', coverImage);
     }
+
+    
     formData.append('author_id', user.id);
     console.log(formData);
 
@@ -463,7 +469,7 @@ function EditBlog() {
                     <div  >
                     
                       {/* Cover Image */}
-                      {console.log(coverImage === prevCoverImage)}
+                      {console.log(coverImage === prevCoverImage , coverImage , prevCoverImage) }
                      
                       { (!image ||   image ===  ' ') && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
@@ -479,7 +485,7 @@ function EditBlog() {
                         accept="image/*"
                       />
 
-                      { (image  &&   image !== ' ')  && (
+                      { (image   &&   image !== ' ' )  && (
                         <div>
                           
                           <div className='flex flex-row'>
@@ -494,7 +500,7 @@ function EditBlog() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage(' ') ; setImage(' ')}}
+                                onClick={() => {setCoverImage('rem') ; setImage('rem')}}
                                 type="button"
                               >
                                 Remove

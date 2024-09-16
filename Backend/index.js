@@ -119,6 +119,7 @@ const insertBlog = async (blogData, tags) => {
 
 const updateBlog = async (blogId, blogData, tags) => {
   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
+  console.log(blogData)
 
   // Update the blog in the 'blogs' table
   if(image_url === ''){
@@ -127,6 +128,13 @@ const updateBlog = async (blogId, blogData, tags) => {
        SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? 
        WHERE id = ?`,
       [author_name, blog_title, blog_content, status, author_id, blogId]
+    );
+  }else if(image_url === 'rem'){
+    await db.execute(
+      `UPDATE blogs 
+       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = '', author_id = ? 
+       WHERE id = ?`,
+      [author_name, blog_title, blog_content, status,  author_id, blogId]
     );
   }else{
     await db.execute(
@@ -550,8 +558,9 @@ app.put('/blogs/:id', multer({
 }).single('image_url'), async (req, res) => {
   try {
     const blogId = req.params.id;
+
     const { author_name, blog_title, blog_content, status, author_id, tags } = req.body;
-    const image_url = req.file ? `uploads/${req.file.filename}` : '';
+    const image_url = req.file ?  `uploads/${req.file.filename}` : '';
 
  
     const blogData = {
@@ -563,6 +572,11 @@ app.put('/blogs/:id', multer({
       author_id
     };
 
+    if(req.body.image_url == 'rem'){
+      blogData['image_url']= 'rem';
+    }
+
+    console.log(req.body.image_url == 'rem' )
   
     const tagsArray = Array.isArray(tags) ? tags : JSON.parse(tags);
     
