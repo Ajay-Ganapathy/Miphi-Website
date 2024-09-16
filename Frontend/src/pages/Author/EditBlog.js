@@ -233,16 +233,19 @@ function EditBlog() {
   const { user } = useLocalContext();
   const [content, setContent] = useState('');
 
+  {console.log(blog )}
+  
+
 
  
   const [error , setError] = useState([]);
   const [loading , setLoading] = useState([])
-  const [coverImage, setCoverImage] = useState(blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null);
-  const [image , setImage] = useState(blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null);
-  const [title, setTitle] = useState( blog.blog_title);
+  const [coverImage, setCoverImage] = useState(data ? (data.image && data.image ) : (blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null ));
+  const [image , setImage] = useState(data ? (data.image && data.image ) : (blog.image_url ? `${process.env.REACT_APP_API_URL}/${blog.image_url}` : null ) );
+  const [title, setTitle] = useState( data ? data.title ? data.title :  blog.blog_title :  blog.blog_title);
   const fileInputRef = useRef(null); 
 
-  const [blogContent, setBlogContent] = useState(blog.blog_content);
+  const [blogContent, setBlogContent] = useState(data ? data.blog_content ? data.blog_content  :  blog.blog_content  :  blog.blog_content );
   const navigate = useNavigate()
 
 

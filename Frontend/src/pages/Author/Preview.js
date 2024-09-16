@@ -19,7 +19,7 @@ const Preview = () => {
         "blog_content" : blogContent ,
         "title" : title ,
         
-        "image" : !image ? ' ' : image
+        "image" : image
         
        
     }
@@ -87,7 +87,7 @@ const Preview = () => {
                         </div>
 }
                         <div className="mt-6">
-                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} blogId = {blog.id} tags = {tags} state = {{user}} />
+                        <BlogContent blogContent={blogContent} author_name={blog.author_name} blogId = {blog.id} tags = {tags} state = {{user}} />
                         </div>
 
                     </div>
