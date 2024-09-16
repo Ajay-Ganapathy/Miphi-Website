@@ -443,7 +443,7 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
 // Route to get all blogs
 app.get('/blogs', async (req, res) => {
   try {
-    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.image_url , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN users u ON u.id = b.author_id`;
+    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN users u ON u.id = b.author_id`;
     
     const [results] = await db.execute(query);
 
@@ -457,7 +457,7 @@ app.get("/blogs/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.image_url , b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN users u ON u.id = b.author_id WHERE id = ?`;
+    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.image_url , b.created_at ,  b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN users u ON u.id = b.author_id WHERE b.id = ?`;
     const [results] = await db.execute(query, [id] ) 
       res.json({ blog: results[0] });
   
