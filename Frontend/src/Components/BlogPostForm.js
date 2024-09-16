@@ -426,7 +426,7 @@ function BlogPostForm() {
                       >
                         Save Draft
                       </button>
-
+{/* 
                       <button
                         className="text-black font-semibold py-2 px-4 rounded-lg"
                         type="button"
@@ -445,7 +445,7 @@ function BlogPostForm() {
 
                       
                         Revert new changes
-                      </button>
+                      </button> */}
                     </div>
                   </form>
                 </div>

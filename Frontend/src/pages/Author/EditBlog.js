@@ -557,7 +557,7 @@ function EditBlog() {
                         Save Draft
                       </button>
 
-                      <button
+                      {/* <button
                         className="text-black font-semibold py-2 px-4 rounded-lg"
                         type="button"
                         onClick = {() => {
@@ -573,7 +573,7 @@ function EditBlog() {
                       }
                       >
                         Revert new changes
-                      </button>
+                      </button> */}
                     </div>
                   </form>
                 </div>
