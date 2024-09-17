@@ -217,6 +217,7 @@ app.post('/register', profile_upload.single('profile'), async (req, res) => {
     return res.status(400).json({ message: 'Username and password are required' });
   }
 
+  
   try {
     const checkUserQuery = 'SELECT * FROM users WHERE username = ?';
     const [userResults] = await db.execute(checkUserQuery, [username]);

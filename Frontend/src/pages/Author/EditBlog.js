@@ -399,6 +399,9 @@ function EditBlog() {
     formData.append('status', 'Draft');
     formData.append('tags', JSON.stringify(tags));
 
+    
+    
+
     if(coverImage === 'rem'){
       formData.append('image_url', 'rem');
     }

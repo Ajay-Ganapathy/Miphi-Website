@@ -272,7 +272,34 @@ function BlogPostForm() {
     };
   
     // Create FormData for the blog submission
-    const formData = new FormData();
+
+    async function blobUrlToFile(blobUrl, fileName) {
+      // Fetch the Blob data
+      const response = await fetch(blobUrl);
+      const blob = await response.blob();
+      
+      // Convert the Blob to a File
+      const file = new File([blob], fileName, { type: blob.type });
+      return file;
+  }
+  
+  // Usage example
+  const blobUrl = image;
+  const fileName = 'cover_image'; 
+  const formData = new FormData();
+  
+  blobUrlToFile(blobUrl, fileName)
+      .then(file => {
+          console.log('File:', file);
+          formData.append('image_url', file);
+          // You can now use the File object as needed
+          // For example, you can create a download link:
+         
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+   
     formData.append('author_name', user.name);
     formData.append('blog_title', title);
     
@@ -282,9 +309,9 @@ function BlogPostForm() {
       
       formData.append('status', 'Draft');
       formData.append('tags', JSON.stringify(tags));
-      if (coverImage) {
-        formData.append('image_url', coverImage);
-      }
+      // if (coverImage) {
+      //   formData.append('image_url', coverImage);
+      // }
       formData.append('author_id', user.id);
   
       console.log([...formData.entries()]); // Log FormData entries for debugging

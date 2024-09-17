@@ -5,11 +5,14 @@ import BlogContent from '../../Components/BlogContent';
 import Sidebar from '../../Components/Sidebar';
 import Navbar from '../../Components/Navbar';
 import { Link } from 'react-router-dom';
+import { useLocalContext } from '../../Context/context';
 
 const Preview = () => {
     const { id } = useParams();
     const location = useLocation();
-    const { blog , user , title , image , blogContent , tags } = location.state || {};
+    const { blog ,  title , image , blogContent , tags } = location.state || {};
+
+    const {user}  = useLocalContext();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,6 +26,8 @@ const Preview = () => {
         
        
     }
+
+    console.log(data)
 
 
     useEffect(() => {
@@ -42,7 +47,7 @@ const Preview = () => {
     return (
         <div >
           {console.log(tags)}
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" >
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100 h-100" style = {{height : "100vh"}}>
                     <div className='flex justify-end'>
 
                     {
@@ -70,7 +75,8 @@ const Preview = () => {
             
                 <div className="max-w-screen-xl mx-3 px-4 lg:px-0 ">
                     <main className="mt-12">
-                    <h1 className="text-center lg:text-left mb-8 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800">
+                   
+                    <h1 className="text-center lg:text-left mb-8 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800" style = {{fontFamily : 'Roboto Slab'}}>
                             {title}
                         </h1>
                     <div>
@@ -86,9 +92,13 @@ const Preview = () => {
                             />
 
                         </div>
+                      
 }
                         <div className="mt-6">
-                        <BlogContent blogContent={blogContent} author_name={blog.author_name} blogId = {blog.id} tags = {tags} state = {{user}} />
+
+                            
+                           
+                        <BlogContent blogContent={blogContent} author_name={blog.author_name} profile_img = {user && user.profile_img} blogId = {blog.id} tags = {tags} state = {{user}} />
                         </div>
 
                     </div>

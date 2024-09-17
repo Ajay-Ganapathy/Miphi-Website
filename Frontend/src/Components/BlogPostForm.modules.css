@@ -66,7 +66,7 @@
     border: none;
     border-bottom: 2px solid transparent;
     outline: none;
-    font-family: 'Playfair Display', serif; /* You can change to Montserrat or Roboto Slab */
+    font-family: 'Roboto Slab'; /* You can change to Montserrat or Roboto Slab */
     
     padding: 10px 0;
     color: #333;
