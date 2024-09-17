@@ -19,12 +19,12 @@ const Preview = () => {
         "blog_content" : blogContent ,
         "title" : title ,
         
-        "image" : !image ? ' ' : image
+        "image" : image
         
        
     }
 
-    // Handle loading and error states here (if fetching data from an API)
+
     useEffect(() => {
         if (!blog) {
             // Simulate a delay and setting error

@@ -192,10 +192,7 @@ const RejectedBlogs = () => {
     }
 };
 
-count.pending = approvedBlogs.length;
-count.reject = rejectedBlogs.length;
-count.accept = approvedBlogs.length;
- 
+
 
 
 

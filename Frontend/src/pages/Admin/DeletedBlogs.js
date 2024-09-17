@@ -117,14 +117,26 @@ const DeletedBlogs = () => {
 
 
        <main class="">
+        
           
           <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400 w-100 h-100">
+          {  blogs.length === 0 &&  <div class="max-w-lg mx-auto text-center">
+          
+          <h1 className={"mt-16 mb-16 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
+          No Deleted
+            <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+              Blogs
+            </span>
+            <div></div>
+          </h1>
+        </div>}
           <div class="grid grid-cols-12 gap-6">
+            
                         <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
                           
                           
                              
-                            
+                       
                                 
                                          
 

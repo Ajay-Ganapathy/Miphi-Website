@@ -15,6 +15,7 @@ const Register = () => {
     const [role, setRole] = useState(1); 
     const [loading, setLoading] = useState(false);
     const [profile, setProfile] = useState(null); 
+    const [designation , setDesignation]  = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -31,6 +32,8 @@ const Register = () => {
             if (profile) {
                 formData.append('profile', profile); 
             }
+
+            formData.append('designation' , designation) ;
 
             
             await axios.post(`${apiUrl}/register`, formData, {
@@ -104,6 +107,24 @@ const Register = () => {
                                             </div>
                                             <br />
                                             <br />
+
+                                            <div className='flex flex-row justify-between'>
+                                                <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="designation">
+                                                   Designation
+                                                </label>
+                                                <input
+                                                    className={styles.formInput}
+                                                    type="text"
+                                                    id="designation"
+                                                    placeholder="Designation"
+                                                    value={designation}
+                                                    onChange={(e) => setDesignation(e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                            <br />
+                                            <br />
+
 
                                             <div className='flex flex-row justify-between'>
                                                 <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="profile_img">

@@ -119,64 +119,154 @@ const insertBlog = async (blogData, tags) => {
 
 const updateBlog = async (blogId, blogData, tags) => {
   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
-  console.log(blogData)
-
-  // Update the blog in the 'blogs' table
-  if(image_url === ''){
-    await db.execute(
-      `UPDATE blogs 
-       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? 
-       WHERE id = ?`,
-      [author_name, blog_title, blog_content, status, author_id, blogId]
-    );
-  }else if(image_url === 'rem'){
-    await db.execute(
-      `UPDATE blogs 
-       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = '', author_id = ? 
-       WHERE id = ?`,
-      [author_name, blog_title, blog_content, status,  author_id, blogId]
-    );
+  //console.log(status , status === "Accept" , "sample" );
+  if(status== "Accept"){
+    console.log("true");
   }else{
+    console.log("false");
+  }
+
+  try {
+    // Determine if `published_at` should be set
+    const publishedAt = status === 'Accept' ? new Date() : null;
+
+    // Update the blog in the 'blogs' table
     await db.execute(
       `UPDATE blogs 
-       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
+       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?, published_at = ?
        WHERE id = ?`,
-      [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
+      [author_name, blog_title, blog_content, status, image_url || '', author_id, publishedAt, blogId]
     );
+
+    // Clear existing tag links for this blog in 'blog_tags'
+    await db.execute(
+      `DELETE FROM blog_tags WHERE blog_id = ?`,
+      [blogId]
+    );
+
+    // Insert tags into the 'tags' table if they don't exist and link them to the blog
+    for (const tag of tags) {
+      const [tagResult] = await db.execute(
+        `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
+        [tag]
+      );
+      const tagId = tagResult.insertId;
+
+      // Insert mapping into 'blog_tags' table if it doesn't exist
+      await db.execute(
+        `INSERT INTO blog_tags (blog_id, tag_id) 
+         SELECT ?, ? FROM DUAL 
+         WHERE NOT EXISTS (
+            SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
+         )`,
+        [blogId, tagId, blogId, tagId]
+      );
+    }
+
+    // Return the updated blog ID and image URL
+    return {
+      id: blogId,
+      image: image_url
+    };
+
+  } catch (error) {
+    console.error('Error updating blog:', error);
+    throw error;  // Rethrow or handle as needed
   }
+};
+
+
+// const updateBlog = async (blogId, blogData, tags) => {
+//   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
+//   console.log(blogData)
+
+//   console.log(status == 'Accept')
+//   // Update the blog in the 'blogs' table
+//   if(image_url === ''){
+
+//     if(status == 'Accept'){
+//       await db.execute(
+//         `UPDATE blogs 
+//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? ,  published_at = ?
+//          WHERE id = ?`,
+//         [author_name, blog_title, blog_content, status, author_id, new Date() , blogId]
+//       );
+//     }else{
+//       await db.execute(
+     
+//         `UPDATE blogs 
+//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? 
+//          WHERE id = ?`,
+//         [author_name, blog_title, blog_content, status, author_id, blogId]
+//       );
+//     }
+   
+//   }else if(image_url === 'rem'){
+//     if(status == 'Accept'){
+//       await db.execute(
+//         `UPDATE blogs 
+//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  image_url = '',  author_id = ? ,  published_at = ?
+//          WHERE id = ?`,
+//         [author_name, blog_title, blog_content, status, author_id, new Date() , blogId]
+//       );
+//     }
+//     await db.execute(
+//       `UPDATE blogs 
+//        SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = '', author_id = ? 
+//        WHERE id = ?`,
+//       [author_name, blog_title, blog_content, status,  author_id, blogId]
+//     );
+//   }else{
+//     if(status == 'Accept'){
+//       await db.execute(
+//         `UPDATE blogs 
+//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ? ,  author_id = ? ,  published_at = ?
+//          WHERE id = ?`,
+//         [author_name, blog_title, blog_content, status,  image_url, author_id, new Date() , blogId]
+//       );
+//     }else{
+//       await db.execute(
+//         `UPDATE blogs 
+//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
+//          WHERE id = ?`,
+//         [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
+//       );
+//     }
+   
+//   }
  
 
-  // First, clear all existing tag links for this blog in 'blog_tags'
-  await db.execute(
-    `DELETE FROM blog_tags WHERE blog_id = ?`,
-    [blogId]
-  );
+//   // First, clear all existing tag links for this blog in 'blog_tags'
+//   await db.execute(
+//     `DELETE FROM blog_tags WHERE blog_id = ?`,
+//     [blogId]
+//   );
 
-  // Insert tags into the 'tags' table if they don't exist and link them to the blog
-  for (const tag of tags) {
-    const [tagResult] = await db.execute(
-      `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
-      [tag]
-    );
-    const tagId = tagResult.insertId;
+//   // Insert tags into the 'tags' table if they don't exist and link them to the blog
+//   for (const tag of tags) {
+//     const [tagResult] = await db.execute(
+//       `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
+//       [tag]
+//     );
+//     const tagId = tagResult.insertId;
 
-    // Insert mapping into 'blog_tags' table if it doesn't exist
-    await db.execute(
-      `INSERT INTO blog_tags (blog_id, tag_id) 
-       SELECT ?, ? FROM DUAL 
-       WHERE NOT EXISTS (
-          SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
-       )`,
-      [blogId, tagId, blogId, tagId]
-    );
-  }
+//     // Insert mapping into 'blog_tags' table if it doesn't exist
+//     await db.execute(
+//       `INSERT INTO blog_tags (blog_id, tag_id) 
+//        SELECT ?, ? FROM DUAL 
+//        WHERE NOT EXISTS (
+//           SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
+//        )`,
+//       [blogId, tagId, blogId, tagId]
+//     );
+//   }
 
-  // Return the updated blog ID and image URL
-  return {
-    id: blogId,
-    image: image_url
-  };
-};
+//   // Return the updated blog ID and image URL
+//   return {
+//     id: blogId,
+//     image: image_url
+//   };
+// };
 
 
 // Set up MySQL connection using promises
@@ -210,7 +300,7 @@ app.get("/" , (req,res) => {
 })
 
 app.post('/register', profile_upload.single('profile'), async (req, res) => {
-  const { username, name, password } = req.body;
+  const { username, name, password , designation } = req.body;
   const profileImg = req.file ? req.file.filename : ''; // Get filename from uploaded file
 
   if (!name) {
@@ -235,11 +325,11 @@ app.post('/register', profile_upload.single('profile'), async (req, res) => {
     let params;
 
     if (profileImg) {
-      query = 'INSERT INTO users (role, username, name, password, profile_img) VALUES (1, ?, ?, ?, ?)';
-      params = [username, name, hashedPassword, profileImg];
+      query = 'INSERT INTO users (role, username, name, password, profile_img , designation) VALUES (1, ?, ?, ?, ? , ?)';
+      params = [username, name, hashedPassword, profileImg , designation ];
     } else {
-      query = 'INSERT INTO users (role, username, name, password) VALUES (1, ?, ?, ?)';
-      params = [username, name, hashedPassword];
+      query = 'INSERT INTO users (role, username, name, password , designation ) VALUES (1, ?, ?, ? , ?)';
+      params = [username, name, hashedPassword , designation ];
     }
 
     const [results] = await db.execute(query, params);
@@ -461,24 +551,12 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
-app.get("/blogs/:id", async (req, res) => {
-  const id = req.params.id;
+// Route to get latest blogs
 
+app.get('/blogs/latest', async (req, res) => {
   try {
-    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.deleted_at ,b.image_url , b.created_at ,  b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN users u ON u.id = b.author_id WHERE b.id = ?`;
-    const [results] = await db.execute(query, [id] ) 
-      res.json({ blog: results[0] });
-  
-  } catch (err) {
-    console.error('Server error:', err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Route to get deleted blogs
-app.get('/deletedblogs', async (req, res) => {
-  try {
-    const query = `SELECT * FROM blogs WHERE deleted_at IS NOT NULL`;
+    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.deleted_at, b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN users u ON u.id = b.author_id ORDER BY published_at  DESC LIMIT 3`;
+    
     const [results] = await db.execute(query);
 
     res.json({ blogs: results });
@@ -539,8 +617,33 @@ app.get('/blogs/count/:id', async (req, res) => {
 
 
 
+// Route to get individual blogs
 
+app.get("/blogs/:id", async (req, res) => {
+  const id = req.params.id;
 
+  try {
+    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.deleted_at ,b.image_url , b.created_at ,  b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN users u ON u.id = b.author_id WHERE b.id = ?`;
+    const [results] = await db.execute(query, [id] ) 
+      res.json({ blog: results[0] });
+  
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Route to get deleted blogs
+app.get('/deletedblogs', async (req, res) => {
+  try {
+    const query = `SELECT * FROM blogs WHERE deleted_at IS NOT NULL`;
+    const [results] = await db.execute(query);
+
+    res.json({ blogs: results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 // Route to update Blog
@@ -633,14 +736,26 @@ app.put('/blogs/:id/status', async (req, res) => {
     console.log(status);
     console.log(remarks);
 
-    const query = `UPDATE blogs SET status = ?, remarks = ? WHERE id = ?`;
-    const [results] = await db.execute(query, [status, remarks, id]);
-
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: 'Blog post not found' });
+    if(status == "Accept"){
+      const query = `UPDATE blogs SET status = ?, remarks = ? , published_at = ? WHERE id = ?`;
+      const [results] = await db.execute(query, [status, remarks, new Date() , id]);
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: 'Blog post not found' });
+      }
+  
+      res.json({ message: 'Status updated successfully' });
+    }else{
+      const query = `UPDATE blogs SET status = ?, remarks = ?  WHERE id = ?`;
+      const [results] = await db.execute(query, [status, remarks , id]);
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: 'Blog post not found' });
+      }
+  
+      res.json({ message: 'Status updated successfully' });
     }
-
-    res.json({ message: 'Status updated successfully' });
+  
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -720,6 +835,27 @@ app.put('/blogs/:id/restore', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Route to get latest 3 posts
+
+app.get('/blogs/latest', async (req, res) => {
+  try {
+    const query = `
+      SELECT * FROM blogs
+      ORDER BY published_at DESC
+      LIMIT 3;
+    `;
+
+    const [blogs] = await db.execute(query);
+
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 
 // Get blogs by tag name
 

@@ -54,9 +54,7 @@ const Dashboard2 = () => {
     
   }, []);
 
-  count.pending = approvedBlogs.length;
-  count.reject = rejectedBlogs.length;
-  count.accept = approvedBlogs.length;
+  
  
 
   
@@ -67,7 +65,7 @@ const Dashboard2 = () => {
     try {
      
       
-      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/status`, { status, remarks });
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${id}/status`, { status, remarks  });
       console.log("Updated Success");
       fetchCount();
       fetchBlogs();
