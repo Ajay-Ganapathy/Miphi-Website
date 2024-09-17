@@ -22,6 +22,7 @@ const EditProfilePage = () => {
     const [name, setName] = useState(user.name);
    const [userName, setUserName] = useState(user.username);
     const [image , setImage] = useState(null);
+    const [designation , setDesignation] = useState(user.designation);
   
    
     const [loading, setLoading] = useState(true);
@@ -150,6 +151,23 @@ const EditProfilePage = () => {
             />
           </div>
 
+
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
+             Designation
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="designation"
+              name="designation"
+              type="text"
+              placeholder="Designation"
+              value={designation}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled
+            />
+          </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="title">
               Image
@@ -163,6 +181,8 @@ const EditProfilePage = () => {
             />
 
           </div>
+
+       
 
           
 

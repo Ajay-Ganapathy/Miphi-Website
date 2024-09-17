@@ -240,6 +240,7 @@ import axios from 'axios';
 import styles from "./AuthorBlogs.modules.css";
 import Modal2 from '../../Components/Modal2';
 import { useLocalContext } from '../../Context/context';
+import NoData from '../../Components/NoData';
 
 const truncateContent = (content, length = 100) => {
   if (content.length <= length) return content;
@@ -305,6 +306,7 @@ const Draft = () => {
           <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
             
           </span>
+          <NoData />
           <div className={styles.bottomLine}></div>
         </h1>
       </div>

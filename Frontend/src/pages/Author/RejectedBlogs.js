@@ -240,6 +240,7 @@ import axios from 'axios';
 import styles from "./AuthorBlogs.modules.css";
 import Modal2 from '../../Components/Modal2';
 import { useLocalContext } from '../../Context/context';
+import NoData from '../../Components/NoData';
 
 const truncateContent = (content, length = 100) => {
   if (content.length <= length) return content;
@@ -410,10 +411,11 @@ const RejectedBlogs = () => {
         (rejectedBlogs.length == 0 ) &&  <div class="max-w-lg mx-auto text-center">
           
         <h1 className={styles.mainHeading+" mb-16 mt-8 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
-          You have no
+          You have no   Rejected Blogs
           <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
-            Rejected Blogs
+          
           </span>
+          <NoData />
           <div className={styles.bottomLine}></div>
         </h1>
       </div>

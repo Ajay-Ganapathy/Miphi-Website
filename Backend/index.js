@@ -342,7 +342,7 @@ app.get('/author/details', async (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET); 
 
-    const [results] = await db.execute('SELECT id , name , username , role , profile_img FROM users WHERE id = ?', [decoded.id]);
+    const [results] = await db.execute('SELECT id , name , username , role , profile_img , designation FROM users WHERE id = ?', [decoded.id]);
    // console.log(results[0] , "dd")
 
     if (results.length === 0) {
