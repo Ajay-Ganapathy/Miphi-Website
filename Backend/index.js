@@ -177,7 +177,7 @@ const updateBlog = async (blogId, blogData, tags) => {
 
 // Set up MySQL connection using promises
 const db = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || ' 10.20.1.188',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'blogdb',
