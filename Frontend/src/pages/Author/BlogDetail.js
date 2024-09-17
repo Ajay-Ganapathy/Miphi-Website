@@ -75,7 +75,7 @@ const BlogDetail = () => {
 
                         {console.log(tag)}
                         <div className="mt-6">
-                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} tags = {tag} blogId = {blog.id} state = {{user }} />
+                        <BlogContent blogContent={blog.blog_content} author_name={blog.author_name} profile_img = {blog.profile_img} tags = {tag} blogId = {blog.id} state = {{user }} />
                         </div>
 
                     </div>
