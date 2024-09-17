@@ -273,10 +273,7 @@ const ApprovedBlogs = () => {
         fetchUserCount(user.id);
     }, []);
 
-    count.pending = approvedBlogs.length;
-    count.reject = rejectedBlogs.length;
-    count.accept = approvedBlogs.length;
-  
+ 
    
 
 
@@ -308,10 +305,10 @@ const ApprovedBlogs = () => {
                           
                             <div class="col-span-12 mt-8">
                             <div class="flex items-center h-10 intro-y">
-                                    {/* <h2 class="mr-5 text-lg font-medium truncate">Dashboard</h2>
+                                   
                                 </div>
                                 <div class="grid grid-cols-12 gap-6 mt-5">
-                                    <Link class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
+                                <Link class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
                                         to ="/admin/pendingblogs">
                                         <div class="p-5">
                                             <div class="flex justify-between">
@@ -323,12 +320,12 @@ const ApprovedBlogs = () => {
                                                 </svg>
                                                 <div
                                                     class="bg-yellow-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">{ Math.round(((count.pending) / (count.pending + count.reject + count.accept) * 100),2)}%</span>
+                                                    <span class="flex items-center">{ Math.round(((userCount.pending) / (userCount.pending + userCount.reject + userCount.accept) * 100),2)}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.pending} </div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{userCount.pending} </div>
 
                                                     <div class="mt-1 text-base text-gray-600">Pending</div>
                                                 </div>
@@ -349,12 +346,12 @@ const ApprovedBlogs = () => {
                                                 </svg>
                                                 <div
                                                     class="bg-green-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">{ Math.round(((count.accept) / (count.pending + count.reject + count.accept) * 100) , 2)}%</span>
+                                                    <span class="flex items-center">{ Math.round(((userCount.accept) / (userCount.pending + userCount.reject + userCount.accept) * 100) , 2)}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.accept}</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{userCount.accept}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Accepted</div>
                                                 </div>
@@ -365,7 +362,7 @@ const ApprovedBlogs = () => {
                                    
                                    
                                     <Link class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
-                                        to="/admin/rejectedblogs">
+                                        to="/author/rejected">
                                         <div class="p-5">
                                             <div class="flex justify-between">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-pink-600"
@@ -379,12 +376,12 @@ const ApprovedBlogs = () => {
                                                 </svg>
                                                 <div
                                                     class="bg-red-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                                                    <span class="flex items-center">{ Math.round(((count.reject) / (count.pending + count.reject + count.accept) * 100))}%</span>
+                                                    <span class="flex items-center">{ Math.round(((userCount.reject) / (userCount.pending + userCount.reject + userCount.accept) * 100))}%</span>
                                                 </div>
                                             </div>
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
-                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.reject}</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{userCount.reject}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Rejected</div>
                                                 </div>
@@ -409,7 +406,7 @@ const ApprovedBlogs = () => {
                                             <div class="ml-2 w-full flex-1">
                                                 <div>
                                                     
-                                                    <div class="mt-3 text-3xl font-bold leading-8">{count.pending + count.reject + count.accept}</div>
+                                                    <div class="mt-3 text-3xl font-bold leading-8">{userCount.pending + userCount.reject + userCount.accept}</div>
 
                                                     <div class="mt-1 text-base text-gray-600">Total</div>
                                                 </div>
@@ -417,8 +414,9 @@ const ApprovedBlogs = () => {
                                         </div>
                                     </Link>
                                 </div>
-                              */}
-                              </div>
+                                
+                             
+                             
                                  <div>
       {/* <Blogs user = {props.user}/> */}
 
@@ -426,10 +424,10 @@ const ApprovedBlogs = () => {
       {
         (approvedBlogs.length == 0 ) &&  <div class="max-w-lg mx-auto text-center">
           
-        <h1 className={styles.mainHeading+" mb-16 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
-          You havent updated
+        <h1 className={styles.mainHeading+" mb-16 mt-8 pb-2 font-bold sm:text-xl text-2xl md:text-3xl text-center"}>
+          You have no
           <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
-            any Blogs yet
+            Approved Blogs
           </span>
           <div className={styles.bottomLine}></div>
         </h1>

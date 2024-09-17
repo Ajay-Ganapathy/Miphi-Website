@@ -25,9 +25,7 @@ const Base = (props) => {
    ["Profile" , "/author/profile"] ,
    ["Drafts" , "/author/drafts"] ,
    ["Reverted Blogs " , "/author/reverted"] ,
-   ["Rejected Blogs " , "/author/rejected"] ,
-   ["Pending Blogs " , "/author/pending"],
-   ["Approved Blogs " , "/author/approved"],
+  
    ["Drafts" , "/author/drafts"]
     
  ]

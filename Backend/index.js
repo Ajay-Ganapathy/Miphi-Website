@@ -117,156 +117,62 @@ const insertBlog = async (blogData, tags) => {
   };
 };
 
+
+
 const updateBlog = async (blogId, blogData, tags) => {
   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
-  //console.log(status , status === "Accept" , "sample" );
-  if(status== "Accept"){
-    console.log("true");
-  }else{
-    console.log("false");
-  }
 
-  try {
-    // Determine if `published_at` should be set
-    const publishedAt = status === 'Accept' ? new Date() : null;
+  // Update the blog in the 'blogs' table based on the presence of image_url
+  let updateQuery = `UPDATE blogs 
+                     SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, author_id = ? 
+                     WHERE id = ?`;
 
-    // Update the blog in the 'blogs' table
-    await db.execute(
-      `UPDATE blogs 
-       SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ?, published_at = ?
-       WHERE id = ?`,
-      [author_name, blog_title, blog_content, status, image_url || '', author_id, publishedAt, blogId]
-    );
+  let queryParams = [author_name, blog_title, blog_content, status, author_id, blogId];
 
-    // Clear existing tag links for this blog in 'blog_tags'
-    await db.execute(
-      `DELETE FROM blog_tags WHERE blog_id = ?`,
-      [blogId]
-    );
-
-    // Insert tags into the 'tags' table if they don't exist and link them to the blog
-    for (const tag of tags) {
-      const [tagResult] = await db.execute(
-        `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
-        [tag]
-      );
-      const tagId = tagResult.insertId;
-
-      // Insert mapping into 'blog_tags' table if it doesn't exist
-      await db.execute(
-        `INSERT INTO blog_tags (blog_id, tag_id) 
-         SELECT ?, ? FROM DUAL 
-         WHERE NOT EXISTS (
-            SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
-         )`,
-        [blogId, tagId, blogId, tagId]
-      );
+  if (image_url !== '') {
+    if (image_url === 'rem') {
+      updateQuery = `UPDATE blogs 
+                     SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = '', author_id = ? 
+                     WHERE id = ?`;
+      queryParams = [author_name, blog_title, blog_content, status, author_id, blogId];
+    } else {
+      updateQuery = `UPDATE blogs 
+                     SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
+                     WHERE id = ?`;
+      queryParams = [author_name, blog_title, blog_content, status, image_url, author_id, blogId];
     }
-
-    // Return the updated blog ID and image URL
-    return {
-      id: blogId,
-      image: image_url
-    };
-
-  } catch (error) {
-    console.error('Error updating blog:', error);
-    throw error;  // Rethrow or handle as needed
   }
+
+  await db.execute(updateQuery, queryParams);
+
+  // Clear all existing tag links for this blog in 'blog_tags'
+  await db.execute(`DELETE FROM blog_tags WHERE blog_id = ?`, [blogId]);
+
+  // Insert tags into the 'tags' table if they don't exist and link them to the blog
+  for (const tag of tags) {
+    const [tagResult] = await db.execute(
+      `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
+      [tag]
+    );
+    const tagId = tagResult.insertId;
+
+    // Insert mapping into 'blog_tags' table if it doesn't exist
+    await db.execute(
+      `INSERT INTO blog_tags (blog_id, tag_id) 
+       SELECT ?, ? FROM DUAL 
+       WHERE NOT EXISTS (
+          SELECT 1 FROM blog_tags WHERE blog_id = ? AND tag_id = ?
+       )`,
+      [blogId, tagId, blogId, tagId]
+    );
+  }
+
+  // Return the updated blog ID and image URL
+  return {
+    id: blogId,
+    image: image_url
+  };
 };
-
-
-// const updateBlog = async (blogId, blogData, tags) => {
-//   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
-//   console.log(blogData)
-
-//   console.log(status == 'Accept')
-//   // Update the blog in the 'blogs' table
-//   if(image_url === ''){
-
-//     if(status == 'Accept'){
-//       await db.execute(
-//         `UPDATE blogs 
-//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? ,  published_at = ?
-//          WHERE id = ?`,
-//         [author_name, blog_title, blog_content, status, author_id, new Date() , blogId]
-//       );
-//     }else{
-//       await db.execute(
-     
-//         `UPDATE blogs 
-//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  author_id = ? 
-//          WHERE id = ?`,
-//         [author_name, blog_title, blog_content, status, author_id, blogId]
-//       );
-//     }
-   
-//   }else if(image_url === 'rem'){
-//     if(status == 'Accept'){
-//       await db.execute(
-//         `UPDATE blogs 
-//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?,  image_url = '',  author_id = ? ,  published_at = ?
-//          WHERE id = ?`,
-//         [author_name, blog_title, blog_content, status, author_id, new Date() , blogId]
-//       );
-//     }
-//     await db.execute(
-//       `UPDATE blogs 
-//        SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = '', author_id = ? 
-//        WHERE id = ?`,
-//       [author_name, blog_title, blog_content, status,  author_id, blogId]
-//     );
-//   }else{
-//     if(status == 'Accept'){
-//       await db.execute(
-//         `UPDATE blogs 
-//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ? ,  author_id = ? ,  published_at = ?
-//          WHERE id = ?`,
-//         [author_name, blog_title, blog_content, status,  image_url, author_id, new Date() , blogId]
-//       );
-//     }else{
-//       await db.execute(
-//         `UPDATE blogs 
-//          SET author_name = ?, blog_title = ?, blog_content = ?, status = ?, image_url = ?, author_id = ? 
-//          WHERE id = ?`,
-//         [author_name, blog_title, blog_content, status, image_url, author_id, blogId]
-//       );
-//     }
-   
-//   }
- 
-
-//   // First, clear all existing tag links for this blog in 'blog_tags'
-//   await db.execute(
-//     `DELETE FROM blog_tags WHERE blog_id = ?`,
-//     [blogId]
-//   );
-
-//   // Insert tags into the 'tags' table if they don't exist and link them to the blog
-//   for (const tag of tags) {
-//     const [tagResult] = await db.execute(
-//       `INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`,
-//       [tag]
-//     );
-//     const tagId = tagResult.insertId;
-
-//     // Insert mapping into 'blog_tags' table if it doesn't exist
-//     await db.execute(
-//       `INSERT INTO blog_tags (blog_id, tag_id) 
-//        SELECT ?, ? FROM DUAL 
-//        WHERE NOT EXISTS (
-//           SELECT * FROM blog_tags WHERE blog_id = ? AND tag_id = ?
-//        )`,
-//       [blogId, tagId, blogId, tagId]
-//     );
-//   }
-
-//   // Return the updated blog ID and image URL
-//   return {
-//     id: blogId,
-//     image: image_url
-//   };
-// };
 
 
 // Set up MySQL connection using promises
@@ -597,9 +503,9 @@ app.get('/blogs/count/:id', async (req, res) => {
     const id = req.params.id;
     console.log(id)
     const query = `SELECT COUNT(*) AS total_count FROM blogs WHERE deleted_at IS NULL `;
-    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending" AND deleted_at IS NULL AND id = ?`;
-    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept" AND deleted_at IS NULL AND id = ?`;
-    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject" AND deleted_at IS NULL AND id = ?`;
+    const q1 = `SELECT COUNT(*) AS pending_count FROM blogs WHERE status = "Pending" AND deleted_at IS NULL AND author_id = ?`;
+    const q2 = `SELECT COUNT(*) AS accepted_count FROM blogs WHERE status = "Accept" AND deleted_at IS NULL AND author_id = ?`;
+    const q3 = `SELECT COUNT(*) AS rejected_count FROM blogs WHERE status = "Reject" AND deleted_at IS NULL AND author_id = ?`;
 
 
     const results = await db.execute(query);
