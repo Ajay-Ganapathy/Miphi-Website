@@ -14,7 +14,7 @@ import Card from '../../Components/Card';
 import Table from '../../Components/Table';
 
 const MySwal = withReactContent(Swal);
-const PendingBlogs = () => {
+const ApprovedBlogs = () => {
 
     const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
@@ -40,7 +40,7 @@ const PendingBlogs = () => {
   
   const [error , setError] = useState('')
 
-  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count } = useLocalContext();
+  const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , fetchCount , setBlogs, setApprovedBlogs, setPendingBlogs, user , count , fetchUserCount } = useLocalContext();
 
   const navigate = useNavigate();
 
@@ -51,10 +51,11 @@ const PendingBlogs = () => {
 
   useEffect(() => {
     fetchCount();
+  
     
   }, []);
 
- 
+  
 
   
 
@@ -111,6 +112,7 @@ const PendingBlogs = () => {
   };
 
   const handleReject = async (id , status , remarks) => {
+    
     try {
      
   
@@ -191,20 +193,18 @@ const PendingBlogs = () => {
         section.scrollIntoView({ behavior: 'smooth' });
     }
 };
-
-
  
 
 
   return (
-    <div >
+    <div>
        
 
 
        
-            <main class="" >
+            <main class="">
           
-                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400" style = {{height : "80vh"}}>
+                <div class="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-green-400">
                
                     <div class="grid grid-cols-12 gap-6">
                         <div class="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
@@ -319,12 +319,11 @@ const PendingBlogs = () => {
                                         </div>
                                     </Link>
                                 </div>
-                              
-                                <section id = "pending" className='mt-12'>
+                                <section id = "approved" className='mt-12'>
                                 <Table title = "Pending" modalOpen = {modalOpen} setModalOpen = {setModalOpen} handleConfirm = {handleConfirm}  actionType = {actionType} />
                                 </section>
-                               
-                           
+
+                                
                             </div>
                         </div>
                     </div>
@@ -335,4 +334,4 @@ const PendingBlogs = () => {
   )
 }
 
-export default PendingBlogs
+export default ApprovedBlogs

@@ -177,7 +177,7 @@ function BlogPostForm() {
       return file;
   }
   
-  // Usage example
+
   const blobUrl = image;
   const fileName = 'cover_image'; 
   const formData = new FormData();
@@ -186,8 +186,7 @@ function BlogPostForm() {
       .then(file => {
           console.log('File:', file);
           formData.append('image_url', file);
-          // You can now use the File object as needed
-          // For example, you can create a download link:
+        
          
       })
       .catch(error => {
@@ -203,9 +202,7 @@ function BlogPostForm() {
       
       formData.append('status', 'Pending');
       formData.append('tags', JSON.stringify(tags));
-      // if (coverImage) {
-      //   formData.append('image_url', coverImage);
-      // }
+     
       formData.append('author_id', user.id);
   
       console.log([...formData.entries()]); // Log FormData entries for debugging
@@ -362,12 +359,12 @@ function BlogPostForm() {
       setBlogContent('');
       setCoverImage(null);
     } catch (error) {
-      console.error('Error submitting blog:', error);
+      console.error('Error submitting blog:', error.response.data.error);
   
       MySwal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Error submitting blog. Please try again.',
+        text: error.response.data.error,
       });
     }
   };

@@ -177,7 +177,7 @@ const updateBlog = async (blogId, blogData, tags) => {
 
 // Set up MySQL connection using promises
 const db = mysql.createPool({
-  host: process.env.DB_HOST || ' 10.20.1.188',
+  host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'blogdb',
@@ -570,9 +570,16 @@ app.put('/blogs/:id', multer({
     const blogId = req.params.id;
 
     const { author_name, blog_title, blog_content, status, author_id, tags } = req.body;
-    const image_url = req.file ?  `uploads/${req.file.filename}` : '';
 
- 
+    // Check if file was uploaded
+    const image_url = req.file ? `uploads/${req.file.filename}` : '';
+
+    // Validate if cover image is mandatory
+    if (req.body.image_url === 'rem' || !image_url) {
+      return res.status(400).json({ error: "Cover Image is Mandatory!" });
+    }
+
+    // Prepare blog data
     const blogData = {
       author_name,
       blog_title,
@@ -582,17 +589,12 @@ app.put('/blogs/:id', multer({
       author_id
     };
 
-    if(req.body.image_url == 'rem'){
-      blogData['image_url']= 'rem';
-    }
-
-    console.log(req.body.image_url == 'rem' )
-  
-    const tagsArray = Array.isArray(tags) ? tags : JSON.parse(tags);
+    // Parse tags
+    const tagsArray = Array.isArray(tags) ? tags : JSON.parse(tags || '[]');
     
     console.log(`Updating blog with ID: ${blogId}`, blogData);
 
- 
+    // Update blog
     const result = await updateBlog(blogId, blogData, tagsArray);
 
     res.status(200).json(result);

@@ -348,52 +348,8 @@ function EditBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
-    formData.append('author_name', user.name);
-    formData.append('blog_title', title);
-    addSrcToImages(blogContent)
-    formData.append('blog_content', blogContent);
-    formData.append('status', 'Pending');
-    formData.append('tags', JSON.stringify(tags));
-    console.log(coverImage , prevCoverImage)
-    if (coverImage && coverImage != ' ' && coverImage != prevCoverImage) {
-      formData.append('image_url', coverImage);
-    }
-    formData.append('author_id', user.id);
-    console.log(formData);
-
-    try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${blog.id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      MySwal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Blog submitted successfully!',
-      });
-
-      setTitle('');
-      setBlogContent('');
-      setCoverImage(null);
-    } catch (error) {
-      console.error('Error submitting blog:', error);
-
-      MySwal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error submitting blog. Please try again.',
-      });
-    }
-  };
-
-  const handleDraft = async (e) => {
-    e.preventDefault() ;
-    const formData = new FormData();
-
+  
     async function blobUrlToFile(blobUrl, fileName) {
       // Fetch the Blob data
       const response = await fetch(blobUrl);
@@ -402,79 +358,122 @@ function EditBlog() {
       // Convert the Blob to a File
       const file = new File([blob], fileName, { type: blob.type });
       return file;
-  }
+    }
   
-  // Usage example
-  const blobUrl = image;
-  const fileName = 'cover_image'; 
-
+    // Usage example
+    const blobUrl = image;
+    const fileName = 'cover_image'; 
+    console.log(image);
   
-  blobUrlToFile(blobUrl, fileName)
-      .then(file => {
-          console.log('File:', file);
-          
-
-          if(coverImage === 'rem'){
-            formData.append('image_url', 'rem');
-          }
-          else{
-            formData.append('image_url', file);
-          }
-            
-          
-      
-          // You can now use the File object as needed
-          // For example, you can create a download link:
-         
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
-
-    formData.append('author_name', user.name);
-    formData.append('blog_title', title);
-    formData.append('blog_content', blogContent);
-    formData.append('status', 'Draft');
-    formData.append('tags', JSON.stringify(tags));
-
-    
-    
-
-   
-    
-    formData.append('author_id', user.id);
-    console.log(formData);
-
     try {
-      
-      
+      if (blobUrl) {
+        const file = await blobUrlToFile(blobUrl, fileName);
+        formData.append('image_url', file);
+      } else if (coverImage) {
+        formData.append('image_url', coverImage);
+      }
+  
+      formData.append('author_name', user.name);
+      formData.append('blog_title', title);
+      formData.append('blog_content', blogContent);
+      formData.append('status', 'Pending');
+      formData.append('tags', JSON.stringify(tags));
+      formData.append('author_id', user.id);
+  
+      console.log(formData.has('image_url'), formData.get('image_url'));
+  
       await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${blog.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       MySwal.fire({
         icon: 'success',
         title: 'Success',
         text: 'Blog saved as draft successfully!',
       }).then(() => {
-        navigate("/author/drafts")
+        navigate("/author/drafts");
       });
-
+  
       setTitle('');
       setBlogContent('');
       setCoverImage(null);
     } catch (error) {
-      console.error('Error submitting blog:', error);
-
+      console.error('Error submitting blog:', error.message);
+  
       MySwal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Error submitting blog. Please try again.',
+        text: error.response?.data?.error || 'An unexpected error occurred',
       });
     }
-  }
+  };
+
+  const handleDraft = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+  
+    async function blobUrlToFile(blobUrl, fileName) {
+      // Fetch the Blob data
+      const response = await fetch(blobUrl);
+      const blob = await response.blob();
+      
+      // Convert the Blob to a File
+      const file = new File([blob], fileName, { type: blob.type });
+      return file;
+    }
+  
+    // Usage example
+    const blobUrl = image;
+    const fileName = 'cover_image'; 
+    console.log(image);
+  
+    try {
+      if (blobUrl) {
+        const file = await blobUrlToFile(blobUrl, fileName);
+        formData.append('image_url', file);
+      } else if (coverImage) {
+        formData.append('image_url', coverImage);
+      }
+  
+      formData.append('author_name', user.name);
+      formData.append('blog_title', title);
+      formData.append('blog_content', blogContent);
+      formData.append('status', 'Draft');
+      formData.append('tags', JSON.stringify(tags));
+      formData.append('author_id', user.id);
+  
+      console.log(formData.has('image_url'), formData.get('image_url'));
+  
+      await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${blog.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      MySwal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Blog saved as draft successfully!',
+      }).then(() => {
+        navigate("/author/drafts");
+      });
+  
+      setTitle('');
+      setBlogContent('');
+      setCoverImage(null);
+    } catch (error) {
+      console.error('Error submitting blog:', error.message);
+  
+      MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.error || 'An unexpected error occurred',
+      });
+    }
+  };
+  
 
   return (
     <main className="">
@@ -493,7 +492,7 @@ function EditBlog() {
                 
                 <div style={{ width: "70vw", backgroundColor: "white" }} className='p-4 shadow-xl rounded-xl mx-auto border-solid'>
                 <div className='flex justify-end'>
-                  {console.log(tags)}
+                  {/* {console.log(tags)} */}
 
 <Link to={`/author/blogs/preview`} state={{ blog , image , title , blogContent , tags  }} className="btn  text-black py-2 px-4 rounded">
     Preview
@@ -504,7 +503,7 @@ function EditBlog() {
                     <div  >
                     
                       {/* Cover Image */}
-                      {console.log(coverImage === prevCoverImage , coverImage , prevCoverImage) }
+                      {/* {console.log(coverImage === prevCoverImage , coverImage , prevCoverImage) } */}
                      
                       { (!image ||   image ===  ' ') && (
                         <button type="button" onClick={handleButtonClick} className='border border-black-800 p-3'>
@@ -535,7 +534,7 @@ function EditBlog() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage('rem') ; setImage('rem')}}
+                                onClick={() => {setCoverImage('') ; setImage('')}}
                                 type="button"
                               >
                                 Remove
