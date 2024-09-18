@@ -79,39 +79,39 @@ const fetchUserBlogs = async (userId) => {
 };
 
 const fetchBlogs = async () => {
-    try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
-        const filteredApproved = response.data.blogs.filter(blog =>  (blog.status === 'Accept' && blog.deleted_at == null) );
-        const filteredRejected = response.data.blogs.filter(blog =>  (blog.status === 'Reject'  && blog.deleted_at == null));
-        const filteredPending = response.data.blogs.filter(blog =>  (blog.status === 'Pending'  && blog.deleted_at == null));
-        const filteredReverted = response.data.blogs.filter(blog =>  (blog.status === 'Revert'  && blog.deleted_at == null));
-        setBlogs(response.data.blogs);
-        setApprovedBlogs(filteredApproved);
-        setRejectedBlogs(filteredRejected);
-        setPendingBlogs(filteredPending);
-        setRevertedBlogs(filteredReverted);
-        
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        setError('Error fetching blogs');
-    } finally {
-        setLoading(false);
-    }
-  };
+  try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
+      const filteredApproved = response.data.blogs.filter(blog =>  (blog.status === 'Accept' && blog.deleted_at == null) );
+      const filteredRejected = response.data.blogs.filter(blog =>  (blog.status === 'Reject'  && blog.deleted_at == null));
+      const filteredPending = response.data.blogs.filter(blog =>  (blog.status === 'Pending'  && blog.deleted_at == null));
+  
+      setBlogs(response.data.blogs);
+      setApprovedBlogs(filteredApproved);
+      setRejectedBlogs(filteredRejected);
+      setPendingBlogs(filteredPending);
+    
+      
+  } catch (error) {
+      console.error('Error fetching blogs:', error);
+      setError('Error fetching blogs');
+  } finally {
+      setLoading(false);
+  }
+};
 
 const fetchCount = async () => {
-    try{
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count`);
-      console.log(response)
-     
-      setCount(response.data);
-      
+  try{
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count`);
+    console.log(response)
+   
+    setCount(response.data);
+    
 
-    }catch(error){
-      console.log("Error occured " , error);
-      setError("Error Fetching Count ! ");
-    }
+  }catch(error){
+    console.log("Error occured " , error);
+    setError("Error Fetching Count ! ");
   }
+}
 
   const fetchUserCount = async (userId) => {
     try{

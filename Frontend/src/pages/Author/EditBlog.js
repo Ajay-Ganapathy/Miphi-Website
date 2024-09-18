@@ -222,7 +222,9 @@ import TextEditor from '../../Components/TextEditor';
 import { useLocalContext } from '../../Context/context';
 import styles from "./EditBlog.modules.css";
 import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 const MySwal = withReactContent(Swal);
+
 
 function EditBlog() {
 
@@ -348,40 +350,98 @@ function EditBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
+  
+    // Function to extract base64 images from blog content
+    const extractBase64Images = (blogContent) => {
+      const uniqueId = uuidv4();
+      const base64ImageRegex = /<img[^>]+src="data:image\/[^"]+"[^>]*>/g;
+      const base64Images = blogContent.match(base64ImageRegex) || [];
+      return base64Images.map((imgTag, index) => {
+        const srcMatch = imgTag.match(/src="(data:image\/[^"]+)"/);
+        const base64String = srcMatch ? srcMatch[1] : null;
+        if (base64String) {
+          const mime = base64String.match(/data:(.*?);base64/)[1];
+          const byteString = atob(base64String.split(',')[1]);
+          const arrayBuffer = new ArrayBuffer(byteString.length);
+          const uintArray = new Uint8Array(arrayBuffer);
+          for (let i = 0; i < byteString.length; i++) {
+            uintArray[i] = byteString.charCodeAt(i);
+          }
+          return new File([uintArray], `${uniqueId}_image_${index}.png`, { type: mime });
+        }
+        return null;
+      }).filter(Boolean);
+    };
+  
+    // Function to process images and replace base64 with URLs if needed
+    const addSrcToImages = async (blogContent) => {
+      const base64Images = extractBase64Images(blogContent);
+  
+      if (base64Images.length === 0) {
+        return blogContent; // No images to upload, return content as is
+      }
+  
+      // Create FormData to upload images
+      const imageFormData = new FormData();
+      base64Images.forEach((file, index) => {
+        imageFormData.append(`images[]`, file);
+      });
+  
+      // Upload images to backend
+      const imageResponse = await fetch(`${process.env.REACT_APP_API_URL}/upload-images`, {
+        method: 'POST',
+        body: imageFormData,
+      });
+  
+      const imageData = await imageResponse.json();
+      if (!imageData.success) {
+        throw new Error('Image upload failed');
+      }
+  
+      const imageUrlArray = imageData.imageUrls;
+  
+      // Replace base64 src in blog content with actual image URLs
+      return replaceBase64ImagesWithURLs(blogContent, imageUrlArray);
+    };
+  
+    const replaceBase64ImagesWithURLs = (blogContent, imageUrlArray) => {
+      let i = 0;
+      return blogContent.replace(/<img[^>]+src="data:image\/[^"]+"[^>]*>/g, () => {
+        const imageUrl = imageUrlArray[i++];
+        return `<img src="${process.env.REACT_APP_API_URL}/uploads/${imageUrl}" />`;
+      });
+    };
   
     async function blobUrlToFile(blobUrl, fileName) {
       // Fetch the Blob data
       const response = await fetch(blobUrl);
       const blob = await response.blob();
-      
+  
       // Convert the Blob to a File
-      const file = new File([blob], fileName, { type: blob.type });
-      return file;
+      return new File([blob], fileName, { type: blob.type });
     }
   
-    // Usage example
-    const blobUrl = image;
-    const fileName = 'cover_image'; 
-    console.log(image);
-  
+    // Start updating the blog
+    const formData = new FormData();
+    
     try {
-      if (blobUrl) {
-        const file = await blobUrlToFile(blobUrl, fileName);
-        formData.append('image_url', file);
-      } else if (coverImage) {
-        formData.append('image_url', coverImage);
-      }
-  
+      const updatedBlogContent = await addSrcToImages(blogContent); // Update content with image URLs
       formData.append('author_name', user.name);
       formData.append('blog_title', title);
-      formData.append('blog_content', blogContent);
+      formData.append('blog_content', updatedBlogContent); // Use updated content with image URLs
       formData.append('status', 'Pending');
       formData.append('tags', JSON.stringify(tags));
+  
+      if (coverImage) {
+        const file = await blobUrlToFile(coverImage, 'cover_image');
+        formData.append('image_url', file); // Append cover image if updated
+      }
+  
       formData.append('author_id', user.id);
   
-      console.log(formData.has('image_url'), formData.get('image_url'));
+      console.log([...formData.entries()]); // Log FormData entries for debugging
   
+      // Submit form data to backend (PUT request to update the blog)
       await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${blog.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -391,61 +451,118 @@ function EditBlog() {
       MySwal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Blog saved as draft successfully!',
-      }).then(() => {
-        navigate("/author/drafts");
+        text: 'Blog updated successfully!',
       });
   
       setTitle('');
       setBlogContent('');
       setCoverImage(null);
     } catch (error) {
-      console.error('Error submitting blog:', error.message);
+      console.error('Error updating blog:', error.response.data.error);
   
       MySwal.fire({
         icon: 'error',
         title: 'Error',
-        text: error.response?.data?.error || 'An unexpected error occurred',
+        text: error.response.data.error,
       });
     }
   };
+  
 
   const handleDraft = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
+  
+    // Function to extract base64 images from blog content
+    const extractBase64Images = (blogContent) => {
+      const uniqueId = uuidv4();
+      const base64ImageRegex = /<img[^>]+src="data:image\/[^"]+"[^>]*>/g;
+      const base64Images = blogContent.match(base64ImageRegex) || [];
+      return base64Images.map((imgTag, index) => {
+        const srcMatch = imgTag.match(/src="(data:image\/[^"]+)"/);
+        const base64String = srcMatch ? srcMatch[1] : null;
+        if (base64String) {
+          const mime = base64String.match(/data:(.*?);base64/)[1];
+          const byteString = atob(base64String.split(',')[1]);
+          const arrayBuffer = new ArrayBuffer(byteString.length);
+          const uintArray = new Uint8Array(arrayBuffer);
+          for (let i = 0; i < byteString.length; i++) {
+            uintArray[i] = byteString.charCodeAt(i);
+          }
+          return new File([uintArray], `${uniqueId}_image_${index}.png`, { type: mime });
+        }
+        return null;
+      }).filter(Boolean);
+    };
+  
+    // Function to process images and replace base64 with URLs if needed
+    const addSrcToImages = async (blogContent) => {
+      const base64Images = extractBase64Images(blogContent);
+  
+      if (base64Images.length === 0) {
+        return blogContent; // No images to upload, return content as is
+      }
+  
+      // Create FormData to upload images
+      const imageFormData = new FormData();
+      base64Images.forEach((file, index) => {
+        imageFormData.append(`images[]`, file);
+      });
+  
+      // Upload images to backend
+      const imageResponse = await fetch(`${process.env.REACT_APP_API_URL}/upload-images`, {
+        method: 'POST',
+        body: imageFormData,
+      });
+  
+      const imageData = await imageResponse.json();
+      if (!imageData.success) {
+        throw new Error('Image upload failed');
+      }
+  
+      const imageUrlArray = imageData.imageUrls;
+  
+      // Replace base64 src in blog content with actual image URLs
+      return replaceBase64ImagesWithURLs(blogContent, imageUrlArray);
+    };
+  
+    const replaceBase64ImagesWithURLs = (blogContent, imageUrlArray) => {
+      let i = 0;
+      return blogContent.replace(/<img[^>]+src="data:image\/[^"]+"[^>]*>/g, () => {
+        const imageUrl = imageUrlArray[i++];
+        return `<img src="${process.env.REACT_APP_API_URL}/uploads/${imageUrl}" />`;
+      });
+    };
   
     async function blobUrlToFile(blobUrl, fileName) {
       // Fetch the Blob data
       const response = await fetch(blobUrl);
       const blob = await response.blob();
-      
+  
       // Convert the Blob to a File
-      const file = new File([blob], fileName, { type: blob.type });
-      return file;
+      return new File([blob], fileName, { type: blob.type });
     }
   
-    // Usage example
-    const blobUrl = image;
-    const fileName = 'cover_image'; 
-    console.log(image);
-  
+    // Start updating the blog
+    const formData = new FormData();
+    
     try {
-      if (blobUrl) {
-        const file = await blobUrlToFile(blobUrl, fileName);
-        formData.append('image_url', file);
-      } else if (coverImage) {
-        formData.append('image_url', coverImage);
-      }
-  
+      const updatedBlogContent = await addSrcToImages(blogContent); // Update content with image URLs
       formData.append('author_name', user.name);
       formData.append('blog_title', title);
-      formData.append('blog_content', blogContent);
+      formData.append('blog_content', updatedBlogContent); // Use updated content with image URLs
       formData.append('status', 'Draft');
       formData.append('tags', JSON.stringify(tags));
+  
+      if (coverImage) {
+        const file = await blobUrlToFile(coverImage, 'cover_image');
+        formData.append('image_url', file); // Append cover image if updated
+      }
+  
       formData.append('author_id', user.id);
   
-      console.log(formData.has('image_url'), formData.get('image_url'));
+      console.log([...formData.entries()]); // Log FormData entries for debugging
   
+      // Submit form data to backend (PUT request to update the blog)
       await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${blog.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -455,21 +572,19 @@ function EditBlog() {
       MySwal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Blog saved as draft successfully!',
-      }).then(() => {
-        navigate("/author/drafts");
+        text: 'Blog updated successfully!',
       });
   
       setTitle('');
       setBlogContent('');
       setCoverImage(null);
     } catch (error) {
-      console.error('Error submitting blog:', error.message);
+      console.error('Error updating blog:', error.response.data.error);
   
       MySwal.fire({
         icon: 'error',
         title: 'Error',
-        text: error.response?.data?.error || 'An unexpected error occurred',
+        text: error.response.data.error,
       });
     }
   };

@@ -6,6 +6,8 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
+
+
 function Modal2(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [remarks, setRemarks] = useState(props.remarks || '');
