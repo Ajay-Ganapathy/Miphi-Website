@@ -151,6 +151,58 @@ html {
   padding-top: 20vh; /* Adjust based on your content */
 }
 
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 2s ease forwards;
+  animation-delay: 2s;
+}
+
+.move-text {
+  position: relative;
+  animation: moveToLeft 2s ease forwards;
+}
+
+@keyframes moveToLeft {
+  0% {
+    transform: translateX(50vw); /* Centered horizontally */
+  }
+  100% {
+    transform: translateX(0); /* Moves to the left */
+  }
+}
+
+.zoom-delay {
+  opacity: 0; /* Initially invisible */
+  transform: scale(0); /* Initially scaled down to 0 (not visible) */
+  animation: zoomIn 0.5s ease forwards; /* Smooth zoom effect */
+  animation-delay: 2s; /* Delay of 2 seconds before zoom starts */
+}
+
+@keyframes zoomIn {
+  to {
+    opacity: 1; /* Element becomes visible */
+    transform: scale(1); /* Element scales up to normal size */
+  }
+}
+
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes jitter {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+
 
 
 

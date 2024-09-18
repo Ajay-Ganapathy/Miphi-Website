@@ -66,20 +66,27 @@ const Login = () => {
     };
 
     return (
-        <div className={styles.main} style={{ background: "linear-gradient(to right, #FF7E5F, #FFB88C)" , height : "100%"}}>
+        <div className={styles.main} >
             <br />
             <br />
             <br />
             <br />
-            <div className="px-24 mb-11">
+
+            <video autoPlay muted loop className="background-video">
+        <source src="http://localhost:5000/uploads/bgvid3.mp4" type="video/mp4" />
+       
+      </video>
+
+
+            <div className="px-24 mb-11 ">
                 <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center justify-between flex-end">
-                    <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+                    <div className=" move-text flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
                          
-                         <h1 className="my-4 text-5xl font-bold leading-tight text-gray-100">
+                         <h1 className="my-4 text-5xl font-bold leading-tight ml-40 text-gray-100">
                             Welcome to Miphi
                         </h1>
-                        <p className="text-3xl tracking-loose w-full text-gray-100 mb-8 font-bold rounded-full tracking-wider">Login and Start writing blogs</p>
-                         <Icon /> 
+                        <p className="text-3xl tracking-loose w-full text-gray-100 mb-8 ml-40  font-bold rounded-full tracking-wider">Login and Start writing blogs</p>
+                         {/* <Icon />  */}
                          <br />
                         
                         <p className="text-3xl tracking-loose w-full text-gray-100 font-bold rounded-full tracking-wider">
@@ -93,7 +100,7 @@ const Login = () => {
                         
                     </div>
                     <div className="w-70 mt-7 mb-10">
-                        <div style={{ width: "30vw", textAlign: "center" }} className="transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                        <div style={{ width: "30vw", textAlign: "center" }} className=" zoom-delay transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                             <div className="p-5">
                                 <div className={`${styles.formContainer}`}>
                                     <div>
@@ -142,7 +149,7 @@ const Login = () => {
             </div>
             
            
-            <div className="relative -mt-20 lg:-mt-24">
+            {/* <div className="relative -mt-20 lg:-mt-24">
                 <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
                     <defs>
                         <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
@@ -154,7 +161,7 @@ const Login = () => {
                         <use xlinkHref="#gentle-wave" x="48" y="7" fill="#fff" />
                     </g>
                 </svg>
-            </div>
+            </div> */}
         </div>
     );
 }
