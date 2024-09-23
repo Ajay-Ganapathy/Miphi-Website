@@ -126,7 +126,7 @@ const Navbar = () => {
         </button> */}
         <span></span>
 
-        <div className="flex justify-center mt-2 mr-4">
+        {/* <div className="flex justify-center mt-2 mr-4">
           <div className="relative flex w-full flex-wrap items-stretch mb-3">
             <input
               type="search"
@@ -139,11 +139,11 @@ const Navbar = () => {
               </svg>
             </span>
           </div>
-        </div>
+        </div> */}
 
         <ul className="flex items-center flex-shrink-0 space-x-6">
           <li className="relative">
-            <button
+            {/* <button
               className="p-2 bg-white text-green-400 align-middle rounded-full hover:text-white hover:bg-green-400 focus:outline-none"
               onClick={toggleNotificationsMenu}
               aria-label="Notifications"
@@ -180,11 +180,11 @@ const Navbar = () => {
                   </a>
                 </li>
               </ul>
-            )}
+            )} */}
           </li>
 
           <li className="relative">
-            <button
+            {/* <button
               className="p-2 bg-white text-green-400 align-middle rounded-full hover:text-white hover:bg-green-400 focus:outline-none"
               onClick={toggleProfileMenu}
               aria-label="Account"
@@ -201,7 +201,7 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-            </button>
+            </button> */}
 
             {isProfileMenuOpen && (
               <ul

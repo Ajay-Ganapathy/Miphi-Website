@@ -177,7 +177,7 @@ function BlogPostForm() {
       return file;
   }
   
-
+  // Usage example
   const blobUrl = image;
   const fileName = 'cover_image'; 
   const formData = new FormData();
@@ -186,7 +186,8 @@ function BlogPostForm() {
       .then(file => {
           console.log('File:', file);
           formData.append('image_url', file);
-        
+          // You can now use the File object as needed
+          // For example, you can create a download link:
          
       })
       .catch(error => {
@@ -202,7 +203,9 @@ function BlogPostForm() {
       
       formData.append('status', 'Pending');
       formData.append('tags', JSON.stringify(tags));
-     
+      // if (coverImage) {
+      //   formData.append('image_url', coverImage);
+      // }
       formData.append('author_id', user.id);
   
       console.log([...formData.entries()]); // Log FormData entries for debugging
@@ -224,12 +227,12 @@ function BlogPostForm() {
       setBlogContent('');
       setCoverImage(null);
     } catch (error) {
-      console.error('Error submitting blog:', error);
+      console.error('Error submitting blog:', error.response.data.error);
   
       MySwal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Error submitting blog. Please try again.',
+        text: error.response.data.error,
       });
     }
   };
@@ -374,10 +377,10 @@ function BlogPostForm() {
 
 
   return (
-    <main className="">
+    <main >
       
       <div className="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100"
-        style={{ height: coverImage ? "auto" : "100vh" }}>
+        style={{ height: "auto" }}>
         <div className="grid grid-cols-12 gap-6">
           <div className="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
             <div className="col-span-12 mt-8">
@@ -428,7 +431,7 @@ function BlogPostForm() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage(' ') ; setImage(' ')}}
+                                onClick={() => {setCoverImage(null) ; setImage(null)}}
                                 type="button"
                               >
                                 Remove

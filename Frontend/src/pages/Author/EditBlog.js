@@ -594,7 +594,7 @@ function EditBlog() {
     <main className="">
      
       <div className="grid mb-4 pb-10 px-8 mx-4 rounded-3xl bg-gray-100 border-4 border-orange-400 w-100"
-        style={{ height: coverImage ? "auto" : "100vh" }}>
+        style={{ height: "auto" }}>
         <div className="grid grid-cols-12 gap-6">
           <div className="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
             <div className="col-span-12 mt-8">
@@ -649,7 +649,7 @@ function EditBlog() {
                               </button>
                               <button
                                 className="text-red-400 w-40 h-10 font-semibold py-2 px-4 rounded-lg m-3"
-                                onClick={() => {setCoverImage('') ; setImage('')}}
+                                onClick={() => {setCoverImage(null) ; setImage(null)}}
                                 type="button"
                               >
                                 Remove

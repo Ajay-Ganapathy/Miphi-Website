@@ -156,6 +156,7 @@ html {
   transform: translateY(20px);
   animation: fadeUp 2s ease forwards;
   animation-delay: 2s;
+  
 }
 
 .move-text {
@@ -177,6 +178,14 @@ html {
   transform: scale(0); /* Initially scaled down to 0 (not visible) */
   animation: zoomIn 0.5s ease forwards; /* Smooth zoom effect */
   animation-delay: 2s; /* Delay of 2 seconds before zoom starts */
+}
+
+.transparent-box {
+  width: 200px;
+  height: 200px;
+ 
+ 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Transparent shadow */
 }
 
 @keyframes zoomIn {
@@ -201,6 +210,59 @@ html {
   75% { transform: translateX(-2px); }
   100% { transform: translateX(0); }
 }
+
+.move-text {
+  position: absolute; /* Position the element absolutely for animation */
+  top: 0;
+  left: 0;
+  animation: moveText 3s ease forwards;
+}
+
+@keyframes moveText {
+  0% {
+    top: 0;  /* Start at top-left corner */
+    left: 0;
+  }
+  50% {
+    top: 50%; /* Move to the vertical center */
+    left: 50%; /* Move to the horizontal center */
+    transform: translate(-50%, -50%); /* Center it exactly */
+  }
+  66% {
+    top: 50%; /* Stay in the center for a while */
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    top: 50%; /* Move back to the top-left */
+    left: 0;
+    transform: translate(0, 0);
+  }
+}
+
+
+
+.box {
+  /* width: 100px;
+  height: 100px;
+  background-color: teal; */
+  animation: emergeMoveLeft 2s ease forwards;
+}
+
+@keyframes emergeMoveLeft {
+  0% {
+    transform: scale(0) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateX(-200px);
+  }
+}
+
 
 
 

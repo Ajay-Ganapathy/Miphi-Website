@@ -105,19 +105,52 @@ const BlogContent = ({ blogContent, author_name , blogId , tags , profile_img })
     return (
         <div className="flex flex-col lg:flex-row lg:justify-start">
            
-            <div style={{ width: '40vw' }} className="flex-1 px-4 lg:px-0 mt-12 mb-12 text-gray-700 max-w-screen-md text-lg leading-relaxed lg:mr-40">
+            <div style={{ width: '40vw' }} className="flex-1 px-4 lg:px-0 mt-12 mb-12 text-gray-700 max-w-screen-md text-lg leading-relaxed lg:mr-48">
                 <div
                     dangerouslySetInnerHTML={{ __html: sanitizedHtmlContent }}
+
+                    
                 ></div>
+
+<h4 className="text-lg font-semibold mb-2"> Tags </h4>
+    <div className="flex flex-wrap items-start space-x-4"> 
+
+    {/* <div className="flex flex-col items-start space-y-4"> 
+  {
+    tags.length > 0 &&
+    tags.map((ta, index) => (
+      <div key={index} className="mb-4"> 
+        <span className="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-2 rounded dark:bg-green-900 dark:text-green-300">
+          {ta}
+        </span>
+      </div>
+    ))
+  }
+</div> */}
+
+      
+    {
+  tags.length > 0 &&
+    tags.map((ta, index) => (
+      <div key={index} className="mb-4"> 
+        <span
+          className="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-2 rounded dark:bg-green-900 dark:text-green-300"
+        >
+          {ta}
+        </span>
+      </div>
+    ))
+}
+    </div>
             </div>
 
             
-            <div  style={{ width: '20vw' }} className="flex flex-col lg:fixed lg:top-44 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-4 h-[80vh] ">
+            <div  style={{ width: '15vw' }} className="flex flex-col lg:fixed lg:top-44 lg:right-16 w-full lg:w-60 mt-8 mb-4 lg:mt-12 h-[80vh] ">
                 <nav className="flex-1 overflow-y-auto pr-2 scrollbar-hidden">
                
                     <strong className="text-2xl mb-8 block text-center lg:text-left top-0  z-10">Highlights</strong>
                    
-                    <ul className="mt-4 space-y-2 text-center lg:text-left">
+                    <ul className="mt-4 space-y-2 text-center lg:text-left h-[20vh]">
                         {ids.map(({ id, content }) => (
                             <li key={id}>
                                 <a
@@ -140,25 +173,10 @@ const BlogContent = ({ blogContent, author_name , blogId , tags , profile_img })
 
                 <div className="mt-4 mb-12 text-center lg:text-left">
     <hr className="my-4" />
-    <h4 className="text-lg font-semibold mb-2"> Tags </h4>
-    <div className="flex flex-column items-center space-x-4"> 
+   
+    </div>
 
-      
-        {
-              tags.length > 0 &&
-       
-                        tags.map((ta) => {
-                            return(
-                                <>
-                                <h1><span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-2 mb-4 rounded dark:bg-green-900 dark:text-green-300">{ta}</span></h1> 
-                                <br />
-                                </>
-                            )
-                          
-                        })
-                    }
-    </div>
-    </div>
+    
 
               
 

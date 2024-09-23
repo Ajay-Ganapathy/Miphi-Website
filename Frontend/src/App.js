@@ -40,8 +40,9 @@ const App = () => {
         {/* <Navbar /> */}
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Sample />} />
+          <Route path="/" element={<Register />} />
           <Route path="/login" element={<Login />} />
+        
           <Route path="/register" element={<Register />} />
           <Route path="/reset" element={<ResetPassword />} />
           <Route path="/reset/:token" element={<ResetPassword />} />

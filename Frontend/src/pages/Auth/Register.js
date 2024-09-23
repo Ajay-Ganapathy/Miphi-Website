@@ -9,14 +9,17 @@ import Icon from '../../Components/Icon';
 const Register = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const MySwal = withReactContent(Swal);
-    const [username, setUserName] = useState('');
+    const [email , setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState(1); 
     const [loading, setLoading] = useState(false);
     const [profile, setProfile] = useState(null); 
     const [designation , setDesignation]  = useState('');
+    const [error , setError] = useState('')
     const navigate = useNavigate();
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@miphi\.in$/;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +27,7 @@ const Register = () => {
 
         try {
             const formData = new FormData(); 
-            formData.append('username', username);
+            formData.append('email', email);
             formData.append('name', name);
             formData.append('password', password);
             formData.append('role', role);
@@ -41,6 +44,15 @@ const Register = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
+            if(error != ''){
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'Enter the domain miphi.in',
+                    text: error,
+                });
+                return;
+            }
 
             MySwal.fire({
                 icon: 'success',
@@ -75,21 +87,40 @@ const Register = () => {
                                         <div className="mt-3 text-3xl font-bold leading-8 mb-8" >Add Users</div>
                                         <form onSubmit={handleSubmit}>
                                             <div className='flex flex-row justify-between'>
-                                                <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="username">
-                                                    User Name
+                                                <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="email">
+                                                    Email
                                                 </label>
                                                 <input
                                                     className={styles.formInput}
-                                                    type="text"
-                                                    id="username"
+                                                    type="email"
+                                                    id="email"
                                                     placeholder="User Name"
-                                                    value={username}
-                                                    onChange={(e) => setUserName(e.target.value)}
+                                                    value={email}
+                                                    onChange={(e) => {
+                                                        setEmail( (e.target.value ).trim());
+                                                        
+
+                                                        if(!email.endsWith("miphi.in")){
+                                                            setError('Enter miphi.in  domain')
+                                                        }else{
+                                                            setError('')
+
+                                                        }
+
+                                                        console.log(email.endsWith("miphi.in"))
+                                                        
+                                                      
+                                                    }}
                                                     required
                                                 />
                                             </div>
 
+
+
                                             <br />
+
+                                            {error != ''  && <p style={{ color: 'red' }}>{error}</p>}
+
                                             <br />
                                             <div className='flex flex-row justify-between'>
                                                 <label className="block text-gray-700 text-sm font-bold mb-2 mt-2" htmlFor="name">

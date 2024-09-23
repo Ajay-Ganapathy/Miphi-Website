@@ -13,7 +13,7 @@ const Login = () => {
   
 
     const MySwal = withReactContent(Swal);
-    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Login = () => {
 
         try {
             const response = await axios.post(`${apiUrl}/login`, {
-                username : name,
+                email : email,
                 password: pass,
             });
 
@@ -50,7 +50,7 @@ const Login = () => {
                 });
             }
 
-            setName('');
+            setEmail('');
             setPass('');
         } catch (error) {
             console.error('Error logging in', error);
@@ -108,13 +108,13 @@ const Login = () => {
                                         <div className="mt-1 text-base text-gray-600">
                                             <form onSubmit={handleSubmit}>
                                                 <div className='mb-4'>
-                                                    <label className={styles.formLabel}>User Name</label>
+                                                    <label className={styles.formLabel}>Email </label>
                                                     <input
                                                         className={styles.formInput}
                                                         type="text"
                                                         placeholder="User Name"
-                                                        value={name}
-                                                        onChange={(e) => setName(e.target.value)}
+                                                        value={email}
+                                                        onChange={(e) => setEmail(e.target.value)}
                                                         required
                                                     />
                                                 </div>

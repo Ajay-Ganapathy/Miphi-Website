@@ -113,6 +113,10 @@ const uploadimg = multer({ storage });
 // Insert blog into 'blogs' table
 const insertBlog = async (blogData, tags) => {
   const { author_name, blog_title, blog_content, status, author_id, image_url } = blogData;
+  if (image_url === 'rem' || !image_url) {
+    return res.status(400).json({ error: "Cover Image is Mandatory!" });
+  }
+
 
   // Insert the blog into the 'blogs' table
   const [blogResult] = await db.execute(
@@ -237,25 +241,46 @@ app.get("/" , (req,res) => {
   res.send("hello")
 })
 
+function validPassword(password) {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  return password.length >= minLength && hasUpperCase && hasNumber && hasSymbol;
+}
+
+
 app.post('/register', profile_upload.single('profile'), async (req, res) => {
-  const { username, name, password , designation } = req.body;
+  const { email, name, password, designation } = req.body;
   const profileImg = req.file ? req.file.filename : ''; // Get filename from uploaded file
+
+ 
+
 
   if (!name) {
     return res.status(400).json({ message: 'Name is required' });
   }
 
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  
+  // Validate email format
+  if(!email.endsWith("miphi.in")) {
+    return res.status(400).json({ message: 'Email must be a valid @miphi.in address' });
+  }
+
+  if(!validPassword(password)){
+    return res.status(400).json({ message: 'Password must contain Minimum 8 Characters ,  1 Uppercase Letter , 1 Number and 1 Symbol ' });
+  }
+
   try {
-    const checkUserQuery = 'SELECT * FROM users WHERE username = ?';
-    const [userResults] = await db.execute(checkUserQuery, [username]);
+    const checkUserQuery = 'SELECT * FROM user WHERE email = ?';
+    const [userResults] = await db.execute(checkUserQuery, [email]);
 
     if (userResults.length > 0) {
-      return res.status(409).json({ message: 'Username already exists' });
+      return res.status(409).json({ message: 'Email already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -264,16 +289,16 @@ app.post('/register', profile_upload.single('profile'), async (req, res) => {
     let params;
 
     if (profileImg) {
-      query = 'INSERT INTO users (role, username, name, password, profile_img , designation) VALUES (1, ?, ?, ?, ? , ?)';
-      params = [username, name, hashedPassword, profileImg , designation ];
+      query = 'INSERT INTO user (role, email, name, password, profile_img, designation) VALUES (1 , ?, ?, ?, ?, ?)';
+      params = [email, name, hashedPassword, profileImg, designation];
     } else {
-      query = 'INSERT INTO users (role, username, name, password , designation ) VALUES (1, ?, ?, ? , ?)';
-      params = [username, name, hashedPassword , designation ];
+      query = 'INSERT INTO user (role, email, name, password, designation) VALUES (1 , ?, ?, ?, ?)';
+      params = [email, name, hashedPassword, designation];
     }
 
     const [results] = await db.execute(query, params);
 
-    const token = jwt.sign({ id: results.insertId, username }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: results.insertId, email }, JWT_SECRET, { expiresIn: '1h' });
     res.status(201).json({ message: 'User registered successfully', token });
 
   } catch (error) {
@@ -284,10 +309,10 @@ app.post('/register', profile_upload.single('profile'), async (req, res) => {
 
 // Route to handle login
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body; // Changed from 'name' to 'username'
+  const { email , password } = req.body; 
 
   try {
-    const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
+    const [results] = await db.execute('SELECT * FROM user WHERE email = ?', [email]);
 
     if (results.length === 0) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -297,7 +322,7 @@ app.post('/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (match) {
-      const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id, email : user.email }, JWT_SECRET, { expiresIn: '1h' });
       res.json({ token, role: user.role });
     } else {
       res.status(400).json({ message: 'Invalid credentials' });
@@ -321,7 +346,7 @@ app.put('/profile/edit/:id', profile_upload.single('profile_img'), async (req, r
 
   try {
     // Check if user exists
-    const [userCheck] = await db.execute('SELECT * FROM users WHERE id = ?', [id]);
+    const [userCheck] = await db.execute('SELECT * FROM user WHERE id = ?', [id]);
     if (userCheck.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -338,11 +363,11 @@ app.put('/profile/edit/:id', profile_upload.single('profile_img'), async (req, r
         }
       }
 
-      query = 'UPDATE users SET name = ?, profile_img = ? WHERE id = ?';
+      query = 'UPDATE user SET name = ?, profile_img = ? WHERE id = ?';
       params = [name, profileImg, id];
     } else {
       // If no new image is uploaded, only update the name
-      query = 'UPDATE users SET name = ? WHERE id = ?';
+      query = 'UPDATE user SET name = ? WHERE id = ?';
       params = [name, id];
     }
 
@@ -374,7 +399,7 @@ app.get('/author/details', async (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET); 
 
-    const [results] = await db.execute('SELECT id , name , username , role , profile_img , designation FROM users WHERE id = ?', [decoded.id]);
+    const [results] = await db.execute('SELECT id , name , email , role , profile_img , designation FROM user WHERE id = ?', [decoded.id]);
    // console.log(results[0] , "dd")
 
     if (results.length === 0) {
@@ -423,7 +448,7 @@ app.get('/author/details', async (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET); // Verify the token
 
-    const [results] = await db.execute('SELECT id, name, role , username , profile_img  FROM users WHERE id = ?', [decoded.id]);
+    const [results] = await db.execute('SELECT id, name, role , username , profile_img  FROM user WHERE id = ?', [decoded.id]);
 
     if (results.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -451,6 +476,18 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
   try {
     const { author_name, blog_title, blog_content, status, author_id, tags } = req.body;
     const image_url = req.file ? `uploads/${req.file.filename}` : '';
+
+     
+      if (req.body.image_url === 'rem' || !image_url) {
+        return res.status(400).json({ error: "Cover Image is Mandatory!" });
+      }
+
+      if (req.body.blog_title.trim() === '' ) {
+        return res.status(400).json({ error: "Blog Title is Mandatory!" });
+      }
+
+
+   
 
     // Construct blogData object
     const blogData = {
@@ -480,7 +517,7 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
 // Route to get all blogs
 app.get('/blogs', async (req, res) => {
   try {
-    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.remarks,  b.deleted_at, b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN users u ON u.id = b.author_id`;
+    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.remarks,  b.deleted_at, b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN user u ON u.id = b.author_id`;
     
     const [results] = await db.execute(query);
 
@@ -494,7 +531,7 @@ app.get('/blogs', async (req, res) => {
 
 app.get('/blogs/latest', async (req, res) => {
   try {
-    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.deleted_at, b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN users u ON u.id = b.author_id ORDER BY published_at  DESC LIMIT 3`;
+    const query = `SELECT b.id , b.author_name , b.blog_title, b.blog_content , b.deleted_at, b.image_url , b.created_at , b.status , b.author_id , u.profile_img , u.designation FROM blogs b JOIN user u ON u.id = b.author_id ORDER BY published_at  DESC LIMIT 3`;
     
     const [results] = await db.execute(query);
 
@@ -562,7 +599,7 @@ app.get("/blogs/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.deleted_at ,b.image_url , b.created_at ,  b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN users u ON u.id = b.author_id WHERE b.id = ?`;
+    const query = `SELECT b.id , b.author_name ,  b.blog_title, b.blog_content , b.deleted_at ,b.image_url , b.created_at ,  b.status , b.author_id , u.profile_img ,  u.designation  FROM blogs b JOIN user u ON u.id = b.author_id WHERE b.id = ?`;
     const [results] = await db.execute(query, [id] ) 
       res.json({ blog: results[0] });
   
@@ -610,6 +647,11 @@ app.put('/blogs/:id', multer({
     if (req.body.image_url === 'rem' || !image_url) {
       return res.status(400).json({ error: "Cover Image is Mandatory!" });
     }
+
+    if (req.body.blog_title.trim() === '' ) {
+      return res.status(400).json({ error: "Blog Title is Mandatory!" });
+    }
+
 
     // Prepare blog data
     const blogData = {
