@@ -202,27 +202,30 @@ const Table = (props) => {
                                     <th className="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Blog Content</th>
                                     <th className="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th className="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                                    <th className="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                                    {
+                                      props.title === "Rejected" &&   <th className="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                                    }
+                                  
                                   </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                   {
                                     blogData[[props.title]].map((blog) => (
                                       <tr key={blog.id}>
-                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">{blog.author_name}</td>
-                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">{blog.blog_title}</td>
-                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-center">{blog.author_name}</td>
+                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-center">{blog.blog_title}</td>
+                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 ">
                                           {console.log(blog)}
                                           <Link to={`/admin/blogs/${blog.id}`} state={{ blog  }} className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                             View Blog
                                           </Link>
                                         </td>
                                       
-                                        <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                        <td className="px-6 py-4 whitespace-no-wrap text-sm text-center leading-5">
                                                           
                                                               
                                                           {blog.status === 'Accept' && <span className="text-green-600">
-                                                              <div className="flex text-green-500">
+                                                              <div className="flex text-green-500 content-center justify-center">
                                                           <svg
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             className="w-5 h-5 mr-1"
@@ -241,7 +244,7 @@ const Table = (props) => {
                                                               </div>
                                                               </span>}
                                                                 {blog.status === 'Reject' &&<span className="text-red-600">
-                                                              <div className="flex text-red-500">
+                                                              <div className="flex text-red-500 content-center justify-center">
                                                               <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="w-5 h-5 mr-1"
@@ -260,8 +263,8 @@ const Table = (props) => {
                                                               Rejected
                                                               </div>
                                                               </span>}
-                                                                {blog.status === 'Pending' && <span className="text-yellow-600">
-                                                              <div className="flex text-yellow-500">
+                                                                {blog.status === 'Pending' && <span className="text-yellow-600 ">
+                                                              <div className="flex text-yellow-500 content-center justify-center">
                                                         <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="w-5 h-5 mr-1"
@@ -284,7 +287,7 @@ const Table = (props) => {
                                                       </td>
                                                       {
                                                         props.title === 'Rejected' ?  <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                        <div className="flex space-x-4">
+                                                        <div className="flex space-x-4 content-center justify-center">
                                                           <button onClick = {() => openModal(blog.id , "Delete")} className="text-red-500 hover:text-red-600">
                                                 
                                                           <svg
@@ -329,7 +332,7 @@ const Table = (props) => {
                                                       />
                                                         </div>
                                                       </td> : props.title === 'Approved' ?    <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                        <div className="flex space-x-4">
+                                                        <div className="flex space-x-4 content-center justify-center">
                                                         
                                                           <button onClick = {() => openModal(blog.id , "Revert")}  className="text-yellow-500 hover:text-yellow-600">
                                                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -347,7 +350,7 @@ const Table = (props) => {
                                                       />
                                                         </div>
                                                       </td> :  <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 content-center justify-center">
           <button onClick = {() => openModal(blog.id , "Accept")} className="text-green-500 hover:text-green-600">
 
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -382,10 +385,14 @@ const Table = (props) => {
         </div>
       </td>
                                                       }
+
+                                                       {
+                                                       props.title === "Rejected" && 
                                                    
-                                                      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-center">
                                                         <p>{blog.remarks}</p>
                                                       </td>
+                                                      }
                                       </tr>
                                     ))
                                   }
