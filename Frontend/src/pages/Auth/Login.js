@@ -73,19 +73,19 @@ const Login = () => {
             <br />
 
             <video autoPlay muted loop className="background-video">
-        <source src="http://localhost:5000/uploads/bgvid3.mp4" type="video/mp4" />
+        <source src="http://localhost:5000/uploads/bgvid2.mp4" type="video/mp4" />
        
       </video>
 
 
             <div className="px-24 mb-11 ">
                 <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center justify-between flex-end">
-                    <div className=" move-text flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+                    <div className=" flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
                          
                          <h1 className="my-4 text-5xl font-bold leading-tight ml-40 text-gray-100">
                             Welcome to Miphi
                         </h1>
-                        <p className="text-3xl tracking-loose w-full text-gray-100 mb-8 ml-40  font-bold rounded-full tracking-wider">Login and Start writing blogs</p>
+                        {/* <p className="text-3xl tracking-loose w-full text-gray-100 mb-8 ml-40  font-bold rounded-full tracking-wider">Login and Start writing blogs</p> */}
                          {/* <Icon />  */}
                          <br />
                         
@@ -100,7 +100,7 @@ const Login = () => {
                         
                     </div>
                     <div className="w-70 mt-7 mb-10">
-                        <div style={{ width: "30vw", textAlign: "center" }} className=" zoom-delay transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                        <div style={{ width: "30vw", textAlign: "center" }} className=" transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                             <div className="p-5">
                                 <div className={`${styles.formContainer}`}>
                                     <div>

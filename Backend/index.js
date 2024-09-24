@@ -290,7 +290,7 @@ app.post('/register', profile_upload.single('profile'), async (req, res) => {
 
     if (profileImg) {
       query = 'INSERT INTO user (role, email, name, password, profile_img, designation) VALUES (1 , ?, ?, ?, ?, ?)';
-      params = [email, name, hashedPassword, profileImg, designation];
+      params = [email, name, hashedPassword, `profile/${profileImg}`, designation];
     } else {
       query = 'INSERT INTO user (role, email, name, password, designation) VALUES (1 , ?, ?, ?, ?)';
       params = [email, name, hashedPassword, designation];
