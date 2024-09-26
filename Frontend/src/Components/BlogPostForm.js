@@ -399,7 +399,7 @@ function BlogPostForm() {
                 {console.log(tags)}
 
              
-                  <form onSubmit={handleSubmit}>
+                  <form >
                     <div  >
                       {/* Cover Image */}
                       { console.log( image , title)}
@@ -447,6 +447,7 @@ function BlogPostForm() {
                           type="text"
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
+                          onKeyDown={(e) => (e.key === 'Enter') && e.preventDefault()}
                           placeholder="Enter the blog title...."
                           className="title-input ml-3"
                           required

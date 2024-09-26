@@ -211,6 +211,12 @@ html {
   100% { transform: translateX(0); }
 }
 
+.word-wrap {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+
 .move-text {
   position: absolute; /* Position the element absolutely for animation */
   top: 0;

@@ -112,7 +112,7 @@ const BlogContent = ({ blogContent, author_name , blogId , tags , profile_img })
                     
                 ></div>
 
-<h4 className="text-lg font-semibold mb-2"> Tags </h4>
+<h4 className="text-lg font-semibold mb-2 mt-4"> Tags </h4>
     <div className="flex flex-wrap items-start space-x-4"> 
 
     {/* <div className="flex flex-col items-start space-y-4"> 
@@ -181,15 +181,15 @@ const BlogContent = ({ blogContent, author_name , blogId , tags , profile_img })
               
 
            
-                <div className="mt-4 mb-12 text-center lg:text-left">
+                <div className="mt-4 mb-32 text-center lg:text-left">
     <hr className="my-4" />
     <h4 className="text-lg font-semibold mb-2">Author</h4>
     <div className="flex items-center space-x-4">  
-        <h3 className="text-xl font-medium">{author_name}</h3> 
+        <h3 className="text-sm font-medium">{author_name}</h3> 
         <img
             src={`${process.env.REACT_APP_API_URL}/${profile_img}`}
             alt=""
-            className="w-24 h-24 rounded-full dark:bg-gray-500 aspect-square"
+            className="w-12 h-12 rounded-full dark:bg-gray-500 aspect-square"
         />
     </div>
 </div>

@@ -257,14 +257,50 @@ const RejectedBlogs = () => {
   //   const [revertedBlogs , setRevertedBlogs ] = useState([]);
   //   const [user, setUser] = useState(null);
   //   const [blogs , setBlogs] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+  const [approvedBlogs, setApprovedBlogs] = useState([]);
+  const [rejectedBlogs, setRejectedBlogs] = useState([]);
+  const [pendingBlogs, setPendingBlogs] = useState([]);
+  const [revertedBlogs , setRevertedBlogs ] = useState([]);
+  const [draftedBlogs , setDraftedBlogs] = useState([]);
+  const [userCount , setUserCount] = useState('')
+ // const [user, setUser] = useState(null);
+  const [blogs , setBlogs] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+  const [tag , setTags] = useState([])
 
-    const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setPendingBlogs, userCount , fetchUserCount, user , fetchUserBlogs} = useLocalContext();
+  const fetchUserBlogs = async (userId) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
+        const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
+        
+        setRejectedBlogs(filteredRejected);
+    
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setError('Error fetching blogs');
+    } finally {
+        setLoading(false);
+    }
+  };
+  
 
-   
-   
+  const fetchUserCount = async (userId) => {
+    try{
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count/${userId}`);
+      console.log(response)
+     
+      setUserCount(response.data);
+      
+
+    }catch(error){
+      console.log("Error occured " , error);
+      setError("Error Fetching Count ! ");
+    }
+  }
+
+  const {user} = useLocalContext()
 
     useEffect(() => {
        

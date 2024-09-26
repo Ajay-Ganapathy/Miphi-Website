@@ -482,7 +482,7 @@ app.post('/blogs', multer({ storage: multer.diskStorage({
         return res.status(400).json({ error: "Cover Image is Mandatory!" });
       }
 
-      if (req.body.blog_title.trim() === '' ) {
+      if (req.body.blog_title.trim() === '' && req.body.status === 'Pending' ) {
         return res.status(400).json({ error: "Blog Title is Mandatory!" });
       }
 

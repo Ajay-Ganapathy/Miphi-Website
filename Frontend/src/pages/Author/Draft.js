@@ -328,7 +328,7 @@ const Draft = () => {
           </h1>
         </div>}
 
-          <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-3">        
+          <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-2">        
           {
              draftedBlogs.length > 0 &&
              draftedBlogs.map((blog) => {
@@ -350,7 +350,7 @@ const Draft = () => {
                 {blog.blog_title}
                 </h3>
                 
-                <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 120) }} className = "h-20"></div>
+                {/* <div dangerouslySetInnerHTML={{ __html: truncateContent(blog.blog_content, 120) }} className = "h-20"></div> */}
                
                 <div className="flex mt-2 justify-center ">
                 <Link to={`/author/blogs/${blog.id}/edit`} state={{ blog }} className="btn bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded">

@@ -257,15 +257,50 @@ const PendingBlogs = () => {
   //   const [revertedBlogs , setRevertedBlogs ] = useState([]);
   //   const [user, setUser] = useState(null);
   //   const [blogs , setBlogs] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+  const [approvedBlogs, setApprovedBlogs] = useState([]);
+  const [rejectedBlogs, setRejectedBlogs] = useState([]);
+  const [pendingBlogs, setPendingBlogs] = useState([]);
+  const [revertedBlogs , setRevertedBlogs ] = useState([]);
+  const [draftedBlogs , setDraftedBlogs] = useState([]);
+  const [userCount , setUserCount] = useState('')
+ // const [user, setUser] = useState(null);
+  const [blogs , setBlogs] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
+  const [tag , setTags] = useState([])
 
-    const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setPendingBlogs, user , userCount , fetchUserCount ,  fetchUserBlogs} = useLocalContext();
+  const fetchUserBlogs = async (userId) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
+        const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
+        
+        setPendingBlogs(filteredPending);
+    
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setError('Error fetching blogs');
+    } finally {
+        setLoading(false);
+    }
+  };
+  
 
-   
-   
+  const fetchUserCount = async (userId) => {
+    try{
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count/${userId}`);
+      console.log(response)
+     
+      setUserCount(response.data);
+      
 
+    }catch(error){
+      console.log("Error occured " , error);
+      setError("Error Fetching Count ! ");
+    }
+  }
+
+  const {user} = useLocalContext()
     useEffect(() => {
        
 
@@ -435,7 +470,7 @@ const PendingBlogs = () => {
           </h1>
         </div>}
 
-          <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-3">        
+          <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-2">        
           {
              pendingBlogs.length > 0 &&
              pendingBlogs.map((blog) => {

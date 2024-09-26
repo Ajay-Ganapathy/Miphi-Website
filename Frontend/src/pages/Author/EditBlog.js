@@ -667,6 +667,7 @@ function EditBlog() {
                           onChange={(e) => setTitle(e.target.value)}
                           placeholder="Enter the blog title...."
                           className="title-input ml-3"
+                          onKeyDown={(e) => (e.key === 'Enter') && e.preventDefault()}
                           required
                         />
                       </div>

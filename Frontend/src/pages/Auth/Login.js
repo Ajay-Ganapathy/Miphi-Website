@@ -73,7 +73,7 @@ const Login = () => {
             <br />
 
             <video autoPlay muted loop className="background-video">
-        <source src="http://localhost:5000/uploads/bgvid2.mp4" type="video/mp4" />
+        <source  src= {`${process.env.REACT_APP_API_URL}/uploads/bgvid2.mp4`}   type="video/mp4" />
        
       </video>
 

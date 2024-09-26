@@ -53,6 +53,11 @@ export function ContextProvider({children})
 
 
     fetchBlogs();
+    fetchCount();
+    if(user && user.id){
+      fetchUserBlogs(user.id);
+      fetchUserCount(user.id);
+    }
 
 }, []);
 
