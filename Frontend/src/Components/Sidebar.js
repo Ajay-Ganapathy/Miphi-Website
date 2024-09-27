@@ -34,7 +34,7 @@ const closeProfileMenu = () => setIsProfileMenuOpen(false);
 const [remarks, setRemarks] = useState(''); 
 const [isMenu , setIsMenu] = useState(false);
 
-const {user} = useLocalContext()
+const {user} = useLocalContext() ;
 const navigate = useNavigate();
  const location = useLocation();
   
@@ -71,13 +71,20 @@ const navigate = useNavigate();
                             DASHBOARD</p>
                         </div>
                     </div>
-                    <div class="flex justify-center">
+
+                    
+                    <UserDetails />
+                    
+                    {/* <div class="flex justify-center">
                         <div class="">
+                     
                         <img  src= {`${process.env.REACT_APP_API_URL}/${user.profile_img}`}  alt="" className="w-32 h-32 mx-auto border-4 border-orange-400 rounded-full dark:bg-gray-500 aspect-square" />
-                              
-                            <p class="font-bold text-base  text-gray-400 pt-2 text-center w-24"> <UserDetails /></p>
+
+      
+<p class="font-bold text-base  text-gray-400 pt-2 text-center w-24"> {user.name ? user.name.split(" ")[0] : ''} </p>
+                           
                         </div>
-                    </div>
+                    </div> */}
                     <div>
 
                     <ul class="mt-6 leading-10">

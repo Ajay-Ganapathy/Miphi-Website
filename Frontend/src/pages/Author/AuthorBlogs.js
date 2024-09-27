@@ -273,106 +273,81 @@ const truncateContent = (content, length = 100) => {
 
 
 const Home = () => {
-
-
-    const [approvedBlogs, setApprovedBlogs] = useState([]);
-    const [rejectedBlogs, setRejectedBlogs] = useState([]);
-    const [pendingBlogs, setPendingBlogs] = useState([]);
-    const [revertedBlogs , setRevertedBlogs ] = useState([]);
-    const [draftedBlogs , setDraftedBlogs] = useState([]);
-    const [userCount , setUserCount] = useState('')
-//     const [user, setUser] = useState( {
-//       id : ''
-// });
-    const [blogs , setBlogs] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [modalInfo, setModalInfo] = useState({ isOpen: false, blogId: null });
-    const [tag , setTags] = useState([])
-
-    const fetchUserBlogs = async (userId) => {
-      setLoading(true)
-      try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
-          const filteredApproved = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Accept');
-          const filteredRejected = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Reject');
-          const filteredPending = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Pending');
-          const filteredReverted = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Revert');
-          const filteredDrafts = response.data.blogs.filter(blog => userId == blog.author_id && blog.status === 'Draft');
-          setBlogs(response.data.blogs);
-          setApprovedBlogs(filteredApproved);
-          setRejectedBlogs(filteredRejected);
-          setPendingBlogs(filteredPending);
-          setRevertedBlogs(filteredReverted);
-          setDraftedBlogs(filteredDrafts);
-      } catch (error) {
-          console.error('Error fetching blogs:', error);
-          setError('Error fetching blogs');
-      } finally {
-          setLoading(false);
-      }
-    };
-    
-
-    const fetchUserCount = async (userId) => {
-      setLoading(true)
-      try{
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count/${userId}`);
-        console.log(response)
-       
-        setUserCount(response.data);
-        
+  const [approvedBlogs, setApprovedBlogs] = useState([]);
+  const [rejectedBlogs, setRejectedBlogs] = useState([]);
+  const [pendingBlogs, setPendingBlogs] = useState([]);
+  const [revertedBlogs, setRevertedBlogs] = useState([]);
+  const [draftedBlogs, setDraftedBlogs] = useState([]);
+  const [userCount, setUserCount] = useState('');
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [tag, setTags] = useState([]);
+  const [userLoading, setUserLoading] = useState(true); // New loading state for user
   
-      }catch(error){
-        console.log("Error occured " , error);
-        setError("Error Fetching Count ! ");
-      }
+  const { user } = useLocalContext();
+
+  const fetchUserBlogs = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`);
+      const filteredApproved = response.data.blogs.filter(blog => userId === blog.author_id && blog.status === 'Accept');
+      const filteredRejected = response.data.blogs.filter(blog => userId === blog.author_id && blog.status === 'Reject');
+      const filteredPending = response.data.blogs.filter(blog => userId === blog.author_id && blog.status === 'Pending');
+      const filteredReverted = response.data.blogs.filter(blog => userId === blog.author_id && blog.status === 'Revert');
+      const filteredDrafts = response.data.blogs.filter(blog => userId === blog.author_id && blog.status === 'Draft');
+      setBlogs(response.data.blogs);
+      setApprovedBlogs(filteredApproved);
+      setRejectedBlogs(filteredRejected);
+      setPendingBlogs(filteredPending);
+      setRevertedBlogs(filteredReverted);
+      setDraftedBlogs(filteredDrafts);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+      setError('Error fetching blogs');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    
+  const fetchUserCount = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/count/${userId}`);
+      setUserCount(response.data);
+    } catch (error) {
+      console.error('Error fetching count:', error);
+      setError('Error Fetching Count!');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchTags = async (id) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
+      setTags(response.data);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      setError('Error fetching tags');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (user && user.id) {
+      setUserLoading(false); // Once user data is available, stop loading
+    }
+  }, [user]);
 
-
-    const {user } = useLocalContext()
-    //const {approvedBlogs , rejectedBlogs , pendingBlogs , revertedBlogs , fetchBlogs , blogs , setPendingBlogs, user , userCount ,  fetchUserCount, fetchUserBlogs} = useLocalContext();
-
-    const fetchTags = async (id) => {
-      try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/tags/${id}`);
-        
-          setTags(response.data);
-          
-      } catch (error) {
-          console.error('Error fetching blogs:', error);
-          setError('Error fetching blogs');
-      } finally {
-          setLoading(false);
-      }
-    };
-
-
-
-   
-   
-   
-
-    useEffect(() => {
-       
-
-      if (user && user.id) {
-        fetchUserBlogs(user.id);
-        fetchUserCount(user.id);
-        fetchTags(user.id);
-      }
-    }, [user])
-       
-       
-      
-
-
-   
-
+  useEffect(() => {
+    if (!userLoading && user && user.id) {  // Ensure user data is ready
+      fetchUserBlogs(user.id);
+      fetchUserCount(user.id);
+      fetchTags(user.id);
+    }
+  }, [userLoading, user]);
 
 
 
@@ -380,6 +355,7 @@ const Home = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   return (
     <div>
+      {console.log(user)}
       {
         loading ? (<div> Loading ... </div> ) : 
         <main class="">

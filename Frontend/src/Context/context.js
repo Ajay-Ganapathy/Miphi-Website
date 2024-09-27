@@ -27,31 +27,49 @@ export function ContextProvider({children})
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error) {
-        setError(error.response?.data?.message || 'Error fetching user details');
-      } finally {
+  const fetchUserDetails = async () => {
+    setLoading(true); // Set loading to true at the start
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError('No token found, redirecting to login');
         setLoading(false);
+        // Optionally, redirect to login page here
+        return;
       }
-    };
 
-    fetchUserDetails();
-  }, []);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/author/details`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUser(response.data);  // Assuming `setUser` updates the global user state
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Error fetching user details';
+      
+      if (error.response?.status === 401) {
+        // Token is invalid, clear localStorage and user data
+        localStorage.removeItem('token');
+        setUser(null);
+        // Optionally, redirect to login page here
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);  // End loading whether the request succeeds or fails
+    }
+  };
+
+
+
+  
 
   useEffect(() => {
        
 
-
+    fetchUserDetails();
     fetchBlogs();
     fetchCount();
     if(user && user.id){
